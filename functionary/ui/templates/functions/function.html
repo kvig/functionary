@@ -1,0 +1,72 @@
+<!-- ui/templates/functionc/function.html -->
+{% extends 'base.html' %}
+
+{% load extras %}
+
+{% block content %}
+<div class="column is-full">
+<nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+    <ul>
+        <li><a href="{% url 'ui:function_list' %}">Function List</a></li>
+        <li class="disabled"><a disabled href="#">{{ function.package.name }}</a></li>
+        <li class="is-active"><a href="#">{{ function.name }}</a></li>
+    </ul>
+</nav>
+</div>
+<div class="column">
+    <div class="block">
+        <h1 class="title is-1">
+            {{ function.name }}
+        </h1>
+    </div>    
+
+    <div class="block">
+        <h3 class="title is-4">
+            Function Call
+        </h3>
+        <p>{{user}}</p>
+    </div>
+    <form method="post" action="/api/v1/execute">
+        {% csrf_token %}
+        <div class="column has-addons" >
+            {% for parameter in function.schema.properties.items %}
+                <div class="field">
+                    <label class="label"for={{parameter.0}}><b>{{ parameter.0 }}</b>: <span class="is-small has-text-grey-light">{{ parameter.1.type }}</span>&nbsp;&nbsp;&nbsp;{{ parameter.1.description }}</label>
+                    <div class="control">
+                        <input class="input" id={{parameter.0}} name="parameters[{{parameter.0}}]" type={{ parameter.1.type | input_type }} placeholder={{ parameter.1.default }}></input>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="field">
+                <div class="control">
+                    <button class="button is-link">Execute</button>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="package" value="{{ function.package.name }}">
+        <input type="hidden" name="function" value="{{ function.name }}">
+    </form>
+    <div class="block">
+        <h3 class="title is-4">
+            Schema
+        </h3>
+    </div>
+    <div class="content">
+        <pre>{{ function.schema | pretty_json }}</pre>
+    </div>
+</div>
+<div class="column is-one-third">
+    <div class="block">
+        <p>Return to</p>
+        <a href="{% url 'ui:function_list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Functions
+            </button>
+        </a>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+

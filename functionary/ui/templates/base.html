@@ -1,0 +1,27 @@
+<!-- ui/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <title>Functionary</title>
+</head>
+<body>
+    <section class="hero is-small is-link mb-r">
+        <div class="hero-body">
+            <h1 class="title is-1">Functionary</h1>
+            <p class="subtitle is-4">Run your functions</p>
+        </div>
+    </section>
+    <div class="container">
+        <div class="columns is-multiline">
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+    </div>
+</body>
+</html>
