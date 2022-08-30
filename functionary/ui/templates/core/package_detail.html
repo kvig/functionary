@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:package-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div class="column is-full">
+    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'ui:package-list' %}">Package List</a></li>
+            <li class="is-active"><a href="#">{{ package.name }}</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="column">
+    <div class="block">
+        <h1 class="title is-1">
+            <span class="icon"><i class="fa fa-box-open"></i></span>&nbsp;&nbsp;{{ package.name }}
+        </h1>
+    </div>
+    <div class="column has-addons" >
+        <div class="columns">
+            <div class="column is-3">
+                <i class="fa fa-users"></i>&nbsp;{{ object.environment.team.name }}
+            </div>
+            <div class="column">
+                <i class="fa fa-industry"></i>&nbsp;{{ object.environment.name }}
+            </div>
+        </div>
+        <!-- <div class="field">
+            <label class="label" for="teams"><i class="fa fa-users"></i>&nbsp;Teams:</label>
+            <div class="select">
+                <select id="teams" name="X_Team_Id" type="select">
+                    <option value={{object.environment.team.id}}>{{object.environment.team.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label" for="envs"><i class="fa fa-industry"></i>&nbsp;Environments:</label>
+            <div class="select">
+                <select id="envs" name="X_Environment_Id" type="select">
+                    <option value={{object.environment.id}}>{{object.environment.name}}</option>
+                </select>
+            </div>
+        </div> -->
+        <div class="field">
+            <label class="label" for="funcs"><i class="fa fa-cube"></i>&nbsp;Functions:</label>
+            <ul id="funcs">
+                {% for function in functions %}
+                <li class="block ml-4">
+                    <a href="{% url 'ui:function-detail' function.id %}">{{function.name}}</a><br/>{{function.description}}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="column is-one-third">
+    <div class="block">
+        <p>Return to</p>
+        <a href="{% url 'ui:package-list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Packages
+            </button>
+        </a>
+    </div>
+</div>
+
+{% endblock content %}

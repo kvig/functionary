@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:task-list' %}{% endblock menu_select %}
+{% block content %}
+<div class="column is-full">
+    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'ui:task-list' %}">Task List</a></li>
+            <li class="is-active"><a href="#">{{ task.function.name }}</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="column">
+    <div class="block">
+        <h1 class="title is-1">
+            <span class="icon"><i class="fa fa-digital-tachograph"></i></span>
+            &nbsp;&nbsp;{{ task.function.name }}
+            &nbsp;&nbsp;<i class="is-size-5 fa fa-info"></i>&nbsp;<span class="is-size-5 has-text-weight-normal">{{ task.status }}</span>
+        </h1>
+    </div>
+    <div class="column has-addons" >
+        <div class="field">
+            <label class="label" for="envs"><i class="fa fa-industry"></i>&nbsp;Environment:</label>
+            <ul id="envs">
+                <li class="block ml-4">
+                    <a href="{% url 'ui:environment-detail' task.environment.id %}">{{task.environment.name}}</a>
+                    <br/>
+                    {{task.environment.description}}
+                </li>
+            </ul>
+        </div>
+        <div class="field">
+            <label class="label" for="users"><i class="fa fa-user"></i>&nbsp;Creator:</label>
+            <ul id="users">
+                <li class="block ml-4">
+                    <p>{{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username}})</span>
+                        at {{ task.created_at }}
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="field">
+            <label class="label" for="users"><i class="fa fa-list"></i>&nbsp;Parameters:</label>
+            <ul id="params">
+                <li class="block ml-4">
+                    <p class="is-font-monospace">{{ task.parameters }}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="column is-one-third">
+    <div class="block">
+        <p>Return to</p>
+        <a href="{% url 'ui:team-list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Teams
+            </button>
+        </a>
+    </div>
+</div>
+
+{% endblock content %}

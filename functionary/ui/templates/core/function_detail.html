@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load extras %}
+
+{% block menu_select %}{% url 'ui:function-list' %}{% endblock menu_select %}
+{% block content %}
+<div class="column is-full">
+    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'ui:function-list' %}">Function List</a></li>
+            <li><a href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a></li>
+            <li class="is-active"><a href="#">{{ function.name }}</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="column">
+    <div class="block">
+        <h1 class="title is-1">
+            <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;{{ function.name }}
+        </h1>
+    </div>
+    <form id="createTask">
+        {% csrf_token %}
+        <div class="column has-addons" >
+            <div class="field">
+                <label class="label" for="envs">Environments:</label>
+                <div class="select">
+                    <select id="envs" name="X-Environment-Id" type="select">
+                        {% for env in environments %}
+                        <option value={{env.id}}>{{env.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% for parameter in function.schema.properties.items %}
+            <div class="field">
+                <label class="label" for={{parameter.0}}>
+                    <b>{{ parameter.0 }}</b>: 
+                    <span class="is-small has-text-grey-light">{{ parameter.1.type }}</span>
+                    &nbsp;&nbsp;&nbsp;{{ parameter.1.description }}
+                </label>
+                <div class="control">
+                    <input class="input" id="param-{{parameter.0}}" name="param-{{parameter.0}}" 
+                            type={{ parameter.1.type | input_type }} placeholder={{ parameter.1.default }}></input>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="field">
+                <div class="control">
+                    <button class="button is-link">Execute</button>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="function" value="{{ function.id }}">
+    </form>
+    <div class="p-3 accordions">
+        <div class="accordion is-info">
+            <div class="accordion-header toggle">
+                <h3 class="is-4">Schema</h3>
+                <button class="button toggle"></button>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <pre>{{ function.schema | pretty_json }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="column is-one-third">
+    <div class="block">
+        <p>Return to</p>
+        <a href="{% url 'ui:function-list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Functions
+            </button>
+        </a>
+    </div>
+</div>
+<link rel="stylesheet" href="/ui/static/css/bulma-accordion-2.0.1.min.css"/>
+
+<script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>
+<script>
+    window.addEventListener('load', (event) => { bulmaAccordion.attach(); });
+</script>
+<script>
+    function getParams(form, keys) {
+        const params = []
+        for (const key of keys) {
+            const elem = form.querySelector(`#param-${key}`)
+            const around = elem.type === 'number' ? '' : '"'
+            params.push(`"${key}": ${around}${elem.value}${around}`)
+        }
+        return params
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const taskForm = document.querySelector("#createTask");
+        taskForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const params = []
+
+            for (var [key, val] of formData) {
+                const paramRegex = /param\-(?<param>.+)/gm
+                const match = paramRegex.exec(key)
+                if (match?.groups) {
+                    params.push(match.groups.param)
+                }
+            }
+
+            params.forEach(rem => formData.delete(`param-${rem}`))
+
+            const request = new XMLHttpRequest();
+            request.open("POST", '/api/v1/task');
+            request.setRequestHeader('X-Environment-ID', formData.get('X-Environment-Id'))
+
+            formData.delete('X-Environment-Id')
+            formData.append('parameters', `{${getParams(taskForm, params).join(',')}}`)
+            request.send(formData);
+        })
+    });        
+
+</script>
+{% endblock content %}

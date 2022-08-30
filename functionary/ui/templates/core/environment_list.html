@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:environment-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div>
+    {% for environment in object_list %}
+    <div class="block">
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-2x fa-industry"></i>
+                        </span>
+                    </div>
+                    <div class="media-content">
+                        <a href="{% url 'ui:environment-detail' environment.id %}">
+                            <p class="title is-4">
+                                {% if environment.display_name%}
+                                {{ environment.display_name }} ({{ environment.name }})
+                                {% else %}
+                                {{ environment.name }}
+                                {% endif %}
+                            </p>
+                        </a>
+                        <p class="subtitle is-6">
+                          <a class="has-text-info" href="{% url 'ui:team-detail' environment.team.id %}">
+                              <span class="icon"><i class="fa fa-users"></i></span>&nbsp;{{ environment.team.name }}
+                          </a>
+                      </p>
+                      {% if environment.description %}
+                      <p class="subtitle is-6">{{ environment.description }}</p>
+                      {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

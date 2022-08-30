@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% include unicorn %}
+
+{% block menu_select %}{% url 'ui:task-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div>
+    {% for task in object_list %}
+    <div class="block">
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-2x fa-digital-tachograph"></i>
+                        </span>
+                    </div>
+                    <div class="media-content">
+                        <a href="{% url 'ui:task-detail' task.id %}">
+                            <p class="title is-4">
+                                {{ task.function.name }}
+                                &nbsp;&nbsp;<span class="is-size-6 has-text-weight-normal">(Created at {{ task.created_at }})</span>
+                            </p>
+                        </a>
+                        <p class="subtitle is-6">
+                            <i class="fa fa-box-open"></i>&nbsp;{{ task.environment.name }}<br/>
+                            <i class="fa fa-user"></i>&nbsp;{{ task.creator.username }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

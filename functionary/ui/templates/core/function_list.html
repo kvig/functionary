@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:function-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div>
+    {% for function in object_list %}
+    <div class="block">
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-2x fa-cube"></i>
+                        </span>
+                    </div>
+                    <div class="media-content">
+                      <a href="{% url 'ui:function-detail' function.id %}">
+                        <p class="title is-4">
+                            {% if function.display_name%}
+                                {{ function.display_name }} ({{ function.name }})
+                            {% else %}
+                                {{ function.name }}
+                            {% endif %}
+                        </p>
+                        </a>
+                        <p class="subtitle is-6">
+                            <a class="has-text-info" href="{% url 'ui:package-detail' function.package.id %}">
+                                <span class="icon"><i class="fa fa-box-open"></i></span>&nbsp;{{ function.package.name|lower }}
+                            </a>
+                        </p>
+                        <p class="subtitle is-6">
+                            {{ function.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:team-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div>
+    {% for team in object_list %}
+    <div class="block">
+        <div class="card">
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <span class="icon is-large">
+                            <i class="fa fa-2x fa-users"></i>
+                        </span>
+                    </div>
+                    <div class="media-content">
+                        <a href="{% url 'ui:team-detail' team.id %}">
+                            <p class="title is-4">
+                                {% if team.display_name%}
+                                {{ team.display_name }} ({{ team.name }})
+                                {% else %}
+                                {{ team.name }}
+                                {% endif %}
+                            </p>
+                        </a>
+                        <p class="subtitle is-6">
+                            {{ team.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

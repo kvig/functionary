@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block menu_select %}{% url 'ui:environment-list' %}{% endblock menu_select %}
+{% block content %}
+
+<div class="column is-full">
+    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'ui:environment-list' %}">Environment List</a></li>
+            <li class="is-active"><a href="#">{{ environment.name }}</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="column">
+    <div class="block">
+        <h1 class="title is-1">
+            <span class="icon"><i class="fa fa-industry"></i></span>&nbsp;&nbsp;{{ environment.name }}
+        </h1>
+    </div>
+    <div class="column has-addons" >
+        <div class="columns">
+            <div class="column is-3">
+                <i class="fa fa-users"></i>&nbsp;{{ object.team.name }}
+            </div>
+        </div>
+        <div class="field">
+            <label class="label" for="funcs"><i class="fa fa-box-open"></i>&nbsp;Packages:</label>
+            <ul id="funcs">
+                {% for package in packages %}
+                <li class="block ml-4">
+                    <a href="{% url 'ui:package-detail' package.id %}">{{package.name}}</a><br/>{{package.description}}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="column is-one-third">
+    <div class="block">
+        <p>Return to</p>
+        <a href="{% url 'ui:environment-list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Environments
+            </button>
+        </a>
+    </div>
+</div>
+
+{% endblock content %}
