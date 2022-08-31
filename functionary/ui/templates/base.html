@@ -1,4 +1,5 @@
 {% load static %}
+{% load unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,15 +9,11 @@
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
         <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-        <link rel="stylesheet" href="/ui/static/css/bulma-0.9.4.min.css"/>
-        <link rel="stylesheet" href="/ui/static/css/fontawesome-all-5.15.4.min.css" type="text/css"/>
+        <link rel="stylesheet" href="{% static 'css/functionary.css' %}" type="text/css"/>
+        <link rel="stylesheet" href="{% static 'css/bulma-0.9.4.min.css' %}" type="text/css"/>
+        <link rel="stylesheet" href="{% static 'css/fontawesome-all-5.15.4.min.css' %}" type="text/css"/>
         <title>Functionary</title>
-        <script>
-            function set_env(value) {
-                console.log("Changed ENV!")
-                document.cookie = `X-Environment-ID=${value}`
-            }
-        </script>
+        {% unicorn_scripts %}
     </head>
     <body>
         <section class="hero is-small is-link mb-r">
@@ -28,30 +25,27 @@
                             <p class="subtitle is-4">Run your functions</p>
                         </a>
                     </div>
-                    <div class="column is-2 has-text-right">
-                        <p class="block"><span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}</p>
-                        <p>
-                            <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
-                            <a class="is-underlined" href="/accounts/logout">Logout</a>
-                        </p>
+                    <div class="column is-4 has-text-right">
+                        <div class="top-right-container">
+                            <div class="has-text-right">
+                                <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}<br/>
+                                <span class="icon"><i class="fa fa-lg fa-industry"></i></span>&nbsp;
+                                {% unicorn 'env_to_select' %}
+                            </div>
+                            <div >
+                                <div>
+                                <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
+                                <a class="is-underlined" href="/accounts/logout">Logout</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
         <div class="columns">
             <aside class="column is-3 menu">
-                <ul class="menu-list block">
-                    <li class="menu-item">
-                        <p>Active: 
-                            <i class="fa fa-lg fa-industry"></i>&nbsp;<select id="env_select" style="border: none" onchange="set_env(this.value)">
-                                <option value="val">&nbsp;Environment</option>
-                                <option value="val2">&nbsp;Environment2</option>
-                                {% for env in environments %}
-                                {% endfor %}
-                            </select>
-                        </p>
-                    </li>
-                </ul>
+                <ul class="menu-list block"></ul>
                 <ul class="menu-list block">
                     <li class="menu-item">
                         <a href="{% url 'ui:task-list' %}">
@@ -96,11 +90,31 @@
             </main>
         </div>
         <script>
-            const dest_url = '{% block menu_select %}{% endblock menu_select %}'.trim()
+            function envSelected(selected_obj) {
+                const value = selected_obj.selectedOptions?.[0].value
+                localStorage.setItem('functionary_selected_environment', value)
+                document.cookie = `X-Environment-ID=${value}`
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
+                const dest_url = '{% block menu_select %}{% endblock menu_select %}'.trim()
                 const menuItem = document.querySelector(".menu-item > a[href$='" + dest_url + "'");
                 menuItem.classList.add('is-active')
-            });        
+
+                const env_select = document.querySelector("#env_select")
+                const selected_env = localStorage.getItem('functionary_selected_environment') ?? env_select.childNodes?.[0].value;
+                if (selected_env) {
+                    env_select.querySelector(`:scope > option[value="${selected_env}"`).selected = true
+                }
+            });
+
+            XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
+
+            //override send to always add the X-Environment-ID header for XHR's
+            XMLHttpRequest.prototype.send = function () {
+                this.setRequestHeader('X-Environment-ID', document.querySelector("#env_select").value)
+                this._send.apply(this, arguments); //call original send event with arguments
+            };
         </script>
     </body>
 </html>

@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "django_unicorn",
+    "unicorn",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "core",

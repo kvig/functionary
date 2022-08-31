@@ -15,13 +15,3 @@ class FunctionListView(ListView):
 
 class FunctionDetailView(DetailView):
     model = Function
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        env = self.get_object().package.environment
-
-        context["teams"] = [env.team]
-        context["environments"] = [env]
-
-        return context

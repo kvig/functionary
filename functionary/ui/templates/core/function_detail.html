@@ -24,14 +24,8 @@
         {% csrf_token %}
         <div class="column has-addons" >
             <div class="field">
-                <label class="label" for="envs">Environments:</label>
-                <div class="select">
-                    <select id="envs" name="X-Environment-Id" type="select">
-                        {% for env in environments %}
-                        <option value={{env.id}}>{{env.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <span class="label">Environment:</span>
+                <span name="envs" value="{{function.package.environment.id}}">{{function.package.environment.name}}</span>
             </div>
             {% for parameter in function.schema.properties.items %}
             <div class="field">
@@ -78,9 +72,11 @@
         </a>
     </div>
 </div>
-<link rel="stylesheet" href="/ui/static/css/bulma-accordion-2.0.1.min.css"/>
+<link rel="stylesheet" href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
 
 <script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>
+<script src="{% static 'js/bulma-toast-2.4.1.min.js' %}" defer></script>
+
 <script>
     window.addEventListener('load', (event) => { bulmaAccordion.attach(); });
 </script>
@@ -95,6 +91,18 @@
         return params
     }
 
+    function handleTaskResponse(event) {
+        const request = event.srcElement
+        if (request.readyState == XMLHttpRequest.DONE) {
+            if (request.status > 399) {
+                const response = JSON.stringify(JSON.parse(request.response), null, 4)
+                bulmaToast.toast({ duration: 99999, position: 'top-center', message: `Error Submitting Tasking:<pre style="text-align:left;">${response}</pre>`, type: 'is-danger' })
+            } else {
+                bulmaToast.toast({ position: 'top-center', message: 'Tasking Submitted', type: 'is-success' })
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const taskForm = document.querySelector("#createTask");
         taskForm.addEventListener('submit', (event) => {
@@ -103,6 +111,7 @@
             const formData = new FormData(event.target);
             const params = []
 
+            // Reformat the parameters into a JSON dictionary
             for (var [key, val] of formData) {
                 const paramRegex = /param\-(?<param>.+)/gm
                 const match = paramRegex.exec(key)
@@ -114,11 +123,11 @@
             params.forEach(rem => formData.delete(`param-${rem}`))
 
             const request = new XMLHttpRequest();
-            request.open("POST", '/api/v1/task');
-            request.setRequestHeader('X-Environment-ID', formData.get('X-Environment-Id'))
+            request.open("POST", '/api/v1/tasks/');
+            request.onreadystatechange = handleTaskResponse
 
-            formData.delete('X-Environment-Id')
             formData.append('parameters', `{${getParams(taskForm, params).join(',')}}`)
+
             request.send(formData);
         })
     });        

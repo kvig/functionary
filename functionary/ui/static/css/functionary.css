@@ -1,0 +1,20 @@
+.top-right-container {
+    height: 100%;
+}
+.top-right-container > div {
+    height: 50%;
+}
+.top-right-container > :last-child {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-end;
+}
+.environment-select {
+    border: none;
+    background: none;
+    color:white;
+    font-size:1em;
+}
+.environment-select > option {
+    color: black;
+}

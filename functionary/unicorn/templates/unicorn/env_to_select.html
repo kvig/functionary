@@ -1,0 +1,5 @@
+<select id="env_select" class="environment-select" onchange="envSelected(this)">
+    {% for env in environments %}
+    <option value="{{ env.id }}">{{ env.name }} ({{ env.team.name }})</option>
+    {% endfor %}
+</select>
