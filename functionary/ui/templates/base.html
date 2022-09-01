@@ -29,7 +29,6 @@
                         <div class="top-right-container">
                             <div class="has-text-right">
                                 <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}<br/>
-                                <span class="icon"><i class="fa fa-lg fa-industry"></i></span>&nbsp;
                                 {% unicorn 'env_to_select' %}
                             </div>
                             <div >
@@ -90,22 +89,12 @@
             </main>
         </div>
         <script>
-            function envSelected(selected_obj) {
-                const value = selected_obj.selectedOptions?.[0].value
-                localStorage.setItem('functionary_selected_environment', value)
-                document.cookie = `X-Environment-ID=${value}`
-            }
-
             document.addEventListener('DOMContentLoaded', function () {
+                // dest_url gets set to the value of the expanded url from the template being
+                // rendered, the "block menu_select" parts are substituted by the template
                 const dest_url = '{% block menu_select %}{% endblock menu_select %}'.trim()
-                const menuItem = document.querySelector(".menu-item > a[href$='" + dest_url + "'");
+                const menuItem = document.querySelector(`.menu-item > a[href$='${dest_url}'`);
                 menuItem.classList.add('is-active')
-
-                const env_select = document.querySelector("#env_select")
-                const selected_env = localStorage.getItem('functionary_selected_environment') ?? env_select.childNodes?.[0].value;
-                if (selected_env) {
-                    env_select.querySelector(`:scope > option[value="${selected_env}"`).selected = true
-                }
             });
 
             XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;

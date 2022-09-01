@@ -32,4 +32,5 @@ urlpatterns = [
     path("task/<uuid:pk>", tasks.TaskDetailView.as_view(), name="task-detail"),
     path("team_list/", teams.TeamListView.as_view(), name="team-list"),
     path("team/<uuid:pk>", teams.TeamDetailView.as_view(), name="team-detail"),
+    path("environment/set_environment_id", environments.set_environment_id, name="set-environment"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

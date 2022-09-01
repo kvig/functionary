@@ -1,5 +1,18 @@
-<select id="env_select" class="environment-select" onchange="envSelected(this)">
-    {% for env in environments %}
-    <option value="{{ env.id }}">{{ env.name }} ({{ env.team.name }})</option>
-    {% endfor %}
-</select>
+<form method="post" action="{% url 'ui:set-environment' %}?next={{ request.get_full_path }}">
+    {% csrf_token %}
+    <span class="icon"><i class="fa fa-lg fa-industry"></i></span>&nbsp;
+    {% with request.session.environment_id as environment_id %}
+    <select id="env_select" name="environment_id" class="environment-select" onchange="this.form.submit()">
+        <option value="-1">Choose</option>
+        {% for grp, envs in environments.items %}
+        <optgroup label="{{ grp }}">
+            {% for env in envs %}
+            <option value="{{env.id}}"
+                {% if environment_id == env.id|stringformat:'s' %}selected{% endif %}
+            >{{ env.name }}</option>
+            {% endfor %}
+        </optgroup>
+        {% endfor %}
+    </select>
+    {% endwith %}
+</form>

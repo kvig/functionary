@@ -15,6 +15,6 @@
     color:white;
     font-size:1em;
 }
-.environment-select > option {
+.environment-select * {
     color: black;
 }
