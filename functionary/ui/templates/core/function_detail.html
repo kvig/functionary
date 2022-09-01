@@ -9,7 +9,7 @@
     <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
         <ul>
             <li><a href="{% url 'ui:function-list' %}">Function List</a></li>
-            <li><a href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a></li>
+            <li><span class="icon mr-0 ml-2"><i class="fa fa-industry"></i></span><a class="pl-0" href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a></li>
             <li class="is-active"><a href="#">{{ function.name }}</a></li>
         </ul>
     </nav>
@@ -22,11 +22,7 @@
     </div>
     <form id="createTask">
         {% csrf_token %}
-        <div class="column has-addons" >
-            <div class="field">
-                <span class="label">Environment:</span>
-                <span name="envs" value="{{function.package.environment.id}}">{{function.package.environment.name}}</span>
-            </div>
+        <div class="column has-addons">
             {% for parameter in function.schema.properties.items %}
             <div class="field">
                 <label class="label" for={{parameter.0}}>
@@ -62,16 +58,7 @@
         </div>
     </div>
 </div>
-<div class="column is-one-third">
-    <div class="block">
-        <p>Return to</p>
-        <a href="{% url 'ui:function-list' %}">
-            <button class="button is-dark is-outlined is-fullwidth">
-                All Functions
-            </button>
-        </a>
-    </div>
-</div>
+
 <link rel="stylesheet" href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
 
 <script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>

@@ -22,26 +22,7 @@
             <div class="column is-3">
                 <i class="fa fa-users"></i>&nbsp;{{ object.environment.team.name }}
             </div>
-            <div class="column">
-                <i class="fa fa-industry"></i>&nbsp;{{ object.environment.name }}
-            </div>
         </div>
-        <!-- <div class="field">
-            <label class="label" for="teams"><i class="fa fa-users"></i>&nbsp;Teams:</label>
-            <div class="select">
-                <select id="teams" name="X_Team_Id" type="select">
-                    <option value={{object.environment.team.id}}>{{object.environment.team.name}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="field">
-            <label class="label" for="envs"><i class="fa fa-industry"></i>&nbsp;Environments:</label>
-            <div class="select">
-                <select id="envs" name="X_Environment_Id" type="select">
-                    <option value={{object.environment.id}}>{{object.environment.name}}</option>
-                </select>
-            </div>
-        </div> -->
         <div class="field">
             <label class="label" for="funcs"><i class="fa fa-cube"></i>&nbsp;Functions:</label>
             <ul id="funcs">
@@ -52,16 +33,6 @@
                 {% endfor %}
             </ul>
         </div>
-    </div>
-</div>
-<div class="column is-one-third">
-    <div class="block">
-        <p>Return to</p>
-        <a href="{% url 'ui:package-list' %}">
-            <button class="button is-dark is-outlined is-fullwidth">
-                All Packages
-            </button>
-        </a>
     </div>
 </div>
 
