@@ -8,15 +8,12 @@ class TaskListView(ListView):
     model = Task
 
     def get_queryset(self):
-        """Sorts the objects on creation time."""
+        """Filters tasks not in the environment then sorts the 
+        objects on creation time."""
 
-        return (super().get_queryset().order_by('-created_at'))
+        env_id = self.request.session['environment_id']
+        return super().get_queryset().filter(environment__id=env_id).order_by('-created_at')
 
 
 class TaskDetailView(DetailView):
     model = Task
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["environments"] = [self.get_object().environment]
-        return context

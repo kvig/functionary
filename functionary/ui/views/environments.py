@@ -1,9 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import redirect
-from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 from core.models import Environment, Package
 
@@ -21,11 +19,8 @@ class EnvironmentDetailView(DetailView):
     model = Environment
 
     def get_context_data(self, **kwargs):
-        print(f"self: {dir(self)!r}")
-        teams = [self.get_object().team]
         context = super().get_context_data(**kwargs)
         context["packages"] = Package.objects.filter(environment=self.get_object())
-        context["teams"] = teams
         return context
 
 

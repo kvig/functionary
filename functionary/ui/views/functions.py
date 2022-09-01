@@ -8,9 +8,11 @@ class FunctionListView(ListView):
     model = Function
 
     def get_queryset(self):
-        """Sorts based on package name, then function name."""
+        """Filters functions not in the environment then sorts based
+        on package name, then function name."""
 
-        return (super().get_queryset().order_by('package__name', 'name'))
+        env_id = self.request.session['environment_id']
+        return super().get_queryset().filter(package__environment__id=env_id).order_by('package__name', 'name')
 
 
 class FunctionDetailView(DetailView):
