@@ -1,7 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from core.models import Function, Package, TeamUserRole
+from core.models import Function, Package
 
 
 class PackageListView(ListView):
@@ -10,7 +10,7 @@ class PackageListView(ListView):
     def get_queryset(self):
         """Filter packages not in the specified environment."""
 
-        env_id = self.request.session['environment_id']
+        env_id = self.request.session["environment_id"]
         return super().get_queryset().filter(environment__id=env_id)
 
 

@@ -20,29 +20,14 @@
             <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;{{ function.name }}
         </h1>
     </div>
-    <form id="createTask">
+    <form id="djangoForm" method="post" action="{% url 'ui:function-execute' %}">
         {% csrf_token %}
+        <input type="hidden" name="function_id" value="{{ function.id }}">
         <div class="column has-addons">
-            {% for parameter in function.schema.properties.items %}
-            <div class="field">
-                <label class="label" for={{parameter.0}}>
-                    <b>{{ parameter.0 }}</b>: 
-                    <span class="is-small has-text-grey-light">{{ parameter.1.type }}</span>
-                    &nbsp;&nbsp;&nbsp;{{ parameter.1.description }}
-                </label>
-                <div class="control">
-                    <input class="input" id="param-{{parameter.0}}" name="param-{{parameter.0}}" 
-                            type={{ parameter.1.type | input_type }} placeholder={{ parameter.1.default }}></input>
-                </div>
-            </div>
-            {% endfor %}
-            <div class="field">
-                <div class="control">
-                    <button class="button is-link">Execute</button>
-                </div>
-            </div>
+            {{ form.non_field_errors }}
+            {{ form }}
+            <input class="button is-link" type="submit" value="Execute"></input>
         </div>
-        <input type="hidden" name="function" value="{{ function.id }}">
     </form>
     <div class="p-3 accordions">
         <div class="accordion is-info">
