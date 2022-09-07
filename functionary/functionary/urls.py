@@ -23,7 +23,7 @@ from drf_spectacular.views import (
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path('accounts/', include('django.contrib.auth.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
     path("api/v1/", include("core.api.v1.urls")),
     path("api/v1/", include("builder.api.v1.urls")),
