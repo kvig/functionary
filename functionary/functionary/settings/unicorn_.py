@@ -1,0 +1,3 @@
+UNICORN = {
+    "APPS": ["ui"],
+}
