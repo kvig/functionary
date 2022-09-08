@@ -6,3 +6,6 @@ black
 coverage
 flake8
 isort
+
+# Django formatting
+djlint

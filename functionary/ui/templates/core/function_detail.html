@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% load static %}
 {% load extras %}
@@ -22,11 +22,11 @@
     </div>
     <form id="djangoForm" method="post" action="{% url 'ui:function-execute' %}">
         {% csrf_token %}
-        <input type="hidden" name="function_id" value="{{ function.id }}">
+        <input type="hidden" name="function_id" value="{{ function.id }}"/>
         <div class="column has-addons">
             {{ form.non_field_errors }}
             {{ form }}
-            <input class="button is-link" type="submit" value="Execute"></input>
+            <input class="button is-link" type="submit" value="Execute"/>
         </div>
     </form>
     <div class="p-3 accordions">

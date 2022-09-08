@@ -2,12 +2,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from .views import dashboard, environments, functions, packages, tasks, teams
+from .views import environments, functions, home, packages, tasks, teams
 
 app_name = "ui"
 
 urlpatterns = [
-    path("", dashboard.dashboard, name="dashboard"),
+    path("", home.home, name="home"),
     path(
         "environment_list/",
         environments.EnvironmentListView.as_view(),

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block menu_select %}{% url 'ui:team-list' %}{% endblock menu_select %}
 {% block content %}
@@ -22,7 +22,7 @@
             <ul id="envs">
                 {% for env in environments %}
                 <li class="block ml-4">
-                    <a href="{% url 'ui:environment-detail' env.id %}">{{env.name}}</a><br/>{{env.description}}
+                    <a href="{% url 'ui:environment-detail' env.id %}">{{ env.name }}</a><br/>{{ env.description }}
                 </li>
                 {% endfor %}
             </ul>
@@ -32,7 +32,7 @@
             <ul id="users">
                 {% for u in users %}
                 <li class="block ml-4">
-                    <p>{{ u.first_name }} {{ u.last_name }} <span class="has-text-grey-light">({{ u.username}})</span></p>
+                    <p>{{ u.first_name }} {{ u.last_name }} <span class="has-text-grey-light">({{ u.username }})</span></p>
                 </li>
                 {% endfor %}
             </ul>

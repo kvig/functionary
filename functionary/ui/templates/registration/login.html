@@ -1,5 +1,3 @@
-<!--ui/templates/registration/login.html-->
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -18,23 +16,19 @@
   {% endif %}
 
   <div class="column">
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <div class="field">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-    </div>
-    <div class="field">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-    </div>
-    </table>
-    <input class="button" type="submit" value="login">
-    <input type="hidden" name="next" value="{{ next }}">
-  </form>
-
-  {# Assumes you setup the password_reset view in your URLconf #}
-  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="field">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+      </div>
+      <div class="field">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+      </div>
+      <input class="button" type="submit" value="login"/>
+      <input type="hidden" name="next" value="{{ next }}"/>
+    </form>
   </div>
 
-{% endblock %}
+{% endblock content %}

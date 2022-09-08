@@ -6,7 +6,7 @@ from django.views.generic.list import ListView
 from core.auth import Permission
 from core.models import Environment, Function, Task
 
-from ..forms.forms import FunctionForm
+from ..forms.forms import TaskParameterForm
 
 
 class FunctionListView(ListView):
@@ -30,8 +30,8 @@ class FunctionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = FunctionForm(self.get_object())
-        context["form"] = form.render("forms/function_detail.html")
+        form = TaskParameterForm(self.get_object())
+        context["form"] = form.render("forms/task_parameters.html")
         return context
 
 
@@ -45,7 +45,7 @@ def execute(request) -> HttpResponse:
 
         if request.user.is_superuser or Permission.TASK_CREATE.value in permissions:
             func = Function.objects.get(id=request.POST["function_id"])
-            form = FunctionForm(func, request.POST)
+            form = TaskParameterForm(func, request.POST)
 
             if form.is_valid():
 
@@ -65,10 +65,10 @@ def execute(request) -> HttpResponse:
     # if a GET (or any other method), create a blank form
     else:
         func = Function.objects.get(id=request.GET["function_id"])
-        form = FunctionForm(func)
+        form = TaskParameterForm(func)
 
     return render(
         request,
         "core/function_detail.html",
-        {"function": func, "form": form.render("forms/function_detail.html")},
+        {"function": func, "form": form.render("forms/task_parameters.html")},
     )

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block menu_select %}{% url 'ui:package-list' %}{% endblock menu_select %}
 {% block content %}
@@ -28,7 +28,7 @@
             <ul id="funcs">
                 {% for function in functions %}
                 <li class="block ml-4">
-                    <a href="{% url 'ui:function-detail' function.id %}">{{function.name}}</a><br/>{{function.description}}
+                    <a href="{% url 'ui:function-detail' function.id %}">{{ function.name }}</a><br/>{{ function.description }}
                 </li>
                 {% endfor %}
             </ul>

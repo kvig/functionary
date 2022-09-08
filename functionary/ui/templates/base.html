@@ -4,10 +4,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+        <meta charset="UTF-8"/>
+        <meta name="description" content="Functionary User Interface"/>
+        <meta name="keywords" content="Functionary"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}"/>
         <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
         <link rel="stylesheet" href="{% static 'css/functionary.css' %}" type="text/css"/>
         <link rel="stylesheet" href="{% static 'css/bulma-0.9.4.min.css' %}" type="text/css"/>
@@ -20,31 +22,34 @@
             <div class="hero-body">
                 <div class="columns">
                     <div class="column">
-                        <a href="/ui">
+                        <a href="{% url 'ui:home' %}">
                             <h1 class="title is-1">
-                                <img src="{% static 'functionary_f_logo.png' %}" alt="F" width="64" height="64"></img><span class="functionary-title">unctionary</span>
+                                <img src="{% static 'functionary_f_logo.png' %}" alt="F" width="64" height="64"/><span class="functionary-title">unctionary</span>
                             </h1>
                             <p class="subtitle is-4">Run your functions</p>
                         </a>
                     </div>
                     <div class="column is-4 has-text-right">
                         <div class="top-right-container">
+                            {% if user.is_authenticated %}
                             <div class="has-text-right">
                                 <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}<br/>
                                 {% unicorn 'env_to_select' %}
                             </div>
                             <div >
                                 <div>
-                                <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
-                                <a class="is-underlined" href="/accounts/logout">Logout</a>
+                                    <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
+                                    <a class="is-underlined" href="{% url 'logout' %}">Logout</a>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         <div class="columns">
+            {% if user.is_authenticated %}
             <aside class="column is-3 menu">
                 <ul class="menu-list block"></ul>
                 <ul class="menu-list block">
@@ -84,6 +89,7 @@
                     </li>
                 </ul>
             </aside>
+            {% endif %}
             <main class="column">
             {% block content %}
 

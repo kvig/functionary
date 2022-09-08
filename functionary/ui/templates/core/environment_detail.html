@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block menu_select %}{% url 'ui:environment-list' %}{% endblock menu_select %}
 {% block content %}
@@ -28,13 +28,12 @@
             <ul id="funcs">
                 {% for package in packages %}
                 <li class="block ml-4">
-                    <a href="{% url 'ui:package-detail' package.id %}">{{package.name}}</a><br/>{{package.description}}
+                    <a href="{% url 'ui:package-detail' package.id %}">{{ package.name }}</a><br/>{{ package.description }}
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 </div>
-<div class=
 
 {% endblock content %}

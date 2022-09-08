@@ -24,8 +24,8 @@ _field_mapping = {
 }
 
 
-class FunctionForm(Form):
-    template_name = "forms/function_detail.html"
+class TaskParameterForm(Form):
+    template_name = "forms/task_parameters.html"
 
     def __init__(self, function, data=None):
         super().__init__(data)
