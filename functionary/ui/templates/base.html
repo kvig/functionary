@@ -21,7 +21,9 @@
                 <div class="columns">
                     <div class="column">
                         <a href="/ui">
-                            <h1 class="title is-1"><img src="{% static 'functionary_f_logo.png' %}" alt="F" width="64" height="64"></img>unctionary</h1>
+                            <h1 class="title is-1">
+                                <img src="{% static 'functionary_f_logo.png' %}" alt="F" width="64" height="64"></img><span class="functionary-title">unctionary</span>
+                            </h1>
                             <p class="subtitle is-4">Run your functions</p>
                         </a>
                     </div>
@@ -96,14 +98,6 @@
                 const menuItem = document.querySelector(`.menu-item > a[href$='${dest_url}'`);
                 menuItem.classList.add('is-active')
             });
-
-            XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
-
-            //override send to always add the X-Environment-ID header for XHR's
-            XMLHttpRequest.prototype.send = function () {
-                this.setRequestHeader('X-Environment-ID', document.querySelector("#env_select").value)
-                this._send.apply(this, arguments); //call original send event with arguments
-            };
         </script>
     </body>
 </html>

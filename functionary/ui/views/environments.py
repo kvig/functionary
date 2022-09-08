@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from rest_framework.decorators import api_view
 
 from core.models import Environment, Package
 
@@ -24,10 +24,10 @@ class EnvironmentDetailView(DetailView):
         return context
 
 
-@api_view(["POST"])
+@require_POST
 def set_environment_id(request):
     request.session["environment_id"] = request.POST["environment_id"]
-    next: str = request.GET.get("next")
+    next = request.GET.get("next")
     if not next:
         next = "/ui/"
     return redirect(next)

@@ -17,7 +17,7 @@
                     <div class="media-content">
                       <a href="{% url 'ui:function-detail' function.id %}">
                         <p class="title is-4">
-                            {% if function.display_name%}
+                            {% if function.display_name %}
                             {{ function.display_name }} ({{ function.name }})
                             {% else %}
                             {{ function.name }}

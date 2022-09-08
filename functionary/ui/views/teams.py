@@ -1,7 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from core.models import Environment, Team, TeamUserRole
+from core.models import Team
 
 
 class TeamListView(ListView):
@@ -13,8 +13,7 @@ class TeamDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["environments"] = Environment.objects.filter(team=self.get_object())
-        context["users"] = [
-            x.user for x in TeamUserRole.objects.filter(team=self.get_object())
-        ]
+        team = self.get_object()
+        context["environments"] = team.environments.all()
+        context["users"] = [user_role.user for user_role in team.user_roles.all()]
         return context

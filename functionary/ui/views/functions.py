@@ -30,19 +30,17 @@ class FunctionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form: FunctionForm = FunctionForm(self.get_object())
+        form = FunctionForm(self.get_object())
         context["form"] = form.render("forms/function_detail.html")
         return context
 
 
 def execute(request) -> HttpResponse:
-    func: Function = None
-    form: FunctionForm = None
+    func = None
+    form = None
 
     if request.method == "POST":
-        env: Environment = Environment.objects.get(
-            id=request.session.get("environment_id")
-        )
+        env = Environment.objects.get(id=request.session.get("environment_id"))
         permissions = request.user.environment_permissions(env, inherited=True)
 
         if request.user.is_superuser or Permission.TASK_CREATE.value in permissions:
@@ -67,7 +65,7 @@ def execute(request) -> HttpResponse:
     # if a GET (or any other method), create a blank form
     else:
         func = Function.objects.get(id=request.GET["function_id"])
-        form = FunctionForm()
+        form = FunctionForm(func)
 
     return render(
         request,

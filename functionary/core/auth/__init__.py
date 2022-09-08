@@ -75,12 +75,12 @@ _READ_ONLY_PERMISSIONS = [
 _DEVELOPER_PERMISSIONS = _READ_ONLY_PERMISSIONS + [
     Permission.PACKAGE_CREATE.value,
     Permission.PACKAGE_UPDATE.value,
-    Permission.TASK_CREATE.value,
 ]
 
 # TODO: Add permissions once Task model exists
-_OPERATOR_PERMISSIONS = _READ_ONLY_PERMISSIONS + []
-
+_OPERATOR_PERMISSIONS = _READ_ONLY_PERMISSIONS + [
+    Permission.TASK_CREATE.value,
+]
 
 ROLE_PERMISSION_MAP = {
     Role.ADMIN.name: _ADMIN_PERMISSIONS,

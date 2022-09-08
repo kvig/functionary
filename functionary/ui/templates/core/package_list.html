@@ -17,7 +17,7 @@
                     <div class="media-content">
                         <a href="{% url 'ui:package-detail' package.id %}">
                             <p class="title is-4">
-                                {% if package.display_name%}
+                                {% if package.display_name %}
                                 {{ package.display_name }} ({{ package.name }})
                                 {% else %}
                                 {{ package.name }}

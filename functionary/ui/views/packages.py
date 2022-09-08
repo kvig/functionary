@@ -1,7 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from core.models import Function, Package
+from core.models import Package
 
 
 class PackageListView(ListView):
@@ -19,5 +19,5 @@ class PackageDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["functions"] = Function.objects.filter(package=self.get_object())
+        context["functions"] = self.get_object().functions.all()
         return context

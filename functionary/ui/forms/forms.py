@@ -4,7 +4,6 @@ from django.forms import (
     DateField,
     DateTimeField,
     DecimalField,
-    Field,
     FloatField,
     Form,
     IntegerField,
@@ -12,7 +11,7 @@ from django.forms import (
     TimeField,
 )
 
-field_mapping: dict[str, Field] = {
+_field_mapping = {
     "integer": IntegerField,
     "string": CharField,
     "float": FloatField,
@@ -41,12 +40,11 @@ class FunctionForm(Form):
                 "required": req,
                 "help_text": value.get("description", None),
             }
-            field_class: Field = field_mapping.get(value["type"], None)
+            field_class = _field_mapping.get(value["type"], None)
 
             if not field_class:
                 raise ValueError(f"Unknown field type for {param}: {value['type']}")
 
             field = field_class(**kwargs)
             field.widget.attrs.update({"class": "input"})
-            # setattr(field, 'field_type', value['type'])
             self.fields[param] = field

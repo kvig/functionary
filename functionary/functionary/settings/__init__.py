@@ -4,4 +4,4 @@ from .core_ import *  # noqa
 from .django_ import *  # noqa
 from .logging_ import *  # noqa
 from .rest_framework_ import *  # noqa
-from .unicorn_ import * # noqa
+from .ui_ import *  # noqa
