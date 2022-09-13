@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from core.models import EnvironmentUserRole
+from core.models import Environment, EnvironmentUserRole
 
 
 def home(request):
@@ -12,4 +12,9 @@ def home(request):
         )
         if role:
             request.session["environment_id"] = str(role.environment.id)
+        elif request.user.is_superuser:
+            request.session["environment_id"] = str(
+                Environment.objects.all().order_by("team__name", "name").first().id
+            )
+
     return render(request, "home.html")

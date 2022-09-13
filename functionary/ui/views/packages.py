@@ -1,20 +1,16 @@
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-
 from core.models import Package
 
+from .view_base import (
+    PermissionedEnvironmentDetailView,
+    PermissionedEnvironmentListView,
+)
 
-class PackageListView(ListView):
+
+class PackageListView(PermissionedEnvironmentListView):
     model = Package
 
-    def get_queryset(self):
-        """Filter packages not in the specified environment."""
 
-        env_id = self.request.session["environment_id"]
-        return super().get_queryset().filter(environment__id=env_id)
-
-
-class PackageDetailView(DetailView):
+class PackageDetailView(PermissionedEnvironmentDetailView):
     model = Package
 
     def get_context_data(self, **kwargs):

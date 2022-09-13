@@ -1,6 +1,7 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block menu_select %}{% url 'ui:task-list' %}{% endblock menu_select %}
+{% load unicorn %}
+
 {% block content %}
 <div class="column is-full">
     <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
@@ -11,19 +12,13 @@
     </nav>
 </div>
 <div class="column">
-    <div class="block">
-        <h1 class="title is-1">
-            <span class="icon"><i class="fa fa-digital-tachograph"></i></span>
-            &nbsp;&nbsp;{{ task.function.name }}
-            &nbsp;&nbsp;<i class="is-size-5 fa fa-info"></i>&nbsp;<span class="is-size-5 has-text-weight-normal">{{ task.status }}</span>
-        </h1>
-    </div>
+    {% unicorn 'task_title' task=task %}
     <div class="column has-addons" >
         <div class="field">
             <label class="label" for="users"><i class="fa fa-user"></i>&nbsp;Creator:</label>
             <ul id="users">
                 <li class="block ml-4">
-                    <p>{{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username}})</span>
+                    <p>{{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username }})</span>
                         at {{ task.created_at }}
                     </p>
                 </li>

@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="{% static 'css/bulma-0.9.4.min.css' %}" type="text/css"/>
         <link rel="stylesheet" href="{% static 'css/fontawesome-all-5.15.4.min.css' %}" type="text/css"/>
         <title>Functionary</title>
+        <!-- This script will run when the page loads and the menus are available -->
+        <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
         {% unicorn_scripts %}
     </head>
     <body>
@@ -39,7 +41,7 @@
                             <div >
                                 <div>
                                     <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
-                                    <a class="is-underlined" href="{% url 'logout' %}">Logout</a>
+                                    <a class="is-underlined" href="{% url 'ui:logout' %}">Logout</a>
                                 </div>
                             </div>
                             {% endif %}
@@ -96,14 +98,5 @@
             {% endblock content %}
             </main>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // dest_url gets set to the value of the expanded url from the template being
-                // rendered, the "block menu_select" parts are substituted by the template
-                const dest_url = '{% block menu_select %}{% endblock menu_select %}'.trim()
-                const menuItem = document.querySelector(`.menu-item > a[href$='${dest_url}'`);
-                menuItem.classList.add('is-active')
-            });
-        </script>
     </body>
 </html>

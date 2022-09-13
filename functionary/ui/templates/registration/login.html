@@ -16,7 +16,7 @@
   {% endif %}
 
   <div class="column">
-    <form method="post" action="{% url 'login' %}">
+    <form method="post" action="{% url 'ui:login' %}">
       {% csrf_token %}
       <div class="field">
           {{ form.username.label_tag }}
