@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -6,7 +6,7 @@ from core.auth import Permission
 from core.models import Environment
 
 
-class PermissionedEnvironmentListView(ListView):
+class PermissionedEnvironmentListView(LoginRequiredMixin, ListView):
     model_field = "environment"
     environment_through_field = None
     order_by_fields = ["name"]
@@ -16,11 +16,10 @@ class PermissionedEnvironmentListView(ListView):
         on the value of order_by_fields."""
 
         env_id = self.request.session["environment_id"]
-        env = Environment.objects.get(id=env_id) if len(env_id) > 2 else None
+        env_is_selected = len(env_id) > 2
+        env = Environment.objects.get(id=env_id) if env_is_selected else None
         if env:
-            if self.request.user.is_superuser or self.request.user.has_perm(
-                Permission.ENVIRONMENT_READ, env
-            ):
+            if self.request.user.has_perm(Permission.ENVIRONMENT_READ, env):
                 prefix = (
                     f"{self.environment_through_field}__"
                     if self.environment_through_field
@@ -36,7 +35,9 @@ class PermissionedEnvironmentListView(ListView):
         return super().get_queryset().none()
 
 
-class PermissionedEnvironmentDetailView(UserPassesTestMixin, DetailView):
+class PermissionedEnvironmentDetailView(
+    LoginRequiredMixin, UserPassesTestMixin, DetailView
+):
     environment_through_field = None
 
     def test_func(self):

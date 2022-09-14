@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Set
 
+from django.apps import apps
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -94,3 +95,20 @@ class User(AbstractBaseUser, PermissionsMixin):
             permissions.update(self.team_permissions(environment.team))
 
         return permissions
+
+    def environments(self) -> Set["Environment"]:
+        """Retrieves the Envrionments the user is permitted to access.
+
+        Returns:
+            A set of Environments from the Users Team roles combined with
+            any Environment roles.
+        """
+        Environment = apps.get_model("core", "Environment")
+        envs = (
+            Environment.objects.filter(
+                models.Q(team__user_roles__user=self) | models.Q(user_roles__user=self)
+            )
+            .distinct()
+            .order_by("team__name", "name")
+        )
+        return envs

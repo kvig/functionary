@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -6,7 +6,7 @@ from core.auth import Permission
 from core.models import Team, TeamUserRole
 
 
-class TeamListView(ListView):
+class TeamListView(LoginRequiredMixin, ListView):
     model = Team
 
     def get_queryset(self):
@@ -20,7 +20,7 @@ class TeamListView(ListView):
             return Team.objects.filter(id__in=[team["team_id"] for team in teams])
 
 
-class TeamDetailView(UserPassesTestMixin, DetailView):
+class TeamDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Team
 
     def get_context_data(self, **kwargs):

@@ -15,6 +15,7 @@
     {% unicorn 'task_title' task=task %}
     <div class="column has-addons" >
         <div class="field">
+            <label class="label"><i class="fa fa-building"></i>&nbsp;{{ task.environment.name }}</label>
             <label class="label" for="users"><i class="fa fa-user"></i>&nbsp;Creator:</label>
             <ul id="users">
                 <li class="block ml-4">

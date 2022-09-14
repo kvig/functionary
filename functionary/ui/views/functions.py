@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from core.auth import Permission
@@ -32,6 +34,7 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
 
 
 @require_POST
+@login_required
 def execute(request) -> HttpResponse:
     func = None
     form = None
@@ -51,6 +54,6 @@ def execute(request) -> HttpResponse:
             )
 
             # redirect to a new URL:
-            return HttpResponseRedirect("/ui/task_list/")
+            return HttpResponseRedirect(reverse("ui:task-list"))
 
     return HttpResponseForbidden()

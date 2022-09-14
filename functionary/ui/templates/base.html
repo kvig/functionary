@@ -65,7 +65,7 @@
                 <ul class="menu-list block">
                     <li class="menu-item">
                         <a href="{% url 'ui:package-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-box-open"></i></span>
+                            <span class="icon has-text-info"><i class="fa fa-lg fa-cubes"></i></span>
                             &nbsp;Packages
                         </a>
                     </li>
@@ -76,10 +76,11 @@
                         </a>
                     </li>
                 </ul>
+                {% if user.is_superuser %}
                 <ul class="menu-list block">
                     <li class="menu-item">
                         <a href="{% url 'ui:environment-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-industry"></i></span>
+                            <span class="icon has-text-info"><i class="fa fa-lg fa-building"></i></span>
                             &nbsp;Environments
                         </a>
                     </li>
@@ -90,6 +91,7 @@
                         </a>
                     </li>
                 </ul>
+                {% endif %}
             </aside>
             {% endif %}
             <main class="column">

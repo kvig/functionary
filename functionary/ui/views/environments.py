@@ -1,14 +1,14 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
 from core.auth import Permission
-from core.models import Environment, EnvironmentUserRole, Package
+from core.models import Environment, Package
 
 
-class EnvironmentListView(ListView):
+class EnvironmentListView(LoginRequiredMixin, ListView):
     model = Environment
 
     def get_queryset(self):
@@ -16,15 +16,10 @@ class EnvironmentListView(ListView):
         if self.request.user.is_superuser:
             return super().get_queryset().order_by("team__name", "name")
         else:
-            environments = EnvironmentUserRole.objects.filter(
-                user=self.request.user
-            ).values("environment_id")
-            return Environment.objects.filter(
-                id__in=[env["environment_id"] for env in environments]
-            )
+            return self.request.user.environments()
 
 
-class EnvironmentDetailView(UserPassesTestMixin, DetailView):
+class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Environment
 
     def get_context_data(self, **kwargs):
