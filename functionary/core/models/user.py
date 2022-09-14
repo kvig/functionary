@@ -96,7 +96,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return permissions
 
-    def environments(self) -> Set["Environment"]:
+    @property
+    def environments(self):
         """Retrieves the Envrionments the user is permitted to access.
 
         Returns:
@@ -104,11 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             any Environment roles.
         """
         Environment = apps.get_model("core", "Environment")
-        envs = (
-            Environment.objects.filter(
-                models.Q(team__user_roles__user=self) | models.Q(user_roles__user=self)
-            )
-            .distinct()
-            .order_by("team__name", "name")
-        )
+        envs = Environment.objects.filter(
+            models.Q(team__user_roles__user=self) | models.Q(user_roles__user=self)
+        ).distinct()
         return envs
