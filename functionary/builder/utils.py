@@ -1,8 +1,10 @@
+import datetime
 import io
 import logging
 import os
 import shutil
 import tarfile
+from typing import TypeVar
 from uuid import UUID
 
 import docker
@@ -11,7 +13,7 @@ from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.db import transaction
 from django.template.loader import get_template
-from pydantic import Field, create_model
+from pydantic import Field, Json, create_model
 
 from core.models import Environment, Function, Package, User
 
@@ -218,8 +220,16 @@ def _create_functions_from_definition(definitions, package: Package):
 def _generate_function_schema(name: str, parameters) -> str:
     """Creates a pydantic model from the parameter definitions and returns the schema
     as a JSON string"""
-    # TODO - Update this map to add lists and whatever other pieces we want to support
-    type_map = {"int": int, "str": str}
+    type_map = {
+        "integer": int,
+        "string": str,
+        "text": TypeVar("text", str, bytes),
+        "float": float,
+        "boolean": bool,
+        "date": datetime.date,
+        "datetime": datetime.datetime,
+        "json": TypeVar("json", Json, str),
+    }
     params_dict = {}
 
     for parameter in parameters:

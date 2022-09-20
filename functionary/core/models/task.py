@@ -5,6 +5,7 @@ from typing import Optional
 import jsonschema
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
 from core.models import ModelSaveHookMixin
@@ -44,7 +45,7 @@ class Task(ModelSaveHookMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     function = models.ForeignKey(to="Function", on_delete=models.CASCADE)
     environment = models.ForeignKey(to="Environment", on_delete=models.CASCADE)
-    parameters = models.JSONField()
+    parameters = models.JSONField(encoder=DjangoJSONEncoder)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=PENDING)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)

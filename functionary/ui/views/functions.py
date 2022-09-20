@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -55,5 +56,7 @@ def execute(request) -> HttpResponse:
 
             # redirect to a new URL:
             return HttpResponseRedirect(reverse("ui:task-detail", args=(task.id,)))
+        args = {"form": form, "function": func}
+        return render(request, "core/function_detail.html", args)
 
     return HttpResponseForbidden()

@@ -1,6 +1,18 @@
 """ Serializers for defining a package """
 from rest_framework import serializers
 
+LANGUAGES = [("python", "Python"), ("javascript", "JavaScript")]
+PARAMETER_TYPES = [
+    ("integer", "Integer"),
+    ("string", "String"),
+    ("text", "String (Long)"),
+    ("float", "Float"),
+    ("boolean", "Boolean"),
+    ("date", "Date"),
+    ("datetime", "Date Time"),
+    ("json", "JSON"),
+]
+
 
 class ParameterOptionSerializer(serializers.Serializer):
     name = serializers.CharField()
@@ -17,8 +29,7 @@ class ParameterSerializer(serializers.Serializer):
     display_name = serializers.CharField(required=False)
     description = serializers.CharField(required=False)
 
-    # TODO: This should likely be limited to known choices
-    type = serializers.CharField(required=True)
+    type = serializers.ChoiceField(choices=PARAMETER_TYPES, required=True)
 
     required = serializers.BooleanField(default=False)
     options = ParameterOptionSerializer(many=True, required=False)
@@ -43,7 +54,7 @@ class PackageDefinitionSerializer(serializers.Serializer):
     name = serializers.CharField()
     display_name = serializers.CharField(required=False)
     description = serializers.CharField(required=False)
-    language = serializers.CharField(required=False)
+    language = serializers.ChoiceField(choices=LANGUAGES, required=False)
     filename = serializers.CharField(required=False)
     environment = serializers.DictField(child=serializers.CharField(), required=False)
     functions = FunctionSerializer(many=True)
