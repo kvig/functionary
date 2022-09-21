@@ -11,6 +11,16 @@ from django.forms import (
     JSONField,
     Textarea,
 )
+from django.forms.widgets import DateInput, DateTimeInput
+
+
+class HTMLDateInput(DateInput):
+    input_type = "date"
+
+
+class HTMLDateTimeInput(DateTimeInput):
+    input_type = "datetime-local"
+
 
 _field_mapping = {
     "integer": (IntegerField, None),
@@ -18,10 +28,10 @@ _field_mapping = {
     "text": (CharField, Textarea),
     "number": (FloatField, None),
     "boolean": (BooleanField, None),
-    "date": (DateField, None),
+    "date": (DateField, HTMLDateInput),
     "date-time": (
         DateTimeField,
-        None,
+        HTMLDateTimeInput,
     ),
     "json": (JSONField, Textarea),
 }
