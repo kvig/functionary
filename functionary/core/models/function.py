@@ -12,6 +12,7 @@ class Function(models.Model):
         package: the package that the function is a part of
         name: internal name that published package definition keys off of
         display_name: optional display name
+        summary: short description of the function
         description: more details about the function
         schema: the function's OpenAPI definition
     """

@@ -190,6 +190,7 @@ def _create_package_from_definition(
         )
 
     package_obj.display_name = package_definition.get("display_name")
+    package_obj.summary = package_definition.get("summary")
     package_obj.description = package_definition.get("description")
     package_obj.language = package_definition.get("language")
     package_obj.image_name = image_name
@@ -210,6 +211,7 @@ def _create_functions_from_definition(definitions, package: Package):
             function_obj = Function(package=package, name=name)
 
         function_obj.display_name = function_def.get("display_name")
+        function_obj.summary = function_def.get("summary")
         function_obj.description = function_def.get("description")
         function_obj.schema = _generate_function_schema(
             name, function_def.get("parameters")

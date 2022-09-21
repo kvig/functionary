@@ -1,55 +1,65 @@
 {% extends "base.html" %}
-
 {% load static %}
 {% load extras %}
-
 {% block content %}
-<div class="column is-full">
-    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{% url 'ui:function-list' %}">Function List</a></li>
-            <li><span class="icon mr-0 ml-2"><i class="fa fa-cubes"></i></span><a class="pl-0" href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a></li>
-            <li class="is-active"><a href="#">{{ function.name }}</a></li>
-        </ul>
-    </nav>
-</div>
-<div class="column">
-    <div class="block">
-        <h1 class="title is-1">
-            <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;{{ function.name }}
-        </h1>
+    <div class="column is-full">
+        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+            <ul>
+                <li>
+                    <a href="{% url 'ui:function-list' %}">Function List</a>
+                </li>
+                <li>
+                    <span class="icon mr-0 ml-2"><i class="fa fa-cubes"></i></span><a class="pl-0" href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a>
+                </li>
+                <li class="is-active">
+                    <a href="#">{{ function.name }}</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-    {% if form %}
-    <form id="djangoForm" method="post" action="{% url 'ui:function-execute' %}">
-        {% csrf_token %}
-        <input type="hidden" name="function_id" value="{{ function.id }}"/>
-        <div class="column has-addons">
-            {{ form.non_field_errors }}
-            {{ form }}
-            <input class="button is-link" type="submit" value="Execute"/>
+    <div class="column">
+        <div class="block">
+            <h1 class="title is-1">
+                <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;{{ function.name }}
+            </h1>
         </div>
-    </form>
-    {% endif %}
-    <div class="p-3 accordions">
-        <div class="accordion is-info {% if not form %} is-active {% endif %}">
-            <div class="accordion-header toggle">
-                <h3 class="is-4">Schema</h3>
-                <button class="button toggle"></button>
-            </div>
-            <div class="accordion-body">
-                <div class="accordion-content">
-                    <pre>{{ function.schema | pretty_json }}</pre>
+        <div class="field">
+            <label class="label" for="desc">Description:</label>
+            <span>{{ function.description }}</span>
+        </div>
+        {% if form %}
+            <form id="djangoForm"
+                  method="post"
+                  action="{% url 'ui:function-execute' %}">
+                {% csrf_token %}
+                <input type="hidden" name="function_id" value="{{ function.id }}"/>
+                <div class="column has-addons">
+                    {{ form.non_field_errors }}
+                    {{ form }}
+                    <input class="button is-link" type="submit" value="Execute"/>
+                </div>
+            </form>
+        {% endif %}
+        <div class="p-3 accordions">
+            <div class="accordion is-info {% if not form %} is-active{% endif %}">
+                <div class="accordion-header toggle">
+                    <h3 class="is-4">Schema</h3>
+                    <button class="button toggle"></button>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <pre>{{ function.schema | pretty_json }}</pre>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<link rel="stylesheet" href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
-
-<script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>
-
-<script>
-    window.addEventListener('load', (event) => { bulmaAccordion.attach(); });
-</script>
+    <link rel="stylesheet"
+          href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
+    <script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>
+    <script>
+        window.addEventListener('load', (event) => {
+            bulmaAccordion.attach();
+        });
+    </script>
 {% endblock content %}
