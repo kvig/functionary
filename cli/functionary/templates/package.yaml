@@ -7,6 +7,9 @@ package:
   #   # (optional) defaults to name; determines how the package is displayed in the UI
   #   display_name: string
 
+  #   # (optional) short summary of the packages purpose
+  #   summary: string
+
   #   # (optional) detailed description
   #   description: string
 
@@ -16,6 +19,7 @@ package:
   functions:
 #    # similar to package level fields, but for the function
 #    - name: string
+#      summary: string
 #      display_name: string
 #      description: string
 
@@ -25,6 +29,8 @@ package:
 #        - name: string
 #          # (optional) defaults to name; determines how the parameter is displayed in the UI
 #          display_name: string
+#          # (optional) short summary of the functions purpose
+#          summary: string
 #          # (optional) detailed description
 #          description: string
 #          # (required) data type of the parameter

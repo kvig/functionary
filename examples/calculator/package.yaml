@@ -5,8 +5,13 @@ package:
   # (required) human-friendly unique identifier (team + package name must be unique)
   name: calculator
 
+  # (optional) Summary of the packages purpose
+  summary: Simple calculator example package
+
   # (optional) Detailed description
-  description: Simple calculator example package
+  description:
+    The calculator package contains many functions useful for calculating
+    values. One of these functions is production ready.
 
   # (required) Language that the functions are written in
   language: python
@@ -15,7 +20,8 @@ package:
   functions:
     # Similar to package level fields, but for the function
     - name: add
-      description: add two ints
+      summary: Add two integers
+      description: This function consumes two integers and outputs the sum.
 
       # (required) Parameters that the function takes
       parameters:

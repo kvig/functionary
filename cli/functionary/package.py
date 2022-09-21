@@ -41,6 +41,7 @@ def package_cmd(ctx):
     "-l",
     type=click.Choice(create_languages(), case_sensitive=False),
     required=True,
+    prompt="Select the language",
 )
 @click.option("--output-directory", "-o", type=click.Path(exists=True), default=".")
 @click.argument("name", type=str)
