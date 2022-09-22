@@ -3,6 +3,8 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from core.models import Environment, Package
 
@@ -72,3 +74,21 @@ class BuildResource(models.Model):
     build = models.OneToOneField(
         to=Build, on_delete=models.CASCADE, related_name="resources"
     )
+
+    @property
+    def image_details(self):
+        # This isn't a version independent way of accessing the definition,
+        # but I don't see name or language moving out of the top level unless
+        # we were to support multiple languages in a single package.
+        name = self.package_definition["name"]
+        language = self.package_definition["language"]
+        dockerfile = f"builder/docker/{language}.Dockerfile"
+        image_name = f"{self.build.environment.id}/{name}:{self.build.id}"
+
+        return (image_name, dockerfile)
+
+
+@receiver(post_save, sender=Build)
+def remove_build_artifacts(sender, instance, **kwargs):
+    if instance.status in [Build.COMPLETE, Build.ERROR]:
+        instance.resources.delete()

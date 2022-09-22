@@ -112,45 +112,56 @@ def build_package(build_id: UUID):
     os.makedirs(workdir)
 
     build = Build.objects.select_related("environment").get(id=build_id)
+    build.status = Build.IN_PROGRESS
+    build.save()
+
     environment = build.environment
     package_contents = build.resources.package_contents
     package_definition = build.resources.package_definition
 
-    # TODO: This sort of direct access of package_definition should be discouraged, as
-    #       it results in package schema parsing being spread throughout the code. It
-    #       should live in one place and we should call helpers in places like this.
-    name = package_definition["name"]
-    language = package_definition["language"]
-    dockerfile = f"builder/docker/{language}.Dockerfile"
-    image_name = f"{environment.id}/{name}:{build_id}"
+    image_name, dockerfile = build.resources.image_details
     full_image_name = f"{settings.REGISTRY}/{image_name}"
-
-    _extract_package_contents(package_contents, workdir)
-    _load_dockerfile_template(dockerfile, workdir)
-
-    image, build_log = docker_client.images.build(
-        path=workdir,
-        pull=True,
-        forcerm=True,
-        tag=full_image_name,
-    )
-
-    docker_client.images.push(full_image_name)
-
-    logger.debug(f"Cleaning up remnants of build {build_id}")
-    docker_client.images.remove(image.id)
-    shutil.rmtree(workdir)
 
     with transaction.atomic():
         package = _create_package_from_definition(
             package_definition, environment, image_name
         )
-        build.status = Build.COMPLETE
         build.package = package
         build.save()
 
-        # TODO: The Build model should just clean its own resources with post_save hook
-        build.resources.delete()
+    try:
+        # Need to validate the potentially new function schema, but
+        # don't save it until the build has finished.
+        db_functions = _create_functions_from_definition(
+            package_definition.get("functions"), package
+        )
+        _extract_package_contents(package_contents, workdir)
+        _load_dockerfile_template(dockerfile, workdir)
+
+        image, build_log = docker_client.images.build(
+            path=workdir,
+            pull=True,
+            forcerm=True,
+            tag=full_image_name,
+        )
+        docker_client.images.push(full_image_name)
+    except Exception:
+        build.status = Build.ERROR
+        build.save()
+        return
+
+    with transaction.atomic():
+        # Build has succeeded, save all the things now
+        for func in db_functions:
+            func.save()
+        package.image_name = image_name
+        package.save()
+        build.status = Build.COMPLETE
+        build.save()
+
+    logger.debug(f"Cleaning up remnants of build {build_id}")
+    docker_client.images.remove(image.id)
+    shutil.rmtree(workdir)
 
     logger.info(f"Build {build_id} COMPLETE")
 
@@ -193,9 +204,6 @@ def _create_package_from_definition(
     package_obj.summary = package_definition.get("summary")
     package_obj.description = package_definition.get("description")
     package_obj.language = package_definition.get("language")
-    package_obj.image_name = image_name
-
-    _create_functions_from_definition(package_definition.get("functions"), package_obj)
     package_obj.save()
 
     return package_obj
@@ -203,6 +211,7 @@ def _create_package_from_definition(
 
 def _create_functions_from_definition(definitions, package: Package):
     """Creates the functions in the package from the definition file"""
+    db_functions = []
     for function_def in definitions:
         name = function_def.get("name")
         try:
@@ -216,7 +225,9 @@ def _create_functions_from_definition(definitions, package: Package):
         function_obj.schema = _generate_function_schema(
             name, function_def.get("parameters")
         )
-        function_obj.save()
+        db_functions.append(function_obj)
+
+    return db_functions
 
 
 def _generate_function_schema(name: str, parameters) -> str:
