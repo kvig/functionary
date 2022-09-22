@@ -12,7 +12,13 @@
                     <span class="icon mr-0 ml-2"><i class="fa fa-cubes"></i></span><a class="pl-0" href="{% url 'ui:package-detail' function.package.id %}">{{ function.package.name }}</a>
                 </li>
                 <li class="is-active">
-                    <a href="#">{{ function.name }}</a>
+                    <a href="#">
+                        {% if function.display_name %}
+                            {{ function.display_name }}
+                        {% else %}
+                            {{ function.name }}
+                        {% endif %}
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -20,13 +26,26 @@
     <div class="column">
         <div class="block">
             <h1 class="title is-1">
-                <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;{{ function.name }}
+                <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;
+                {% if function.display_name %}
+                    {{ function.display_name }}
+                {% else %}
+                    {{ function.name }}
+                {% endif %}
             </h1>
         </div>
-        <div class="field">
-            <label class="label" for="desc">Description:</label>
-            <span>{{ function.description }}</span>
-        </div>
+        {% if function.summary %}
+            <div class="field ml-4">
+                <label class="label" for="desc">Summary:</label>
+                <span class="ml-4">{{ function.summary }}</span>
+            </div>
+        {% endif %}
+        {% if function.description %}
+            <div class="field ml-4">
+                <label class="label" for="desc">Description:</label>
+                <span class="ml-4">{{ function.description }}</span>
+            </div>
+        {% endif %}
         {% if form %}
             <form id="djangoForm"
                   method="post"

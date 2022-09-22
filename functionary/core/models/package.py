@@ -26,7 +26,7 @@ class Package(models.Model):
     name = models.CharField(max_length=64, blank=False)
 
     display_name = models.CharField(max_length=64, null=True)
-    summary = models.CharField(max_length=50, null=True)
+    summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
 
     # TODO: Restrict to list of choices?

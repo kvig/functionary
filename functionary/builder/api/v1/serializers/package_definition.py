@@ -44,7 +44,7 @@ class FunctionSerializer(serializers.Serializer):
 
     name = serializers.CharField()
     display_name = serializers.CharField(required=False)
-    summary = serializers.CharField(max_length=50, required=False)
+    summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
     parameters = ParameterSerializer(many=True)
 
@@ -54,7 +54,7 @@ class PackageDefinitionSerializer(serializers.Serializer):
 
     name = serializers.CharField()
     display_name = serializers.CharField(required=False)
-    summary = serializers.CharField(max_length=50, required=False)
+    summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
     language = serializers.ChoiceField(choices=LANGUAGES, required=False)
     filename = serializers.CharField(required=False)
