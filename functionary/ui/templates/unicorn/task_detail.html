@@ -27,21 +27,17 @@
             <label class="label" for="params">
                 <i class="fa fa-list"></i>&nbsp;Parameters:
             </label>
-            <ul id="params">
-                <li class="block ml-4">
-                    <p class="is-font-monospace">{{ task.parameters }}</p>
-                </li>
-            </ul>
+            <div id="params">
+                <pre class="block ml-4">{{ task.parameters | pprint }}</pre>
+            </div>
         </div>
         <div class="field">
             <label class="label" for="result">
                 <i class="fa fa-clipboard-check"></i>&nbsp;Result:
             </label>
-            <ul id="result">
-                {% if task.result is not None %}
-                    <li class="block ml-4">{{ task.result }}</li>
-                {% endif %}
-            </ul>
+            <div id="result">
+                {% if task.result is not None %}<pre class="block ml-4">{{ task.result }}</pre>{% endif %}
+            </div>
         </div>
     </div>
 </div>
