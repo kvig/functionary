@@ -8,7 +8,7 @@ from ..serializers import BuildSerializer
 class BuildViewSet(EnvironmentReadOnlyModelViewSet):
     """View the status of package builds"""
 
-    queryset = Build.objects.all()
+    queryset = Build.objects.select_related("package", "creator").all()
     serializer_class = BuildSerializer
     permission_classes = [HasEnvironmentPermissionForAction]
     permissioned_model = "Package"

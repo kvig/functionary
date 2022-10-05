@@ -80,7 +80,18 @@ def initiate_build(
         package_definition: dict containing the package definition
     """
     with transaction.atomic():
-        build = Build.objects.create(creator=creator, environment=environment)
+        package_obj = None
+
+        try:
+            package_obj = Package.objects.get(
+                environment=environment, name=package_definition.get("names")
+            )
+        except Package.DoesNotExist:
+            pass
+
+        build = Build.objects.create(
+            creator=creator, environment=environment, package=package_obj
+        )
 
         BuildResource(
             build=build,
@@ -122,12 +133,13 @@ def build_package(build_id: UUID):
     image_name, dockerfile = build.resources.image_details
     full_image_name = f"{settings.REGISTRY}/{image_name}"
 
-    with transaction.atomic():
-        package = _create_package_from_definition(
-            package_definition, environment, image_name
-        )
-        build.package = package
-        build.save()
+    if not build.package:
+        with transaction.atomic():
+            package = _create_package_from_definition(
+                package_definition, environment, image_name
+            )
+            build.package = package
+            build.save()
 
     try:
         # Need to validate the potentially new function schema, but

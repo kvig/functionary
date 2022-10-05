@@ -3,13 +3,12 @@ import uuid
 
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from core.models import Environment, Package
+from core.models.mixins import ModelSaveHookMixin
 
 
-class Build(models.Model):
+class Build(ModelSaveHookMixin, models.Model):
     """Tracks the package build status and history
 
     Attributes:
@@ -57,6 +56,10 @@ class Build(models.Model):
     def __str__(self):
         return f"{self.id}"
 
+    def post_save(self):
+        if self.status in [Build.COMPLETE, Build.ERROR]:
+            self.resources.delete()
+
 
 class BuildResource(models.Model):
     """Houses resources needed to perform a package build
@@ -86,9 +89,3 @@ class BuildResource(models.Model):
         image_name = f"{self.build.environment.id}/{name}:{self.build.id}"
 
         return (image_name, dockerfile)
-
-
-@receiver(post_save, sender=Build)
-def remove_build_artifacts(sender, instance, **kwargs):
-    if instance.status in [Build.COMPLETE, Build.ERROR]:
-        instance.resources.delete()

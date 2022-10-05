@@ -119,10 +119,18 @@ def buildstatus(ctx, id):
     """
     if id:
         results = get(f"builds/{id}")
-        format_results([results], title=f"Build: {id}", excluded_fields=["environment"])
+        format_results(
+            [results],
+            title=f"Build: {id}",
+            excluded_fields=["environment", "package_id", "creator_id"],
+        )
     else:
         results = get("builds")
-        format_results(results, title="Build Status", excluded_fields=["environment"])
+        format_results(
+            results,
+            title="Build Status",
+            excluded_fields=["environment", "package_id", "creator_id"],
+        )
 
 
 @package_cmd.command()
