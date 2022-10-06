@@ -2,19 +2,47 @@ from rich.console import Console
 from rich.table import Table
 
 
-def _get_str_value(value):
-    """Helper function to return a string representation of a value.
+def flatten(results, object_fields):
+    """Flattens any nested objects in results.
 
-    If the passed in value is not a dict, this will return the str() of it.
-    If it is a dict, it will return the str() of the first item that doesn't
-    have a key of 'id', otherwise it will return None.
+    The keys from each dict in results is checked for a replacement
+    in object_fields. If found in object_fields, the original value
+    will be replaced by new entries for each mapping specified.
+
+    Args:
+        results: List of dict objects to process
+        object_fields: mapping of keys from a nested object in each
+            result item that should be in used instead of the object.
+            For example:
+                object_fields={
+                    "package": [("name", "package")],
+                    "user": [("first_name", "first"), ("last_name", "last")],
+                }
+            will return:
+                [ ...,
+                  "package": <package.name>,
+                  "first": <user.first_name>,
+                  "last": <user.last_name>,
+                  ...
+                ]
+
+    Returns:
+        The input list with the replacements from object_fields included
     """
-    if not isinstance(value, dict):
-        return str(value)
+    new_results = []
 
-    # If the value is a dict, find the first key that's not 'id'
-    dictVals = [v for k, v in value.items() if k != "id"]
-    return None if len(dictVals) == 0 else str(dictVals[0])
+    for item in results:
+        new_item = {}
+        for key, value in item.items():
+            if key in object_fields:
+                replacements = object_fields[key]
+                for nested_key, label in replacements:
+                    new_item[label] = value[nested_key] if value else None
+            else:
+                new_item[key] = value
+        new_results.append(new_item)
+
+    return new_results
 
 
 def format_results(results, title="", excluded_fields=[]):
@@ -24,6 +52,7 @@ def format_results(results, title="", excluded_fields=[]):
     Args:
         results: Results to format as a List
         title: Optional table title as a String
+        excluded_fields: Optional list of keys to filter out
 
     Returns:
         None
@@ -39,7 +68,7 @@ def format_results(results, title="", excluded_fields=[]):
                 continue
             if first_row:
                 table.add_column(key.capitalize())
-            row_data.append(_get_str_value(value) if value else None)
+            row_data.append(str(value) if value else None)
         table.add_row(*row_data)
         first_row = False
     console.print(table)

@@ -84,7 +84,7 @@ def initiate_build(
 
         try:
             package_obj = Package.objects.get(
-                environment=environment, name=package_definition.get("names")
+                environment=environment, name=package_definition.get("name")
             )
         except Package.DoesNotExist:
             pass
