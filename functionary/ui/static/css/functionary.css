@@ -27,6 +27,9 @@
 .errors {
     color: red;
 }
+.result_table{
+    width: 100%;
+}
 textarea.input {
     height: 100px;
 }

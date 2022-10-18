@@ -28,6 +28,8 @@ class Function(models.Model):
     display_name = models.CharField(max_length=64, null=True)
     summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
+    return_type = models.CharField(max_length=64, null=True)
+    output_format = models.CharField(max_length=64, null=True)
     schema = models.JSONField()
 
     class Meta:

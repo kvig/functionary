@@ -59,6 +59,18 @@
                 </div>
             </form>
         {% endif %}
+        {% if function.return_type %}
+            <div class="field ml-4">
+                <label class="label" for="desc">Return Type:</label>
+                <span class="ml-4">{{ function.return_type }}</span>
+            </div>
+        {% endif %}
+        {% if function.output_format %}
+            <div class="field ml-4">
+                <label class="label" for="desc">Output Format:</label>
+                <span class="ml-4">{{ function.output_format }}</span>
+            </div>
+        {% endif %}
         <div class="p-3 accordions">
             <div class="accordion is-info {% if not form %} is-active{% endif %}">
                 <div class="accordion-header toggle">

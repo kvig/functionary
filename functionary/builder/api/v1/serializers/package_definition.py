@@ -47,6 +47,8 @@ class FunctionSerializer(serializers.Serializer):
     summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
     parameters = ParameterSerializer(many=True)
+    return_type = serializers.CharField(required=False)
+    output_format = serializers.CharField(required=False)
 
 
 class PackageDefinitionSerializer(serializers.Serializer):

@@ -10,7 +10,7 @@ def pretty_json(value):
     return json.dumps(value, indent=4)
 
 
-@register.filter
+@register.filter(is_safe=True)
 def input_type(value):
     if value in ["integer", "float"]:
         return "number"

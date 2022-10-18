@@ -1,0 +1,18 @@
+{% if format == "table" %}
+    <table id="result_table" class="result_table">
+        <thead>
+            <tr>
+                {% for header in result.headers %}<th>{{ header }}</th>{% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in result.data %}
+                <tr>
+                    {% for col in row %}<td>{{ col }}</td>{% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <pre>{{ result | linebreaksbr }}</pre>
+{% endif %}

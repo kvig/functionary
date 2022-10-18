@@ -1,6 +1,5 @@
 {% load static %}
 {% load unicorn %}
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -8,13 +7,31 @@
         <meta name="description" content="Functionary User Interface"/>
         <meta name="keywords" content="Functionary"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}"/>
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}"/>
-        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-        <link rel="stylesheet" href="{% static 'css/functionary.css' %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static 'css/bulma-0.9.4.min.css' %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static 'css/fontawesome-all-5.15.4.min.css' %}" type="text/css"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'favicon-32x32.png' %}"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'favicon-16x16.png' %}"/>
+        <link rel="shortcut icon"
+              type="image/png"
+              href="{% static 'favicon.ico' %}"/>
+        <link rel="stylesheet"
+              href="{% static 'css/functionary.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/bulma-0.9.4.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/fontawesome-all-5.15.4.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/pretty-print-json-1.2.css' %}"
+              type="text/css"/>
         <title>Functionary</title>
+        <script src="{% static 'js/pretty-print-json-1.2.min.js' %}"></script>
         <!-- This script will run when the page loads and the menus are available -->
         <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
         {% unicorn_scripts %}
@@ -26,7 +43,11 @@
                     <div class="column">
                         <a href="{% url 'ui:home' %}">
                             <h1 class="title is-1">
-                                <img src="{% static 'functionary_f_logo.png' %}" alt="F" width="64" height="64"/><span class="functionary-title">unctionary</span>
+                                <img src="{% static 'functionary_f_logo.png' %}"
+                                     alt="F"
+                                     width="64"
+                                     height="64"/>
+                                <span class="functionary-title">unctionary</span>
                             </h1>
                             <p class="subtitle is-4">Run your functions</p>
                         </a>
@@ -34,16 +55,17 @@
                     <div class="column is-4 has-text-right">
                         <div class="top-right-container">
                             {% if user.is_authenticated %}
-                            <div class="has-text-right">
-                                <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}<br/>
-                                {% unicorn 'env_to_select' %}
-                            </div>
-                            <div >
-                                <div>
-                                    <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
-                                    <a class="is-underlined" href="{% url 'ui:logout' %}">Logout</a>
+                                <div class="has-text-right">
+                                    <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}
+                                    <br/>
+                                    {% unicorn 'env_to_select' %}
                                 </div>
-                            </div>
+                                <div >
+                                    <div>
+                                        <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
+                                        <a class="is-underlined" href="{% url 'ui:logout' %}">Logout</a>
+                                    </div>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -52,52 +74,52 @@
         </section>
         <div class="columns">
             {% if user.is_authenticated %}
-            <aside class="column is-3 menu">
-                <ul class="menu-list block"></ul>
-                <ul class="menu-list block">
-                    <li class="menu-item">
-                        <a href="{% url 'ui:task-list' %}">
-                            <span class="icon has-text-success"><i class="fa fa-lg fa-clipboard-list"></i></span>
-                            &nbsp;Tasking
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-list block">
-                    <li class="menu-item">
-                        <a href="{% url 'ui:package-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-cubes"></i></span>
-                            &nbsp;Packages
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{% url 'ui:function-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-cube"></i></span>
-                            &nbsp;Functions
-                        </a>
-                    </li>
-                </ul>
-                {% if user.is_superuser %}
-                <ul class="menu-list block">
-                    <li class="menu-item">
-                        <a href="{% url 'ui:environment-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-building"></i></span>
-                            &nbsp;Environments
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{% url 'ui:team-list' %}">
-                            <span class="icon has-text-info"><i class="fa fa-lg fa-users"></i></span>
-                            &nbsp;Teams
-                        </a>
-                    </li>
-                </ul>
-                {% endif %}
-            </aside>
+                <aside class="column is-3 menu">
+                    <ul class="menu-list block">
+                    </ul>
+                    <ul class="menu-list block">
+                        <li class="menu-item">
+                            <a href="{% url 'ui:task-list' %}">
+                                <span class="icon has-text-success"><i class="fa fa-lg fa-clipboard-list"></i></span>
+                                &nbsp;Tasking
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="menu-list block">
+                        <li class="menu-item">
+                            <a href="{% url 'ui:package-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-cubes"></i></span>
+                                &nbsp;Packages
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'ui:function-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-cube"></i></span>
+                                &nbsp;Functions
+                            </a>
+                        </li>
+                    </ul>
+                    {% if user.is_superuser %}
+                        <ul class="menu-list block">
+                            <li class="menu-item">
+                                <a href="{% url 'ui:environment-list' %}">
+                                    <span class="icon has-text-info"><i class="fa fa-lg fa-building"></i></span>
+                                    &nbsp;Environments
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{% url 'ui:team-list' %}">
+                                    <span class="icon has-text-info"><i class="fa fa-lg fa-users"></i></span>
+                                    &nbsp;Teams
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </aside>
             {% endif %}
             <main class="column">
-            {% block content %}
-
-            {% endblock content %}
+                {% block content %}
+                {% endblock content %}
             </main>
         </div>
     </body>
