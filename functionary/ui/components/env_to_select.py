@@ -11,9 +11,15 @@ class EnvToSelectView(UnicornView):
         self.environments = {}
 
         if self.request.user.is_superuser:
-            envs = Environment.objects.all().order_by("team__name", "name")
+            envs = (
+                Environment.objects.select_related("team")
+                .all()
+                .order_by("team__name", "name")
+            )
         else:
-            envs = self.request.user.environments.order_by("team__name", "name")
+            envs = self.request.user.environments.select_related("team").order_by(
+                "team__name", "name"
+            )
 
         for env in envs:
             self.environments.setdefault(env.team.name, []).append(env)

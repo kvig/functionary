@@ -1,67 +1,69 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="column is-full">
-        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-            <ul>
-                <li>
-                    <a href="{% url 'ui:package-list' %}">Package List</a>
-                </li>
-                <li class="is-active">
-                    <a href="#">
-                        {% if package.display_name %}
-                            {{ package.display_name }}
-                        {% else %}
-                            {{ package.name }}
-                        {% endif %}
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <div class="column">
-        <div class="block">
-            <h1 class="title is-1">
-                <span class="icon"><i class="fa fa-cubes"></i></span>&nbsp;&nbsp;
-                {% if package.display_name %}
-                    {{ package.display_name }}
-                {% else %}
-                    {{ package.name }}
-                {% endif %}
-            </h1>
-        </div>
-        <div class="column has-addons">
-            {% if package.summary %}
-                <div class="field">
-                    <label class="label" for="desc">Summary:</label>
-                    <span class="ml-4">{{ package.summary }}</span>
-                </div>
-            {% endif %}
-            {% if package.description %}
-                <div class="field">
-                    <label class="label" for="desc">Description:</label>
-                    <span class="ml-4">{{ package.description }}</span>
-                </div>
-            {% endif %}
-            <div class="field">
-                <label class="label" for="funcs">
-                    <i class="fa fa-cube"></i>&nbsp;Functions:
-                </label>
-                <ul id="funcs">
-                    {% for function in functions %}
-                        <li class="block ml-4">
-                            <a href="{% url 'ui:function-detail' function.id %}">
-                                {% if function.display_name %}
-                                    {{ function.display_name }}
-                                {% else %}
-                                    {{ function.name }}
-                                {% endif %}
-                            </a>
-                            <br/>
-                            <span class="ml-4">{{ function.summary }}</span>
-                        </li>
-                    {% endfor %}
+    {% with package.functions.all as functions %}
+        <div class="column is-full">
+            <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+                <ul>
+                    <li>
+                        <a href="{% url 'ui:package-list' %}">Package List</a>
+                    </li>
+                    <li class="is-active">
+                        <a href="#">
+                            {% if package.display_name %}
+                                {{ package.display_name }}
+                            {% else %}
+                                {{ package.name }}
+                            {% endif %}
+                        </a>
+                    </li>
                 </ul>
+            </nav>
+        </div>
+        <div class="column">
+            <div class="block">
+                <h1 class="title is-1">
+                    <span class="icon"><i class="fa fa-cubes"></i></span>&nbsp;&nbsp;
+                    {% if package.display_name %}
+                        {{ package.display_name }}
+                    {% else %}
+                        {{ package.name }}
+                    {% endif %}
+                </h1>
+            </div>
+            <div class="column has-addons">
+                {% if package.summary %}
+                    <div class="field">
+                        <label class="label" for="desc">Summary:</label>
+                        <span class="ml-4">{{ package.summary }}</span>
+                    </div>
+                {% endif %}
+                {% if package.description %}
+                    <div class="field">
+                        <label class="label" for="desc">Description:</label>
+                        <span class="ml-4">{{ package.description }}</span>
+                    </div>
+                {% endif %}
+                <div class="field">
+                    <label class="label" for="funcs">
+                        <i class="fa fa-cube"></i>&nbsp;Functions:
+                    </label>
+                    <ul id="funcs">
+                        {% for function in functions %}
+                            <li class="block ml-4">
+                                <a href="{% url 'ui:function-detail' function.id %}">
+                                    {% if function.display_name %}
+                                        {{ function.display_name }}
+                                    {% else %}
+                                        {{ function.name }}
+                                    {% endif %}
+                                </a>
+                                <br/>
+                                <span class="ml-4">{{ function.summary }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    {% endwith %}
 {% endblock content %}

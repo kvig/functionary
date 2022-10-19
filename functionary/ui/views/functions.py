@@ -17,6 +17,7 @@ from .view_base import (
 class FunctionListView(PermissionedEnvironmentListView):
     model = Function
     environment_through_field = "package"
+    queryset = Function.objects.select_related("package").all()
     order_by_fields = ["package__name", "name"]
 
 
@@ -24,11 +25,15 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
     model = Function
     environment_through_field = "package"
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("package", "package__environment")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        env = Environment.objects.get(id=self.request.session.get("environment_id"))
+        the_function = self.get_object()
+        env = the_function.package.environment
         if self.request.user.has_perm(Permission.TASK_CREATE, env):
-            form = TaskParameterForm(self.get_object())
+            form = TaskParameterForm(the_function)
 
             context["form"] = form.render("forms/task_parameters.html")
         return context

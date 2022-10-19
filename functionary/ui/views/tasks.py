@@ -14,3 +14,12 @@ class TaskListView(PermissionedEnvironmentListView):
 
 class TaskDetailView(PermissionedEnvironmentDetailView):
     model = Task
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "environment", "creator", "function", "taskresult", "environment__team"
+            )
+        )
