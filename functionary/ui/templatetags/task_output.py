@@ -23,9 +23,9 @@ def _format_json(result, result_type):
 def _format_table(result, result_type):
     """Convert a result of the given result_type to a table.
 
-    This will take in a "csv", "string" or "json" result and return
+    This will take in a "string" or "json" result and return
     the headers and a list of rows for the data. A result_type of
-    csv or string is assumed to be csv formatted data - a csv reader
+    string is assumed to be csv formatted data - a csv reader
     parses the data into the resulting header and data.
 
     A result type of json can be one of the following formats:
@@ -39,11 +39,11 @@ def _format_table(result, result_type):
             {"prop1":"value3", "prop2":"value4"}
         ]
     }
-    In the second format, the "foos" key will be ignored and the
+    In the second format, the key "foos" will be ignored and the
     value of that key(the list) will be used for the table data. The
-    headers are derived from the keys in the first entry of the list.
+    headers are derived from the keys of the first entry in the list.
     """
-    if result_type in ["csv", "string"]:
+    if result_type == "string":
         data = io.StringIO(result)
         csv_data = csv.reader(data)
         result = {"headers": next(csv_data), "data": [row for row in csv_data]}
@@ -80,9 +80,10 @@ def _format_table(result, result_type):
     return result
 
 
+# Add table first since we can convert some JSON to CSV
 format_mapper = {
-    "json": _format_json,
     "table": _format_table,
+    "json": _format_json,
 }
 
 
@@ -95,25 +96,33 @@ class TaskOutputNode(Node):
         if not the_task.result:
             return "<span>No results</span>"
 
-        output_fmt = the_task.function.output_format
-        try:
-            ctx = {
-                "format": output_fmt,
-                "result": format_mapper[output_fmt](
-                    the_task.result, the_task.function.return_type
-                ),
-            }
+        result = the_task.result
+        return_type = the_task.return_type
+        output_format = the_task.output_format
 
-            if output_fmt:
-                plate = get_template(f"tags/output_{output_fmt}.html")
+        formats_to_try = [output_format] if output_format else format_mapper.keys()
+
+        # If the return type isn't set, do our best guess to
+        # generate a useful output
+        if not return_type and isinstance(result, str):
+            return_type = "string"
+
+        for fmt in formats_to_try:
+            try:
+                ctx = {
+                    "format": fmt,
+                    "result": format_mapper[fmt](result, return_type),
+                }
+
+                plate = get_template(f"tags/output_{fmt}.html")
                 return plate.render(context=ctx)
-        except Exception as e:
-            logger.debug(
-                "Unable to convert output for %s to %s: %s",
-                the_task.id,
-                output_fmt,
-                e,
-            )
+            except Exception as e:
+                logger.debug(
+                    "Unable to convert output for %s to %s: %s",
+                    the_task.id,
+                    fmt,
+                    e,
+                )
 
         return f"<pre>{'<br/>'.join(the_task.result.splitlines())}</pre>"
 

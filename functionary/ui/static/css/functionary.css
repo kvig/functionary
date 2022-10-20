@@ -27,9 +27,11 @@
 .errors {
     color: red;
 }
-.result_table{
-    width: 100%;
-}
 textarea.input {
     height: 100px;
+}
+.wrap-json {
+    display: block;
+    white-space: pre;
+    margin: 0px;
 }

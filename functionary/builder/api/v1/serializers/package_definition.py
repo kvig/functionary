@@ -12,6 +12,7 @@ PARAMETER_TYPES = [
     ("datetime", "Date Time"),
     ("json", "JSON"),
 ]
+RETURN_TYPES = PARAMETER_TYPES[:]
 
 
 class ParameterOptionSerializer(serializers.Serializer):
@@ -47,7 +48,7 @@ class FunctionSerializer(serializers.Serializer):
     summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
     parameters = ParameterSerializer(many=True)
-    return_type = serializers.CharField(required=False)
+    return_type = serializers.ChoiceField(choices=RETURN_TYPES, required=False)
     output_format = serializers.CharField(required=False)
 
 

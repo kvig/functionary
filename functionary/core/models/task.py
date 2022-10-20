@@ -46,6 +46,8 @@ class Task(ModelSaveHookMixin, models.Model):
     function = models.ForeignKey(to="Function", on_delete=models.CASCADE)
     environment = models.ForeignKey(to="Environment", on_delete=models.CASCADE)
     parameters = models.JSONField(encoder=DjangoJSONEncoder)
+    return_type = models.CharField(max_length=64, null=True)
+    output_format = models.CharField(max_length=64, null=True)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=PENDING)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)

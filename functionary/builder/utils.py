@@ -24,17 +24,6 @@ from .models import Build, BuildResource
 logger = get_task_logger(__name__)
 logger.setLevel(getattr(logging, settings.LOG_LEVEL))
 
-type_map = {
-    "integer": int,
-    "string": str,
-    "text": TypeVar("text", str, bytes),
-    "float": float,
-    "boolean": bool,
-    "date": datetime.date,
-    "datetime": datetime.datetime,
-    "json": TypeVar("json", Json, str),
-}
-
 
 def extract_package_definition(package_contents: bytes) -> dict:
     """Extracts the package.yaml from a package tarball
@@ -238,10 +227,6 @@ def _create_functions_from_definition(definitions, package: Package):
     db_functions = []
     for function_def in definitions:
         name = function_def.get("name")
-        ret_type = function_def.get("return_type")
-        if ret_type not in type_map:
-            raise ValueError(f"Incorrect return type for {name}")
-
         try:
             function_obj = Function.objects.get(package=package, name=name)
         except Function.DoesNotExist:
@@ -249,7 +234,7 @@ def _create_functions_from_definition(definitions, package: Package):
 
         function_obj.display_name = function_def.get("display_name")
         function_obj.summary = function_def.get("summary")
-        function_obj.return_type = ret_type
+        function_obj.return_type = function_def.get("return_type")
         function_obj.output_format = function_def.get("output_format")
         function_obj.description = function_def.get("description")
         function_obj.schema = _generate_function_schema(
@@ -263,6 +248,16 @@ def _create_functions_from_definition(definitions, package: Package):
 def _generate_function_schema(name: str, parameters) -> str:
     """Creates a pydantic model from the parameter definitions and returns the schema
     as a JSON string"""
+    type_map = {
+        "integer": int,
+        "string": str,
+        "text": TypeVar("text", str, bytes),
+        "float": float,
+        "boolean": bool,
+        "date": datetime.date,
+        "datetime": datetime.datetime,
+        "json": TypeVar("json", Json, str),
+    }
     params_dict = {}
 
     for parameter in parameters:
