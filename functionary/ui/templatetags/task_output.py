@@ -28,20 +28,12 @@ def _format_table(result, result_type):
     string is assumed to be csv formatted data - a csv reader
     parses the data into the resulting header and data.
 
-    A result type of json can be one of the following formats:
+    A result type of json should be of the following format:
     [
         {"prop1":"value1", "prop2":"value2"},
         {"prop1":"value3", "prop2":"value4"}
     ]
-    or
-    {   "foos" : [
-            {"prop1":"value1", "prop2":"value2"},
-            {"prop1":"value3", "prop2":"value4"}
-        ]
-    }
-    In the second format, the key "foos" will be ignored and the
-    value of that key(the list) will be used for the table data. The
-    headers are derived from the keys of the first entry in the list.
+    The headers are derived from the keys of the first entry in the list.
     """
     if result_type == "string":
         data = io.StringIO(result)
@@ -56,31 +48,30 @@ def _format_table(result, result_type):
             data = []
             if isinstance(json_data, list):
                 data = json_data
-            elif isinstance(json_data, dict) and len(json_data.values()) == 1:
-                values = next(iter((json_data.values())))
-                if isinstance(values, list):
-                    data = values
 
-            if len(data) > 0:
-                headers = data[0].keys()
-                res_data = []
-                for row in data:
-                    r = []
-                    for key in headers:
-                        r.append(row[key])
-                    res_data.append(r)
+                if len(data) > 0:
+                    headers = data[0].keys()
+                    res_data = []
+                    for row in data:
+                        r = []
+                        for key in headers:
+                            r.append(row[key])
+                        res_data.append(r)
 
-                result = {"headers": headers, "data": res_data}
+                    result = {"headers": headers, "data": res_data}
+                else:
+                    raise ValueError("JSON data is empty")
             else:
-                raise ValueError("Unable to determine the structure of the JSON")
+                raise ValueError("Unsupported JSON data type, not a list")
         else:
-            raise ValueError("JSON data appears to be empty")
+            raise ValueError("No JSON data found")
     else:
-        raise ValueError(f"Unable to convert {result_type} to csv")
+        raise ValueError(f"Unable to convert {result_type} to table")
+
     return result
 
 
-# Add table first since we can convert some JSON to CSV
+# Add table first since we can figure out a table format from some JSON
 format_mapper = {
     "table": _format_table,
     "json": _format_json,
@@ -130,5 +121,5 @@ class TaskOutputNode(Node):
 @register.tag("task_output")
 def do_task_output(parser, token):
     """Convert the result of the task to the specified format."""
-    _, rest = token.contents.split(None, 1)
-    return TaskOutputNode(rest)
+    _, params_without_tag = token.contents.split(None, 1)
+    return TaskOutputNode(params_without_tag)
