@@ -30,10 +30,10 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        the_function = self.get_object()
-        env = the_function.package.environment
+        function = self.get_object()
+        env = function.package.environment
         if self.request.user.has_perm(Permission.TASK_CREATE, env):
-            form = TaskParameterForm(the_function)
+            form = TaskParameterForm(function)
 
             context["form"] = form.render("forms/task_parameters.html")
         return context
