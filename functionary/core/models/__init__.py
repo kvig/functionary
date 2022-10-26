@@ -1,4 +1,5 @@
 from .environment import Environment  # noqa
+from .environment_variable import EnvironmentVariable  # noqa
 from .function import Function  # noqa
 from .mixins import ModelSaveHookMixin  # noqa
 from .package import Package  # noqa

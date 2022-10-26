@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from core.models import (
     Environment,
     EnvironmentUserRole,
+    EnvironmentVariable,
     Function,
     Package,
     Task,
@@ -18,6 +19,7 @@ from .user import UserAdmin
 
 admin.site.register(Environment, admin.ModelAdmin)
 admin.site.register(EnvironmentUserRole, admin.ModelAdmin)
+admin.site.register(EnvironmentVariable, admin.ModelAdmin)
 admin.site.register(Function, admin.ModelAdmin)
 admin.site.register(Package, admin.ModelAdmin)
 admin.site.register(Task, admin.ModelAdmin)

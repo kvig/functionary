@@ -28,6 +28,7 @@ class Function(models.Model):
     display_name = models.CharField(max_length=64, null=True)
     summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
+    env_variables = models.JSONField(default=list, blank=True, null=True)
     return_type = models.CharField(max_length=64, null=True)
     schema = models.JSONField()
 

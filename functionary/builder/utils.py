@@ -173,8 +173,11 @@ def build_package(build_id: UUID):
         build.save()
 
     logger.debug(f"Cleaning up remnants of build {build_id}")
-    docker_client.images.remove(image.id)
     shutil.rmtree(workdir)
+    # TODO this has been throwing can't remove image on my box,
+    # we can pass `force=True`, but is that what we want all to
+    # do all the time?
+    docker_client.images.remove(image.id)
 
     logger.info(f"Build {build_id} COMPLETE")
 
@@ -236,6 +239,7 @@ def _create_functions_from_definition(definitions, package: Package):
         function_obj.summary = function_def.get("summary")
         function_obj.return_type = function_def.get("return_type")
         function_obj.description = function_def.get("description")
+        function_obj.env_variables = function_def.get("env_variables")
         function_obj.schema = _generate_function_schema(
             name, function_def.get("parameters")
         )
