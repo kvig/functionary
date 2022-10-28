@@ -44,12 +44,17 @@ def _run_task(task):
     package = task.get("package")
     function = task.get("function")
     parameters = json.dumps(task["function_parameters"])
+    variables = task.get("variables")
     run_command = ["--function", function, "--parameters", parameters]
 
     logging.info("Running %s from package %s", function, package)
     docker_client = docker.from_env()
     container = docker_client.containers.run(
-        package, auto_remove=False, detach=True, command=run_command
+        package,
+        auto_remove=False,
+        detach=True,
+        command=run_command,
+        environment=variables,
     )
 
     exit_status = container.wait()["StatusCode"]
