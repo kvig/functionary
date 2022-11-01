@@ -47,7 +47,7 @@ class FunctionSerializer(serializers.Serializer):
     display_name = serializers.CharField(required=False)
     summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
-    env_variables = serializers.ListField(
+    variables = serializers.ListField(
         child=serializers.CharField(max_length=256, required=False),
         required=False,
     )

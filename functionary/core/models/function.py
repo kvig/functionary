@@ -24,6 +24,8 @@ class Function(models.Model):
         display_name: optional display name
         summary: short description of the function
         description: more details about the function
+        variables: list of variable names to set before execution
+        return_type: the type of the object being returned
         schema: the function's OpenAPI definition
     """
 
@@ -38,7 +40,7 @@ class Function(models.Model):
     display_name = models.CharField(max_length=64, null=True)
     summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
-    env_variables = models.JSONField(
+    variables = models.JSONField(
         default=list, validators=[list_of_strings], blank=True, null=True
     )
     return_type = models.CharField(max_length=64, null=True)

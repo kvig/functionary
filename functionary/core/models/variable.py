@@ -4,24 +4,24 @@ import uuid
 from django.core.validators import RegexValidator
 from django.db import models
 
-VALID_ENV_NAME = RegexValidator(
+VALID_VARIABLE_NAME = RegexValidator(
     regex="[A-Z_][A-Z0-9_]*",
-    message="Invalid environment variable name. Must be in [A-Z0-9_]",
+    message="Invalid variable name. Characters must be in [A-Z0-9_]",
 )
 
 
 class Variable(models.Model):
-    """An Environment Variable is set in the system and set in
-    the runtime environment for tasks as required by the function
-    in the package.yaml.
+    """A Variable is set in the runtime environment by the system
+    prior to function execution. Variables set for an Environment
+    will override ones set for the Team.
 
     Attributes:
         id: unique identifier (UUID)
         environment: the environment that this variable belongs to
         team: the team that this variable belongs to
-        variable_name: name of the environment variable to set
+        name: name of the variable to set
         description: more details about the package
-        value: value of the environment variable
+        value: value of the variable
         protect: True to protect the value of this variable
     """
 
@@ -37,7 +37,9 @@ class Variable(models.Model):
         "Team", on_delete=models.CASCADE, related_name="vars", blank=True, null=True
     )
 
-    name = models.CharField(max_length=255, validators=[VALID_ENV_NAME], blank=False)
+    name = models.CharField(
+        max_length=255, validators=[VALID_VARIABLE_NAME], blank=False
+    )
     description = models.TextField(null=True)
     value = models.TextField(max_length=32767, blank=False)
     protect = models.BooleanField(default=False)
