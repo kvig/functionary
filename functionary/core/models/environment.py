@@ -31,6 +31,18 @@ class Environment(models.Model):
         return f"{self.team.name} - {self.name}"
 
     def variables(self, variable_names=None):
+        """Retrieve the variables visible in this environment.
+
+        This will by default return all variables associated with this
+        Environment and add in any variables associated with the Team
+        that haven't been overridden.
+
+        Optionally pass in a list of strings of variable names to filter
+        the returned values by.
+
+        Parameters:
+            variable_names: Optional list of strings of variable names to return
+        """
         if variable_names:
             env_vars = list(self.vars.filter(variable_name__in=variable_names))
             env_var_names = [v.variable_name for v in env_vars]

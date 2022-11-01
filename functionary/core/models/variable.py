@@ -1,10 +1,16 @@
 """ Package model """
 import uuid
 
+from django.core.validators import RegexValidator
 from django.db import models
 
+VALID_ENV_NAME = RegexValidator(
+    regex="[A-Z_][A-Z0-9_]*",
+    message="Invalid environment variable name. Must be in [A-Z0-9_]",
+)
 
-class EnvironmentVariable(models.Model):
+
+class Variable(models.Model):
     """An Environment Variable is set in the system and set in
     the runtime environment for tasks as required by the function
     in the package.yaml.
@@ -31,23 +37,23 @@ class EnvironmentVariable(models.Model):
         "Team", on_delete=models.CASCADE, related_name="vars", blank=True, null=True
     )
 
-    variable_name = models.CharField(max_length=64, blank=False)
+    name = models.CharField(max_length=255, validators=[VALID_ENV_NAME], blank=False)
     description = models.TextField(null=True)
-    value = models.TextField(blank=False)
+    value = models.TextField(max_length=32767, blank=False)
     protect = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["environment", "variable_name"],
+                fields=["environment", "name"],
                 name="environment_variable_name_unique_together",
             ),
             models.UniqueConstraint(
-                fields=["team", "variable_name"],
+                fields=["team", "name"],
                 name="team_variable_name_unique_together",
             ),
             models.CheckConstraint(
-                name="environment_variable_only_one_team_or_environment",
+                name="variable_only_one_team_or_environment",
                 check=(
                     models.Q(team__isnull=True, environment__isnull=False)
                     | models.Q(team__isnull=False, environment__isnull=True)
@@ -55,5 +61,9 @@ class EnvironmentVariable(models.Model):
             ),
         ]
 
+    @property
+    def parent(self):
+        return self.team if self.team is not None else self.environment
+
     def __str__(self):
-        return self.variable_name
+        return f"{self.name} - {self.parent.name}"

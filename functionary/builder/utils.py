@@ -13,6 +13,7 @@ from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.db import transaction
 from django.template.loader import get_template
+from docker.errors import DockerException
 from pydantic import Field, Json, create_model
 
 from core.models import Environment, Function, Package, User
@@ -174,10 +175,11 @@ def build_package(build_id: UUID):
 
     logger.debug(f"Cleaning up remnants of build {build_id}")
     shutil.rmtree(workdir)
-    # TODO this has been throwing can't remove image on my box,
-    # we can pass `force=True`, but is that what we want all to
-    # do all the time?
-    docker_client.images.remove(image.id)
+
+    try:
+        docker_client.images.remove(image.id)
+    except DockerException:
+        logger.warn(f"Unable to remove build image: {image.id}")
 
     logger.info(f"Build {build_id} COMPLETE")
 
