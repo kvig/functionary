@@ -26,12 +26,34 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
     environment_through_field = "package"
 
     def get_queryset(self):
-        return super().get_queryset().select_related("package", "package__environment")
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "package", "package__environment", "package__environment__team"
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        function = self.get_object()
+        function = self.object
         env = function.package.environment
+
+        variables = []
+        missing_variables = []
+        if function.variables:
+            all_vars = {v.name: v for v in env.variables()}
+            missing_variables = []
+            for var in function.variables:
+                if var in all_vars:
+                    variables.append(all_vars[var])
+                else:
+                    missing_variables.append(var)
+            missing_variables = [
+                var for var in function.variables if var not in all_vars
+            ]
+        context["variables"] = variables
+        context["missing_variables"] = missing_variables
         if self.request.user.has_perm(Permission.TASK_CREATE, env):
             form = TaskParameterForm(function)
 

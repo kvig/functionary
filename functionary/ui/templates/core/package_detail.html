@@ -31,16 +31,15 @@
                 </h1>
             </div>
             <div class="column has-addons">
-                {% if package.summary %}
-                    <div class="field">
-                        <label class="label" for="desc">Summary:</label>
-                        <span class="ml-4">{{ package.summary }}</span>
-                    </div>
-                {% endif %}
                 {% if package.description %}
                     <div class="field">
                         <label class="label" for="desc">Description:</label>
-                        <span class="ml-4">{{ package.description }}</span>
+                        <span id="desc" class="ml-4">{{ package.description }}</span>
+                    </div>
+                {% elif package.summary %}
+                    <div class="field">
+                        <label class="label" for="desc">Summary:</label>
+                        <span id="desc" class="ml-4">{{ package.summary }}</span>
                     </div>
                 {% endif %}
                 <div class="field">

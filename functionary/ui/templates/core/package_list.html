@@ -21,7 +21,11 @@
                                         {% endif %}
                                     </p>
                                 </a>
-                                {% if package.summary %}<p class="subtitle is-6">{{ package.summary }}</p>{% endif %}
+                                {% if package.summary %}
+                                    <p class="subtitle is-6">{{ package.summary }}</p>
+                                {% elif package.description %}
+                                    <p class="subtitle is-6">{{ package.description }}</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

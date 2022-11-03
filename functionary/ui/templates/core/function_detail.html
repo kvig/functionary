@@ -34,29 +34,35 @@
                 {% endif %}
             </h1>
         </div>
-        {% if function.summary %}
-            <div class="field ml-4">
-                <label class="label" for="desc">Summary:</label>
-                <span class="ml-4">{{ function.summary }}</span>
-            </div>
-        {% endif %}
         {% if function.description %}
             <div class="field ml-4">
                 <label class="label" for="desc">Description:</label>
-                <span class="ml-4">{{ function.description }}</span>
+                <span id="desc" class="ml-4">{{ function.description }}</span>
+            </div>
+        {% elif function.summary %}
+            <div class="field ml-4">
+                <label class="label" for="desc">Summary:</label>
+                <span id="desc" class="ml-4">{{ function.summary }}</span>
             </div>
         {% endif %}
-        <form id="djangoForm"
-              method="post"
-              action="{% url 'ui:function-execute' %}">
-            {% csrf_token %}
-            <input type="hidden" name="function_id" value="{{ function.id }}"/>
-            <div class="column has-addons">
-                {{ form.non_field_errors }}
-                {{ form }}
-                <input class="button is-link" type="submit" value="Execute"/>
+        {% if variables %}
+            <div class="field ml-4">
+                <label class="label">Variables:</label>
+                {% for func_var in variables %}
+                    <div class="field ml-4">
+                        <span>{{ func_var.name }}</span>
+                        {% if not func_var.protect %}
+                            <span class="ml-4">[<span class="has-background-info-light has-text-info">{{ func_var.value }}</span>]</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                {% for missing in missing_variables %}
+                    <div class="field ml-4" title="Missing">
+                        <span class="has-background-danger-light has-text-danger">{{ missing }}</span>
+                    </div>
+                {% endfor %}
             </div>
-        </form>
+        {% endif %}
         {% if function.return_type %}
             <div class="field ml-4">
                 <label class="label" for="desc">Return Type:</label>
@@ -69,6 +75,20 @@
                 <span class="ml-4">{{ function.output_format }}</span>
             </div>
         {% endif %}
+        <label class="label ml-4">Create Task:</label>
+        <div class="has-background-white-ter ml-4">
+            <form id="djangoForm"
+                  method="post"
+                  action="{% url 'ui:function-execute' %}">
+                {% csrf_token %}
+                <input type="hidden" name="function_id" value="{{ function.id }}"/>
+                <div class="column has-addons">
+                    {{ form.non_field_errors }}
+                    {{ form }}
+                    <input class="button is-link" type="submit" value="Execute"/>
+                </div>
+            </form>
+        </div>
         <div class="p-3 accordions">
             <div class="accordion is-info {% if not form %} is-active{% endif %}">
                 <div class="accordion-header toggle">
