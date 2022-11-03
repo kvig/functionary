@@ -2,6 +2,8 @@ import itertools
 import json
 import logging
 
+from docker.errors import DockerException
+
 import docker
 
 from .celery import app
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
     retry_kwargs={
         "max_retries": 3,
     },
-    autoretry_for=(docker.errors.DockerException,),
+    autoretry_for=(DockerException,),
 )
 def pull_image(task) -> None:
     package = task.get("package")
@@ -35,8 +37,8 @@ def run_task(_=None, task=None):
     return {
         "task_id": task["id"],
         "status": exit_status,
-        "output": output.decode(),
-        "result": result.decode(),
+        "output": output.decode() if isinstance(output, bytes) else output,
+        "result": result.decode() if isinstance(result, bytes) else result,
     }
 
 
@@ -49,13 +51,16 @@ def _run_task(task):
 
     logging.info("Running %s from package %s", function, package)
     docker_client = docker.from_env()
-    container = docker_client.containers.run(
-        package,
-        auto_remove=False,
-        detach=True,
-        command=run_command,
-        environment=variables,
-    )
+    try:
+        container = docker_client.containers.run(
+            package,
+            auto_remove=False,
+            detach=True,
+            command=run_command,
+            environment=variables,
+        )
+    except DockerException as exc:
+        return (1, f"Unable to execute function. Encountered error: {exc}", "null")
 
     exit_status = container.wait()["StatusCode"]
     output, result = _parse_container_logs(container.logs(stream=True))

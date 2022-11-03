@@ -22,6 +22,8 @@ package:
 #      summary: string
 #      display_name: string
 #      description: string
+#      # (optional) list of environment variables to set at runtime
+#      variables: list
 #      # (optional) data type of the functions return value
 #      return_type: string
 

@@ -14,11 +14,7 @@ logger.setLevel(getattr(logging, settings.LOG_LEVEL))
 
 def _generate_task_message(task: Task) -> dict:
     """Generates tasking message from the provided Task"""
-    variables = {
-        var.name: var.value
-        for var in task.environment.variables()
-        if var.name in task.function.variables
-    }
+    variables = {var.name: var.value for var in task.variables}
     return {
         "id": str(task.id),
         "package": task.function.package.full_image_name,
@@ -26,6 +22,22 @@ def _generate_task_message(task: Task) -> dict:
         "function_parameters": task.parameters,
         "variables": variables,
     }
+
+
+def _protect_output(task, output):
+    """Mask the values of the tasks protected variables in the output.
+
+    Does a simple protection for variable values over 4 characters
+    long. This is arbitrary, but the results are easily reversed if
+    its too short.
+    """
+    mask = list(task.variables.filter(protect=True).values_list("value", flat=True))
+    protected_output = output
+    for to_mask in mask:
+        if len(to_mask) > 4:
+            protected_output = protected_output.replace(to_mask, "********")
+
+    return protected_output
 
 
 @app.task(
@@ -70,19 +82,7 @@ def record_task_result(task_result_message: dict) -> None:
         logger.error("Unable to record results for task %s: task not found", task_id)
         return
 
-    # Do a simple protection for values over 4 characters long.
-    # This is arbitrary, but it's easily reversed if its too short.
-    mask = [
-        var.value
-        for var in task.environment.variables()
-        if var.name in task.function.variables and var.protect
-    ]
-    protected_output = output
-    for to_mask in mask:
-        if len(to_mask) > 4:
-            protected_output = protected_output.replace(to_mask, "********")
-
-    TaskLog.objects.create(task=task, log=protected_output)
+    TaskLog.objects.create(task=task, log=_protect_output(task, output))
     TaskResult.objects.create(task=task, result=result)
 
     # TODO: This status determination feels like it belongs in the runner. This should

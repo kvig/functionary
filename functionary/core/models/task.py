@@ -130,3 +130,8 @@ class Task(ModelSaveHookMixin, models.Model):
             return self.tasklog.log
         except ObjectDoesNotExist:
             return None
+
+    @property
+    def variables(self):
+        """Returns the variables required by the function being tasked."""
+        return self.environment.variables.filter(name__in=self.function.variables)

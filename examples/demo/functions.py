@@ -1,3 +1,4 @@
+import os
 import time
 
 
@@ -15,3 +16,15 @@ def output_text(input: str):
 def long_running_process(duration: int = 60):
     """Simulates a long running process"""
     time.sleep(duration)
+
+
+def variables(dummy):
+    """Print environment variables that got passed through"""
+    vars = []
+    for name, value in os.environ.items():
+        vars.append(f"{name}: {value}")
+
+    output = "\n".join(vars)
+
+    print(output)
+    return [{"name": n, "value": v} for n, v in os.environ.items()]

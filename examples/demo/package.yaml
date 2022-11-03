@@ -43,3 +43,15 @@ package:
           type: integer
           required: false
           default: 60
+    - name: variables
+      display_name: Display Variables
+      summary: Displays environment variables at runtime
+      description:
+        Displays all the environment variables that are available to the
+        function at runtime
+      variables: [HOME, USER]
+      parameters:
+        - name: dummy
+          summary: Not used
+          type: string
+          required: false

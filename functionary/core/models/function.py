@@ -40,9 +40,7 @@ class Function(models.Model):
     display_name = models.CharField(max_length=64, null=True)
     summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
-    variables = models.JSONField(
-        default=list, validators=[list_of_strings], blank=True, null=True
-    )
+    variables = models.JSONField(default=list, validators=[list_of_strings])
     return_type = models.CharField(max_length=64, null=True)
     schema = models.JSONField()
 

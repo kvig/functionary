@@ -30,6 +30,7 @@ class Environment(models.Model):
     def __str__(self):
         return f"{self.team.name} - {self.name}"
 
+    @property
     def variables(self):
         """Retrieve the variables visible in this environment.
 

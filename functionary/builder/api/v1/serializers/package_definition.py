@@ -48,8 +48,7 @@ class FunctionSerializer(serializers.Serializer):
     summary = serializers.CharField(max_length=128, required=False)
     description = serializers.CharField(required=False)
     variables = serializers.ListField(
-        child=serializers.CharField(max_length=256, required=False),
-        required=False,
+        child=serializers.CharField(max_length=256, required=False), required=False
     )
     parameters = ParameterSerializer(many=True)
     return_type = serializers.ChoiceField(choices=RETURN_TYPES, required=False)
