@@ -14,37 +14,39 @@ def environment(team):
 
 
 @pytest.fixture
-def env1(environment):
+def env_var1(environment):
     return Variable.objects.create(name="env_var1", environment=environment)
 
 
 @pytest.fixture
-def env2(environment):
+def env_var2(environment):
     return Variable.objects.create(name="var2", environment=environment)
 
 
 @pytest.fixture
-def var1(environment):
-    return Variable.objects.create(name="var1", environment=environment)
+def env_shared_var1(environment):
+    return Variable.objects.create(name="var1", environment=environment, value="env")
 
 
 @pytest.fixture
-def team1(team):
-    return Variable.objects.create(name="var1", team=team)
+def team_shared_var1(team):
+    return Variable.objects.create(name="var1", team=team, value="team")
 
 
 @pytest.fixture
-def team2(team):
+def team_var1(team):
     return Variable.objects.create(name="team_var1", team=team)
 
 
 @pytest.mark.django_db
-def test_team(team, team1, team2):
-    """List all team variables"""
-    assert len(team.vars.all()) == 2
+@pytest.mark.usefixtures("team_var1", "team_shared_var1", "env_var1")
+def test_team_variables(team):
+    """Team variables include only those explicitly assigned to the team"""
+    assert team.vars.count() == 2
 
 
 @pytest.mark.django_db
-def test_env(environment, env1, env2, var1):
-    """List all environment variables"""
-    assert len(environment.vars.all()) == 3
+@pytest.mark.usefixtures("env_var1", "env_var2", "env_shared_var1", "team_var1")
+def test_environment_variables(environment):
+    """Environment variables include only those explicitly assigned to the env"""
+    assert environment.vars.count() == 3

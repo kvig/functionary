@@ -1,8 +1,7 @@
 import pytest
 
 from core.models import Function, Package, Task, Team, Variable
-
-from ..utils.tasking import _protect_output
+from core.utils.tasking import record_task_result
 
 
 @pytest.fixture
@@ -56,7 +55,7 @@ def function(package):
 
 
 @pytest.fixture
-def task(function, var1, var2, var3, environment, admin_user):
+def task(function, environment, admin_user):
     return Task.objects.create(
         function=function,
         environment=environment,
@@ -66,11 +65,21 @@ def task(function, var1, var2, var3, environment, admin_user):
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("var1", "var2", "var3")
 def test_output_masking(task):
-    """Test that variables with protect set and greater than 4
-    characters are masked. Masking is currently case sensitive."""
+    """Variables with protect set and greater than 4 characters should be masked in the
+    task log. Masking is case sensitive."""
     output = "hi! Some people say hide me but others say hide or Hide me"
-    protected = _protect_output(task, output)
-    assert protected.count("hi") == 2
-    assert protected.count("hide me") == 0
-    assert protected.count("Hide me") == 1
+    task_result_message = {
+        "task_id": task.id,
+        "status": 0,
+        "output": output,
+        "result": "doesntmatter",
+    }
+
+    record_task_result(task_result_message)
+    task_log = task.tasklog.log
+
+    assert task_log.count("hi") == 2
+    assert task_log.count("hide me") == 0
+    assert task_log.count("Hide me") == 1
