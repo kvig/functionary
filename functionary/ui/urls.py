@@ -2,7 +2,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-from .views import builds, environments, functions, home, packages, tasks, teams
+from .views import (
+    builds,
+    environments,
+    functions,
+    home,
+    htmx_views,
+    packages,
+    tasks,
+    teams,
+    variables,
+)
 
 app_name = "ui"
 
@@ -65,6 +75,31 @@ urlpatterns = [
         "environment/set_environment_id",
         (environments.set_environment_id),
         name="set-environment",
+    ),
+    path(
+        "htmx_variable_form/<parent_id>",
+        (htmx_views.htmx_variable_form),
+        name="htmx-variable-form",
+    ),
+    path(
+        "add_variable/<parent_id>",
+        (variables.VariableView.as_view()),
+        name="add-variable",
+    ),
+    path(
+        "update_variable/<pk>/<parent_id>",
+        (variables.UpdateVariableView.as_view()),
+        name="update-variable",
+    ),
+    path(
+        "delete_variable/<pk>",
+        (variables.delete_variable),
+        name="delete-variable",
+    ),
+    path(
+        "detail_variable/<pk>",
+        (variables.VariableView.as_view()),
+        name="detail-variable",
     ),
     path("", include("django.contrib.auth.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

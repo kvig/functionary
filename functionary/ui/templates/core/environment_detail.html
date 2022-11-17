@@ -21,14 +21,15 @@
         <div class="column has-addons">
             <div class="columns">
                 <div class="column is-3">
-                    <i class="fa fa-users"></i>&nbsp;{{ object.team.name }}
+                    <i class="fa fa-users"></i>&nbsp;{{ environment.team.name }}
                 </div>
             </div>
+            {% include 'partials/variables.html' with parent_object=environment parent_id=environment.id %}
             <div class="field">
-                <label class="label" for="funcs">
+                <label class="label" for="packages">
                     <i class="fa fa-cubes"></i>&nbsp;Packages:
                 </label>
-                <ul id="funcs">
+                <ul id="packages">
                     {% for package in packages %}
                         <li class="block ml-4">
                             <a href="{% url 'ui:package-detail' package.id %}">{{ package.name }}</a>

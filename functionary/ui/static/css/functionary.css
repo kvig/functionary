@@ -35,3 +35,10 @@ textarea.input {
     white-space: pre;
     margin: 0px;
 }
+.missing-variables > ul {
+    list-style: inside;
+}
+#addVarForm textarea {
+    width: 80%;
+    height: 100px;
+}

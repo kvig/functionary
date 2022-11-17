@@ -1,10 +1,12 @@
 <div class="column"
-     {% if should_refresh %} unicorn:model="task" unicorn:poll-5000="refresh_task"{% endif %}>
+     {% if should_refresh %} unicorn:model="task" unicorn:poll-5000="refresh_task"{% endif %}
+     unicorn:partial.key="task_status"
+     unicorn:partial.id="task_results">
     <div class="block">
         <h1 class="title is-1">
             <span class="icon"><i class="fa fa-digital-tachograph"></i></span>
             &nbsp;&nbsp;{{ task.function.name }}
-            &nbsp;&nbsp;<i class="is-size-5 fa fa-info"></i>&nbsp;<span class="is-size-5 has-text-weight-normal">{{ task.status }}</span>
+            &nbsp;&nbsp;<i class="is-size-5 fa fa-info"></i>&nbsp;<span unicorn:key="task_status" class="is-size-5 has-text-weight-normal">{{ task.status }}</span>
         </h1>
     </div>
     <div class="column has-addons">
@@ -29,7 +31,7 @@
                 <pre class="block ml-4">{{ task.parameters | pprint }}</pre>
             </div>
         </div>
-        <div class="field">
+        <div id="task_results" class="field">
             <label class="label" for="result">
                 <i class="fa fa-clipboard-check"></i>&nbsp;Result:
             </label>

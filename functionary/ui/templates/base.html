@@ -31,6 +31,8 @@
               href="{% static 'css/pretty-print-json-1.2.css' %}"
               type="text/css"/>
         <title>Functionary</title>
+        <script src="{% static 'js/hyperscript-0.9.7.min.js' %}"></script>
+        <script src="{% static 'js/htmx-1.8.4.min.js' %}"></script>
         <script src="{% static 'js/pretty-print-json-1.2.min.js' %}"></script>
         <!-- This script will run when the page loads and the menus are available -->
         <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
@@ -55,7 +57,7 @@
                     <div class="column is-4 has-text-right">
                         <div class="top-right-container">
                             {% if user.is_authenticated %}
-                                <div class="has-text-right">
+                                <div>
                                     <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}
                                     <br/>
                                     {% unicorn 'env_to_select' %}
@@ -128,5 +130,10 @@
                 {% endblock content %}
             </main>
         </div>
+        <script>
+            document.body.addEventListener('htmx:configRequest', (event) => {
+                event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            })
+        </script>
     </body>
 </html>

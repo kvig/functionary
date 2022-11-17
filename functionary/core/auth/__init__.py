@@ -53,6 +53,11 @@ class Permission(Enum):
     USERROLE_UPDATE = "userrole:update"
     USERROLE_DELETE = "userrole:delete"
 
+    VARIABLE_CREATE = "variable:create"
+    VARIABLE_READ = "variable:read"
+    VARIABLE_UPDATE = "variable:update"
+    VARIABLE_DELETE = "variable:delete"
+
 
 class Role(Enum):
     """Enum containing assignable roles"""

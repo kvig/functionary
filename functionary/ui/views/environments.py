@@ -5,7 +5,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
 from core.auth import Permission
-from core.models import Environment, Package
+from core.models import Environment, Package, Variable
 
 
 class EnvironmentListView(LoginRequiredMixin, ListView):
@@ -38,7 +38,22 @@ class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["packages"] = Package.objects.filter(environment=self.get_object())
+        env = self.get_object()
+        context["packages"] = Package.objects.filter(environment=env)
+        context["var_create"] = self.request.user.has_perm(
+            Permission.VARIABLE_CREATE, env
+        )
+        context["var_update"] = self.request.user.has_perm(
+            Permission.VARIABLE_UPDATE, env
+        )
+        context["var_delete"] = self.request.user.has_perm(
+            Permission.VARIABLE_DELETE, env
+        )
+        context["variables"] = (
+            self.get_object().vars
+            if self.request.user.has_perm(Permission.VARIABLE_READ, env)
+            else Variable.objects.none()
+        )
         return context
 
     def test_func(self):

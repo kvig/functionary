@@ -2,6 +2,7 @@ celery
 django
 django-celery-beat
 django-unicorn
+django-widget-tweaks
 docker
 jsonschema
 pika

@@ -1,0 +1,40 @@
+{% load extras %}
+<div>
+    <div class="field">
+        <label class="label" for="variable_list">
+            <i class="fa fa-tags"></i>&nbsp;Variables - HTMX:
+            {% comment %} {% if var_create and not show_add and not editting_id %} {% endcomment %}
+            <button class="button is-small has-text-link is-white"
+                    type="button"
+                    hx-get="{% url 'ui:htmx-variable-form' parent_object.id %}"
+                    hx-target="#variableforms"
+                    hx-swap="innerHTML"
+                    _="on click hide me then toggle @disabled on button's in #variable_list">
+                <span class="fa fa-plus"/>
+            </button>
+            {% comment %} {% endif %} {% endcomment %}
+        </label>
+        <div id="variableforms"></div>
+        <div class="columns">
+            <table id="variable_list" class="table ml-4 column is-9">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for variable in variables.all %}
+                        <tr id="variable-{{ variable.id }}"
+                            class="ml-4"
+                            hx-target="this"
+                            hx-swap="innerHTML">
+                            {% include "core/variable/row.html" with variable=variable parent_id=parent_id %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

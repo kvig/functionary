@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from core.auth import Permission
 from core.models import Environment, Function, Task
 
-from ..forms.forms import TaskParameterForm
+from ..forms.tasks import TaskParameterForm
 from .view_base import (
     PermissionedEnvironmentDetailView,
     PermissionedEnvironmentListView,
@@ -39,20 +39,12 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
         function = self.object
         env = function.package.environment
 
-        variables = []
         missing_variables = []
         if function.variables:
-            all_vars = {v.name: v for v in env.variables()}
-            missing_variables = []
-            for var in function.variables:
-                if var in all_vars:
-                    variables.append(all_vars[var])
-                else:
-                    missing_variables.append(var)
+            all_vars = list(env.variables.values_list("name", flat=True))
             missing_variables = [
                 var for var in function.variables if var not in all_vars
             ]
-        context["variables"] = variables
         context["missing_variables"] = missing_variables
         if self.request.user.has_perm(Permission.TASK_CREATE, env):
             form = TaskParameterForm(function)

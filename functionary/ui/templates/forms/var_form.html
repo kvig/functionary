@@ -1,0 +1,60 @@
+{% load widget_tweaks %}
+<style>
+    .error {
+        color: red;
+    }
+</style>
+{{ form.non_field_errors }}
+{% for hidden_field in form.hidden_fields %}
+    {{ hidden_field.errors }}
+    {{ hidden_field }}
+{% endfor %}
+<div class="columns is-multiline is-mobile">
+    <div class="field column is-half">
+        <label class="label{% if form.name.errors %} error{% endif %}" for={{ form.name.id_for_label }}>Name:
+        </label>
+        {% render_field form.name class="input" placeholder=form.name.name %}
+        <br/>
+        <span class="error">{{ form.name.errors }}</span>
+    </div>
+    <div class="field column is-half">
+        <label class="label" for={{ form.name.id_for_label }}>Protect:
+        </label>
+        {{ field.protect.label_tag }}
+        {% render_field form.protect class="checkbox" %}
+    </div>
+    <div class="field column is-half">
+        <label class="label{% if form.description.errors %} error{% endif %}" for={{ form.description.id_for_label }}>Description:
+        </label>
+        {{ field.name.label_tag }}
+        {% render_field form.description class="input" placeholder=form.description.name %}
+        <br />
+        <span class="error">{{ form.description.errors }}</span>
+    </div>
+    <div class="field column is-half">
+        <label class="label{% if form.value.errors %} error{% endif %}" for={{ form.value.id_for_label }}>Value:
+        </label>
+        {{ field.value.label_tag }}
+        {% comment %} <div class="control"> {% endcomment %}
+        {% render_field form.value class="input" placeholder=form.value.name %}
+        {% comment %} </div> {% endcomment %}
+        <span class="error">{{ form.value.errors }}</span>
+    </div>
+</div>
+{% if variable %}
+    <button class="button"
+            type="submit"
+            hx-params="not environment,team"
+            hx-post="{% url 'ui:update-variable' variable.id parent_id %}">
+        Update
+    </button>
+    <a class="button" hx-get="{% url 'ui:detail-variable' pk=variable.id %}">Cancel</a>
+{% else %}
+    <button id="add-variable-button1"
+            class="button"
+            type="submit"
+            hx-post="{% url 'ui:add-variable' parent_id %}">
+        Add
+    </button>
+    <button class="button" _="on click remove #add_variable_form">Cancel</button>
+{% endif %}
