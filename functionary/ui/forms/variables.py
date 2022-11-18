@@ -4,29 +4,15 @@ from core.models import Environment, Team, Variable
 
 
 class VariableForm(ModelForm):
-    template_name = "forms/var_form.html"
+    parent_id = None
 
     class Meta:
         model = Variable
         fields = ["name", "protect", "description", "value", "environment", "team"]
 
-    def __init__(self, data, parent_id=None, **kwargs):
-        super().__init__(data, **kwargs)
-        if parent_id:
-            self.parent_id = parent_id
-        elif "instance" in kwargs:
-            self.parent_id = (
-                kwargs["instance"].environment.id or kwargs["instance"].team.id
-            )
-        elif "parent_id" in data:
-            print("Expected")
-            self.parent_id = data["parent_id"]
-        else:
-            print("UNEXPECTED")
-            if hasattr(data, "parent_id"):
-                self.parent_id = data.parent_id
-            else:
-                print("WTF?")
+    def __init__(self, parent_id, **kwargs):
+        super().__init__(**kwargs)
+        self.parent_id = parent_id
 
     def clean_name(self):
         return self.cleaned_data["name"].upper()
@@ -60,9 +46,11 @@ class VariableForm(ModelForm):
                     f"A Variable named {var_name} already exists for {self.parent_id}"
                 )
 
-        if cleaned_data["environment"] and cleaned_data["team"]:
-            raise ValidationError("Can have only a team or an environment, not both")
-        elif not cleaned_data["environment"] and not cleaned_data["team"]:
+        env = cleaned_data.get("environment", None)
+        team = cleaned_data.get("team", None)
+        if env and team:
+            raise ValidationError("Can have only a Team or an Environment, not both")
+        elif not env and not team:
             raise ValidationError("Must select an Environment or Team")
 
         return cleaned_data

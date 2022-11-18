@@ -10,22 +10,23 @@
 </td>
 <td class="pl-4">
     {% if var_update %}
-        <button class="button is-small has-text-info is-white"
+        <button class="button is-small has-text-info is-white singletonActive"
                 type="button"
                 title="Edit"
+                onclick="disableVariableButtons(true)"
                 hx-get="{% url 'ui:update-variable' pk=variable.id parent_id=parent_id %}">
             <span class="fa fa-pencil-alt"/>
         </button>
-        {% comment %} <a class="button fa fa-pencil-alt is-small has-text-info is-white" {% if show_add or editting_id %}disabled{% endif %} unicorn:click="set_editing('{{ variable.id }}')" title="Edit"></a> {% endcomment %}
     {% endif %}
     {% if var_delete %}
         <button class="button is-small has-text-danger is-white"
                 type="button"
                 title="Delete"
                 hx-confirm="Are you sure you want to delete {{ variable.name }}?"
-                hx-post="{% url 'ui:delete-variable' variable.id %}">
+                hx-target="closest tr"
+                hx-swap="outerHTML swap:1s"
+                hx-delete="{% url 'ui:delete-variable' variable.id %}">
             <span class="fa fa-trash"/>
         </button>
-        {% comment %} <a class="button fa fa-trash is-small has-text-danger is-white" unicorn:click="delete_var('{{ variable.id }}')" title="Delete"></a> {% endcomment %}
     {% endif %}
 </td>

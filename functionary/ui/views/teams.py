@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
 from core.auth import Permission
-from core.models import Team, TeamUserRole
+from core.models import Team, TeamUserRole, Variable
 
 
 class TeamListView(LoginRequiredMixin, ListView):
@@ -28,6 +28,20 @@ class TeamDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         team = self.get_object()
         context["environments"] = team.environments.all()
         context["users"] = [user_role.user for user_role in team.user_roles.all()]
+        context["var_create"] = self.request.user.has_perm(
+            Permission.VARIABLE_CREATE, team
+        )
+        context["var_update"] = self.request.user.has_perm(
+            Permission.VARIABLE_UPDATE, team
+        )
+        context["var_delete"] = self.request.user.has_perm(
+            Permission.VARIABLE_DELETE, team
+        )
+        context["variables"] = (
+            team.vars
+            if self.request.user.has_perm(Permission.VARIABLE_READ, team)
+            else Variable.objects.none()
+        )
         return context
 
     def test_func(self):

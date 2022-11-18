@@ -46,11 +46,14 @@ django==4.1.3
     # via
     #   -r requirements.in
     #   django-celery-beat
+    #   django-htmx
     #   django-unicorn
     #   djangorestframework
     #   drf-spectacular
     #   drf-spectacular-sidecar
 django-celery-beat==2.4.0
+    # via -r requirements.in
+django-htmx==1.13.0
     # via -r requirements.in
 django-timezone-field==5.0
     # via django-celery-beat

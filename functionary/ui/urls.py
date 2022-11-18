@@ -7,7 +7,6 @@ from .views import (
     environments,
     functions,
     home,
-    htmx_views,
     packages,
     tasks,
     teams,
@@ -77,9 +76,9 @@ urlpatterns = [
         name="set-environment",
     ),
     path(
-        "htmx_variable_form/<parent_id>",
-        (htmx_views.htmx_variable_form),
-        name="htmx-variable-form",
+        "variables/<parent_id>",
+        (variables.all_variables),
+        name="all-variables",
     ),
     path(
         "add_variable/<parent_id>",

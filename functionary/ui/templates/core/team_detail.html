@@ -1,42 +1,53 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="column is-full">
-    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{% url 'ui:team-list' %}">Team List</a></li>
-            <li class="is-active"><a href="#">{{ team.name }}</a></li>
-        </ul>
-    </nav>
-</div>
-<div class="column">
-    <div class="block">
-        <h1 class="title is-1">
-            <span class="icon"><i class="fa fa-users"></i></span>&nbsp;&nbsp;{{ team.name }}
-        </h1>
-    </div>
-    <div class="column has-addons" >
-        <div class="field">
-            <label class="label" for="envs"><i class="fa fa-building"></i>&nbsp;Environments:</label>
-            <ul id="envs">
-                {% for env in environments %}
-                <li class="block ml-4">
-                    <a href="{% url 'ui:environment-detail' env.id %}">{{ env.name }}</a><br/>{{ env.description }}
+    <div class="column is-full">
+        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+            <ul>
+                <li>
+                    <a href="{% url 'ui:team-list' %}">Team List</a>
                 </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="field">
-            <label class="label" for="users"><i class="fa fa-user"></i>&nbsp;Users:</label>
-            <ul id="users">
-                {% for u in users %}
-                <li class="block ml-4">
-                    <p>{{ u.first_name }} {{ u.last_name }} <span class="has-text-grey-light">({{ u.username }})</span></p>
+                <li class="is-active">
+                    <a href="#">{{ team.name }}</a>
                 </li>
-                {% endfor %}
             </ul>
+        </nav>
+    </div>
+    <div class="column">
+        <div class="block">
+            <h1 class="title is-1">
+                <span class="icon"><i class="fa fa-users"></i></span>&nbsp;&nbsp;{{ team.name }}
+            </h1>
+        </div>
+        <div class="column has-addons">
+            <div class="field">
+                <label class="label" for="envs">
+                    <i class="fa fa-building"></i>&nbsp;Environments:
+                </label>
+                <ul id="envs">
+                    {% for env in environments %}
+                        <li class="block ml-4">
+                            <a href="{% url 'ui:environment-detail' env.id %}">{{ env.name }}</a>
+                            <br/>
+                            {{ env.description }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="field">
+                <label class="label" for="users">
+                    <i class="fa fa-user"></i>&nbsp;Users:
+                </label>
+                <ul id="users">
+                    {% for u in users %}
+                        <li class="block ml-4">
+                            <p>
+                                {{ u.first_name }} {{ u.last_name }} <span class="has-text-grey-light">({{ u.username }})</span>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% include 'partials/variables.html' with parent_object=team parent_id=team.id %}
         </div>
     </div>
-</div>
-
 {% endblock content %}

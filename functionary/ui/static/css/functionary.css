@@ -27,9 +27,6 @@
 .errors {
     color: red;
 }
-textarea.input {
-    height: 100px;
-}
 .wrap-json {
     display: block;
     white-space: pre;
@@ -38,7 +35,7 @@ textarea.input {
 .missing-variables > ul {
     list-style: inside;
 }
-#addVarForm textarea {
-    width: 80%;
-    height: 100px;
-}
+tr.htmx-swapping td {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+  }

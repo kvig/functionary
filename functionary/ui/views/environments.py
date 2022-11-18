@@ -50,7 +50,7 @@ class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
             Permission.VARIABLE_DELETE, env
         )
         context["variables"] = (
-            self.get_object().vars
+            env.vars
             if self.request.user.has_perm(Permission.VARIABLE_READ, env)
             else Variable.objects.none()
         )
