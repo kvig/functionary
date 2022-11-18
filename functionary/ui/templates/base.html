@@ -130,18 +130,16 @@
             </main>
         </div>
         <script>
+            // Add the X-CSRFToken header for HTMX requests
             document.body.addEventListener('htmx:configRequest', (event) => {
                 event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
             })
+            // Show an error message when a bad status comes back from an HTMX call
             document.body.addEventListener('htmx:beforeOnLoad', (event) => {
                 if (event.detail.xhr.status >= 400) {
                     alert(event.detail.xhr.responseText)
                 }
             });
-            
-            function disableVariableButtons(disable) {
-                htmx.findAll('#variable_section .singletonActive').forEach(b => b.disabled = disable)
-            }
         </script>
     </body>
 </html>

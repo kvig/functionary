@@ -3,6 +3,6 @@
         class="ml-4"
         hx-target="this"
         hx-swap="innerHTML">
-        {% include "core/variable/row.html" with variable=variable parent_id=parent_id %}
+        {% include "partials/variable_row.html" with variable=variable parent_id=parent_id %}
     </tr>
 {% endfor %}

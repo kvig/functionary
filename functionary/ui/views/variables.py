@@ -27,18 +27,13 @@ def _render_variable_row(request, parent_id, variable):
     context["var_update"] = request.user.has_perm(Permission.VARIABLE_UPDATE, variable)
     context["var_delete"] = request.user.has_perm(Permission.VARIABLE_DELETE, variable)
 
-    return render(request, "core/variable/row.html", context)
+    return render(request, "partials/variable_row.html", context)
 
 
 def _render_variable_form(request, form, parent_id, variable=None, add=False):
     context = {"form": form, "variable": variable, "parent_id": parent_id, "add": add}
     if variable:
         context["pk"] = variable.id
-    context.update(
-        {
-            "form": form.render("forms/var_form.html", context),
-        }
-    )
 
     return render(request, "forms/variable_form.html", context)
 

@@ -32,5 +32,11 @@
             </div>
         </div>
     </div>
+    <script>
+        // Allow toggling the disabled state of the buttons without fetching the whole page
+        function disableVariableButtons(disable) {
+            htmx.findAll('#variable_section .singletonActive').forEach(b => b.disabled = disable)
+        }
+    </script>
 </div>
 {% django_htmx_script %}
