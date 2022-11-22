@@ -1,0 +1,7 @@
+<div hx-trigger="load"
+     hx-get="{% url 'ui:set-environment' %}?next={{ request.get_full_path }}"
+     hx-target="#set-env-form"
+     hx-swap="innerHTML">
+    <form id="set-env-form">
+    </form>
+</div>

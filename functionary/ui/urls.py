@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from .views import (
     builds,
@@ -96,9 +96,9 @@ urlpatterns = [
         (scheduling.update_scheduled_task),
         name="update-schedule",
     ),
-    path(
-        "environment/set_environment_id",
-        (environments.set_environment_id),
+    re_path(
+        r"^environment/set_environment/(?:(?P<pk>\w+)?$)",
+        (environments.EnvironmentSelectView.as_view()),
         name="set-environment",
     ),
     path(

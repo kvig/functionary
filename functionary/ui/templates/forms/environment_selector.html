@@ -1,0 +1,24 @@
+{% csrf_token %}
+<span class="icon"><i class="fa fa-lg fa-building"></i></span>&nbsp;
+{% with request.session.environment_id as environment_id %}
+    <select id="env_select"
+            name="environment_id"
+            class="dropdown environment-select"
+            hx-trigger="change"
+            hx-post="{% url 'ui:set-environment' %}"
+            hx-swap="none">
+        <option value="-1">
+            Choose
+        </option>
+        {% for grp, envs in environments.items %}
+            <optgroup label="{{ grp }}">
+                {% for env in envs %}
+                    <option value="{{ env.id }}"
+                            {% if environment_id == env.id|stringformat:'s' %}selected{% endif %}>
+                        {{ env.name }}
+                    </option>
+                {% endfor %}
+            </optgroup>
+        {% endfor %}
+    </select>
+{% endwith %}

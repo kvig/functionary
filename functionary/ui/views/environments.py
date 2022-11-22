@@ -1,8 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import redirect
-from django.views.decorators.http import require_POST
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django_htmx import http
 
 from core.auth import Permission
 from core.models import Environment, Package, Variable
@@ -62,10 +64,40 @@ class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
         )
 
 
-@require_POST
-def set_environment_id(request):
-    request.session["environment_id"] = request.POST["environment_id"]
-    next = request.GET.get("next")
-    if not next:
-        next = "/ui/"
-    return redirect(next)
+class EnvironmentSelectView(LoginRequiredMixin, TemplateView):
+    environments = {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["environments"] = self.environments
+        return context
+
+    def post(self, request):
+        pk = request.POST["environment_id"]
+        get_object_or_404(Environment, id=pk)
+
+        request.session["environment_id"] = pk
+        next = request.POST.get("next")
+        if not next:
+            next = "/ui/"
+        return http.trigger_client_event(HttpResponse(""), "reloadData")
+
+    def get(self, request):
+        if self.request.user.is_superuser:
+            envs = (
+                Environment.objects.select_related("team")
+                .all()
+                .order_by("team__name", "name")
+            )
+        else:
+            envs = self.request.user.environments.select_related("team").order_by(
+                "team__name", "name"
+            )
+
+        self.environments = {}
+        for env in envs:
+            self.environments.setdefault(env.team.name, []).append(env)
+
+        ctx = self.get_context_data()
+        ctx["next"] = request.GET["next"]
+        return render(request, "forms/environment_selector.html", ctx)

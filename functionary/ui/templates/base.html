@@ -60,7 +60,7 @@
                                 <div>
                                     <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}
                                     <br/>
-                                    {% unicorn 'env_to_select' %}
+                                    {% include "partials/env_selector.html" %}
                                 </div>
                                 <div >
                                     <div>
@@ -132,8 +132,16 @@
                 </aside>
             {% endif %}
             <main class="column">
-                {% block content %}
-                {% endblock content %}
+                <div id="data_div"
+                     hx-get="{{ request.get_full_path }}"
+                     hx-trigger="reloadData from:body"
+                     hx-select="#dataBlock"
+                     hx-swap="innerHTML">
+                    <div id="dataBlock">
+                        {% block content %}
+                        {% endblock content %}
+                    </div>
+                </div>
             </main>
         </div>
         <script>
