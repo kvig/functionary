@@ -72,8 +72,6 @@ def delete_variable(request, pk):
 
 
 class VariableView(LoginRequiredMixin, UserPassesTestMixin, View):
-    form_class = VariableForm
-
     def post(self, request, parent_id):
         data = request.POST.copy()
         parent = _get_parent(parent_id)

@@ -1,4 +1,4 @@
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm
 
 from core.models import Environment, Team, Variable
 
@@ -28,29 +28,3 @@ class VariableForm(ModelForm):
             team = Team.objects.filter(id=self.parent_id)
             return team.get() if team.exists() else None
         return self.cleaned_data["team"]
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        if "name" in cleaned_data:
-            var_name = cleaned_data["name"]
-
-            if not self.instance and (
-                Variable.objects.filter(
-                    name=var_name, environment_id=self.parent_id
-                ).exists()
-                or Variable.objects.filter(
-                    name=var_name, team_id=self.parent_id
-                ).exists()
-            ):
-                raise ValidationError(
-                    f"A Variable named {var_name} already exists for {self.parent_id}"
-                )
-
-        env = cleaned_data.get("environment", None)
-        team = cleaned_data.get("team", None)
-        if env and team:
-            raise ValidationError("Can have only a Team or an Environment, not both")
-        elif not env and not team:
-            raise ValidationError("Must select an Environment or Team")
-
-        return cleaned_data

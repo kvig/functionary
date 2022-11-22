@@ -60,8 +60,8 @@
         <label class="label ml-4">Create Task:</label>
         <div class="has-background-white-ter ml-4">
             <form id="djangoForm"
-                    method="post"
-                    action="{% url 'ui:function-execute' %}">
+                  method="post"
+                  action="{% url 'ui:function-execute' %}">
                 {% csrf_token %}
                 <input type="hidden" name="function_id" value="{{ function.id }}"/>
                 <div class="column has-addons">
@@ -69,7 +69,7 @@
                     {{ form }}
                     {% if missing_variables %}
                         <div class="field ml-4 missing-variables has-background-danger-light has-text-danger">
-                            <span>Tasking this function may not work as expected, the following variables are missing:</span>
+                            <span>Tasking this function may not work as expected; the following variables are missing:</span>
                             <ul>
                                 {% for missing in missing_variables %}
                                     <li>
@@ -80,8 +80,8 @@
                         </div>
                     {% endif %}
                     <input class="button {% if missing_variables %}is-warning{% else %}is-link{% endif %}"
-                            type="submit"
-                            value="Execute"/>
+                           type="submit"
+                           value="Execute"/>
                 </div>
             </form>
         </div>

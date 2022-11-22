@@ -7,12 +7,7 @@
 {% endif %}
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" name="parent_id" value="{{ parent_id }}"/>
             {{ form.non_field_errors }}
-            {% for hidden_field in form.hidden_fields %}
-                {{ hidden_field.errors }}
-                {{ hidden_field }}
-            {% endfor %}
             <div class="columns is-multiline is-mobile">
                 <div class="field column is-half">
                     <label class="{% if form.name.errors %}errors{% endif %} label" for={{ form.name.id_for_label }}>Name:
