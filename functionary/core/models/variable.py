@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 VALID_VARIABLE_NAME = RegexValidator(
-    regex="[A-Z_][A-Z0-9_]*",
+    regex="^[A-Z_][A-Z0-9_]*$",
     message="Invalid variable name. Characters must be in [A-Z0-9_]",
 )
 
