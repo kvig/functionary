@@ -1,7 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
-
 from builder.models import Build
 
+from .tasks import FINISHED_STATUS
 from .view_base import (
     PermissionedEnvironmentDetailView,
     PermissionedEnvironmentListView,
@@ -20,8 +19,10 @@ class BuildDetailView(PermissionedEnvironmentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context["build_log"] = context["object"].buildlog
-        except ObjectDoesNotExist:
-            context["build_log"] = None
+        completed = self.object.status in FINISHED_STATUS
+
+        context["completed"] = completed
+        if hasattr(self.object, "buildlog"):
+            context["build_log"] = self.object.buildlog
+
         return context

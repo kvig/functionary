@@ -1,61 +1,58 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="column is-full">
-        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-            <ul>
-                <li>
-                    <a href="{% url 'ui:build-list' %}">Build List</a>
-                </li>
-                <li class="is-active">
-                    <a href="#">{{ object.package }}</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <div class="column">
-        <div class="block">
-            <h1 class="title is-1">
-                <span class="icon"><i class="fa fa-wrench"></i></span>&nbsp;&nbsp;
-                {{ object.package }}
-            </h1>
+    <div id="build_detail"
+         hx-swap-oob="true"
+         {% if not completed %} hx-get="{% url 'ui:build-detail' build.id %}?poll=true" hx-trigger="every 15s"{% endif %}>
+        <div class="column is-full">
+            <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+                <ul>
+                    <li>
+                        <a href="{% url 'ui:build-list' %}">Build List</a>
+                    </li>
+                    <li class="is-active">
+                        <a href="#">{{ build.package }}</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <div class="column has-addons">
-            {% if object.created_at %}
+        <div class="column">
+            <div class="block">
+                <h1 class="title is-1">
+                    <p>
+                        <i class="fa fa-wrench"></i>
+                        <span>{{ build.package }}</span>
+                        <i class="is-size-5 fa fa-info pl-4"></i>
+                        <span class="is-size-5 has-text-weight-normal">{{ build.status }}</span>
+                    </p>
+                </h1>
+            </div>
+            <div class="column has-addons">
                 <div class="field">
-                    <label class="label" for="desc">Created At:</label>
-                    <span class="ml-4">{{ object.created_at }}</span>
+                    <label class="label" for="users">
+                        <i class="fa fa-user"></i>&nbsp;Creator:
+                    </label>
+                    <ul id="users">
+                        <li class="block ml-4">
+                            <p>
+                                {{ build.creator.first_name }} {{ build.creator.last_name }} <span class="has-text-grey-light">({{ build.creator.username }})</span>
+                                at {{ build.created_at }}
+                            </p>
+                        </li>
+                    </ul>
                 </div>
-            {% endif %}
-            {% if object.updated_at %}
-                <div class="field">
-                    <label class="label" for="desc">Updated At:</label>
-                    <span class="ml-4">{{ object.updated_at }}</span>
-                </div>
-            {% endif %}
-            {% if object.creator %}
-                <div class="field">
-                    <label class="label" for="desc">Creator:</label>
-                    <span class="ml-4">{{ object.creator }}</span>
-                </div>
-            {% endif %}
-            {% if object.status %}
-                <div class="field">
-                    <label class="label" for="desc">Status:</label>
-                    <span class="ml-4">{{ object.status }}</span>
-                </div>
-            {% endif %}
-            {% if object.id %}
-                <div class="field">
-                    <label class="label" for="desc">Build Id:</label>
-                    <span class="ml-4">{{ object.id }}</span>
-                </div>
-            {% endif %}
-            {% if build_log.log %}
-                <div class="field">
-                    <label class="label" for="desc">Build Log:</label>
-                    <pre class="ml-4">{{ build_log.log }}</pre>
-                </div>
-            {% endif %}
+                {% if build.updated_at %}
+                    <div class="field">
+                        <label class="label" for="desc">Last Updated:</label>
+                        <span class="ml-4">{{ build.updated_at }}</span>
+                    </div>
+                {% endif %}
+                {% if build_log.log %}
+                    <div class="field">
+                        <label class="label" for="desc">Build Log:</label>
+                        <pre class="ml-4">{{ build_log.log }}</pre>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock content %}
