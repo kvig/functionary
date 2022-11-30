@@ -26,12 +26,16 @@
     <div class="column">
         <div class="block">
             <h1 class="title is-1">
-                <span class="icon"><i class="fa fa-cube"></i></span>&nbsp;&nbsp;
-                {% if function.display_name %}
-                    {{ function.display_name }}
-                {% else %}
-                    {{ function.name }}
-                {% endif %}
+                <p>
+                    <i class="fa fa-cube"></i>
+                    <span>
+                        {% if function.display_name %}
+                            {{ function.display_name }}
+                        {% else %}
+                            {{ function.name }}
+                        {% endif %}
+                    </span>
+                </p>
             </h1>
         </div>
         {% if function.description %}

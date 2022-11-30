@@ -40,7 +40,6 @@ urlpatterns = [
         name="redoc",
     ),
     path("ui/", include("ui.urls")),
-    path("unicorn/", include("django_unicorn.urls")),
 ]
 
 

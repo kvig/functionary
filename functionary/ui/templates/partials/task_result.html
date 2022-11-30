@@ -1,0 +1,28 @@
+<div id="result"
+     class="block ml-4"
+     hx-swap-oob="true"
+     {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output={{ get_endpoint }}" {% endif %}>
+    {% if show_output_selector %}
+        <div class="tabs is-small is-toggle ml-4">
+            <ul hx-target="#result">
+                <li {% if output_format != "table" %}class="is-active"{% endif %}>
+                    <a hx-get="{% url 'ui:task-results' task.id %}?output=display_raw">Raw</a>
+                </li>
+                <li {% if output_format == "table" %}class="is-active"{% endif %}>
+                    <a hx-get="{% url 'ui:task-results' task.id %}?output=display_table">Table</a>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+    {% if not completed %}
+        <i id="result_indicator" class="fas fa-spinner fa-spin fa-2x"></i>
+    {% elif task.result is None %}
+        {% include "partials/output_none.html" %}
+    {% elif output_format == "json" %}
+        {% include "partials/output_json.html" %}
+    {% elif output_format == "table" %}
+        {% include "partials/output_table.html" %}
+    {% else %}
+        {% include "partials/output_string.html" %}
+    {% endif %}
+</div>

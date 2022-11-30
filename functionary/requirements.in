@@ -2,7 +2,6 @@ celery
 django
 django-celery-beat
 django-htmx
-django-unicorn
 django-widget-tweaks
 docker
 jsonschema

@@ -12,12 +12,8 @@ async-timeout==4.0.2
     # via redis
 attrs==22.1.0
     # via jsonschema
-beautifulsoup4==4.11.1
-    # via django-unicorn
 billiard==3.6.4.0
     # via celery
-cachetools==4.2.4
-    # via django-unicorn
 celery==5.2.7
     # via
     #   -r requirements.in
@@ -38,16 +34,11 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-decorator==4.4.2
-    # via django-unicorn
-deprecated==1.2.13
-    # via redis
 django==4.1.3
     # via
     #   -r requirements.in
     #   django-celery-beat
     #   django-htmx
-    #   django-unicorn
     #   djangorestframework
     #   drf-spectacular
     #   drf-spectacular-sidecar
@@ -57,8 +48,6 @@ django-htmx==1.13.0
     # via -r requirements.in
 django-timezone-field==5.0
     # via django-celery-beat
-django-unicorn==0.49.2
-    # via -r requirements.in
 django-widget-tweaks==1.4.12
     # via -r requirements.in
 djangorestframework==3.14.0
@@ -75,21 +64,19 @@ idna==3.4
     # via requests
 inflection==0.5.1
     # via drf-spectacular
-jsonschema==4.17.0
+jsonschema==4.17.3
     # via
     #   -r requirements.in
     #   drf-spectacular
 kombu==5.2.4
     # via celery
-orjson==3.8.1
-    # via django-unicorn
 packaging==21.3
     # via
     #   docker
     #   redis
 pika==1.3.1
     # via -r requirements.in
-prompt-toolkit==3.0.32
+prompt-toolkit==3.0.33
     # via click-repl
 psycopg2==2.9.5
     # via -r requirements.in
@@ -112,18 +99,14 @@ pyyaml==6.0
     # via
     #   -r requirements.in
     #   drf-spectacular
-redis==4.3.4
+redis==4.3.5
     # via -r requirements.in
 requests==2.28.1
     # via docker
-shortuuid==1.0.11
-    # via django-unicorn
 six==1.16.0
     # via
     #   click-repl
     #   python-dateutil
-soupsieve==2.3.2.post1
-    # via beautifulsoup4
 sqlparse==0.4.3
     # via django
 typing-extensions==4.4.0
@@ -132,7 +115,7 @@ tzdata==2022.6
     # via django-celery-beat
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==1.26.12
+urllib3==1.26.13
     # via
     #   docker
     #   requests
@@ -145,5 +128,3 @@ wcwidth==0.2.5
     # via prompt-toolkit
 websocket-client==1.4.2
     # via docker
-wrapt==1.14.1
-    # via deprecated

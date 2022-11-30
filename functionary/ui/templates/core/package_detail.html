@@ -22,12 +22,16 @@
         <div class="column">
             <div class="block">
                 <h1 class="title is-1">
-                    <span class="icon"><i class="fa fa-cubes"></i></span>&nbsp;&nbsp;
-                    {% if package.display_name %}
-                        {{ package.display_name }}
-                    {% else %}
-                        {{ package.name }}
-                    {% endif %}
+                    <p>
+                        <i class="fa fa-cubes"></i>
+                        <span>
+                            {% if package.display_name %}
+                                {{ package.display_name }}
+                            {% else %}
+                                {{ package.name }}
+                            {% endif %}
+                        </span>
+                    </p>
                 </h1>
             </div>
             <div class="column has-addons">

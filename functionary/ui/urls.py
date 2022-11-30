@@ -85,6 +85,11 @@ urlpatterns = [
         (tasks.TaskDetailView.as_view()),
         name="task-detail",
     ),
+    path(
+        "task/<uuid:pk>/results",
+        (tasks.TaskResultsView.as_view()),
+        name="task-results",
+    ),
     path("team_list/", (teams.TeamListView.as_view()), name="team-list"),
     path(
         "team/<uuid:pk>",

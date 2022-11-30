@@ -3,14 +3,9 @@
 }
 .top-right-container {
     height: 100%;
-}
-.top-right-container > div {
-    height: 50%;
-}
-.top-right-container > :last-child {
     display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-end;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .environment-select {
     border: none;
@@ -38,4 +33,4 @@
 tr.htmx-swapping td {
     opacity: 0;
     transition: opacity 1s ease-out;
-  }
+}

@@ -1,5 +1,4 @@
 {% load static %}
-{% load unicorn %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -35,8 +34,6 @@
         <script src="{% static 'js/pretty-print-json-1.2.min.js' %}"></script>
         <!-- This script will run when the page loads and the menus are available -->
         <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
-        <script src="{% static 'js/htmx-1.8.4.min.js' %}"></script>
-        {% unicorn_scripts %}
     </head>
     <body>
         <section class="hero is-small is-link mb-r">
@@ -54,19 +51,20 @@
                             <p class="subtitle is-4">Run your functions</p>
                         </a>
                     </div>
-                    <div class="column is-4 has-text-right">
-                        <div class="top-right-container">
+                    <div class="column is-4">
+                        <div class="top-right-container has-text-right">
                             {% if user.is_authenticated %}
                                 <div>
-                                    <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}
-                                    <br/>
+                                    <p>
+                                        <span class="icon"><i class="fa fa-user"></i></span>&nbsp;{{ user }}
+                                    </p>
                                     {% include "partials/env_selector.html" %}
                                 </div>
-                                <div >
-                                    <div>
+                                <div>
+                                    <p>
                                         <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
                                         <a class="is-underlined" href="{% url 'ui:logout' %}">Logout</a>
-                                    </div>
+                                    </p>
                                 </div>
                             {% endif %}
                         </div>

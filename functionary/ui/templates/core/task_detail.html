@@ -1,17 +1,61 @@
 {% extends "base.html" %}
-{% load unicorn %}
 {% block content %}
-    <div class="column is-full">
-        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-            <ul>
-                <li>
-                    <a href="{% url 'ui:task-list' %}">Task List</a>
-                </li>
-                <li class="is-active">
-                    <a href="#">{{ task.function.name }}</a>
-                </li>
-            </ul>
-        </nav>
+    <div id="task_detail"
+         hx-swap-oob="true"
+         {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output={{ get_endpoint }}&poll=true" hx-trigger="every 5s"{% endif %}>
+        <div class="column is-full">
+            <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+                <ul>
+                    <li>
+                        <a href="{% url 'ui:task-list' %}">Task List</a>
+                    </li>
+                    <li class="is-active">
+                        <a href="#">{{ task.function.name }}</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="column" id="task_details">
+            <div class="block">
+                <h1 class="title is-1">
+                    <p>
+                        <i class="fa fa-digital-tachograph"></i>
+                        <span>{{ task.function.name }}</span>
+                        <i class="is-size-5 fa fa-info pl-4"></i>
+                        <span class="is-size-5 has-text-weight-normal">{{ task.status }}</span>
+                    </p>
+                </h1>
+            </div>
+        </div>
+        <div class="column has-addons">
+            <div class="field">
+                <label class="label" for="users">
+                    <i class="fa fa-user"></i>&nbsp;Creator:
+                </label>
+                <ul id="users">
+                    <li class="block ml-4">
+                        <p>
+                            {{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username }})</span>
+                            at {{ task.created_at }}
+                        </p>
+                    </li>
+                </ul>
+            </div>
+            <div class="field">
+                <label class="label" for="params">
+                    <i class="fa fa-list"></i>&nbsp;Parameters:
+                </label>
+                <div id="params">
+                    <pre class="block ml-4">{{ task.parameters | pprint }}</pre>
+                </div>
+            </div>
+            <div id="task_results" class="field">
+                <label class="label" for="result">
+                    <i class="fa fa-clipboard-check"></i>&nbsp;Result:
+                </label>
+                {% include "partials/task_result.html" %}
+            </div>
+        </div>
     </div>
-    {% unicorn 'task_detail' task=task %}
+</div>
 {% endblock content %}
