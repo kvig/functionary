@@ -180,9 +180,11 @@ class TaskResultsView(PermissionedEnvironmentDetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data()
-        completed = context["completed"]
 
-        if "poll" in request.GET and completed:
-            return http.HttpResponseClientRefresh()
+        if "poll" in request.GET:
+            return http.retarget(
+                render(request, "core/task_detail.html", context=context),
+                "#task_detail",
+            )
 
         return render(request, "partials/task_result.html", context=context)
