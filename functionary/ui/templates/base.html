@@ -35,7 +35,7 @@
         <!-- This script will run when the page loads and the menus are available -->
         <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
     </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <section class="hero is-small is-link mb-r">
             <div class="hero-body">
                 <div class="columns">
@@ -129,12 +129,13 @@
                     {% endif %}
                 </aside>
             {% endif %}
-            <main class="column">
+            <main class="column is-9 container">
                 <div id="data_div"
                      hx-get="{{ request.get_full_path }}"
                      hx-trigger="reloadData from:body"
                      hx-select="#dataBlock"
-                     hx-swap="innerHTML">
+                     hx-swap="innerHTML"
+                     hx-swap-oob="true">
                     <div id="dataBlock">
                         {% block content %}
                         {% endblock content %}
@@ -143,10 +144,6 @@
             </main>
         </div>
         <script>
-            // Add the X-CSRFToken header for HTMX requests
-            document.body.addEventListener('htmx:configRequest', (event) => {
-                event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-            })
             // Show an error message when a bad status comes back from an HTMX call
             document.body.addEventListener('htmx:beforeOnLoad', (event) => {
                 if (event.detail.xhr.status >= 400) {

@@ -1,7 +1,4 @@
-<div id="result"
-     class="block ml-4"
-     hx-swap-oob="true"
-     {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output={{ get_endpoint }}" {% endif %}>
+<div id="result" class="block ml-4 is-12" hx-swap-oob="true">
     {% if show_output_selector %}
         <div class="tabs is-small is-toggle ml-4">
             <ul hx-target="#result">

@@ -2,8 +2,8 @@
 {% block content %}
     <div id="task_detail"
          hx-swap-oob="true"
-         {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output={{ get_endpoint }}&poll=true" hx-trigger="every 5s"{% endif %}>
-        <div class="column is-full">
+         {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output=display_raw&poll=true" hx-target="#result" hx-trigger="every 5s"{% endif %}>
+        <div class="block">
             <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
                 <ul>
                     <li>
@@ -15,7 +15,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="column" id="task_details">
+        <div class="block" id="task_details">
             <div class="block">
                 <h1 class="title is-1">
                     <p>
@@ -27,29 +27,25 @@
                 </h1>
             </div>
         </div>
-        <div class="column has-addons">
-            <div class="field">
+        <div class="block has-addons">
+            <div class="block">
                 <label class="label" for="users">
                     <i class="fa fa-user"></i>&nbsp;Creator:
                 </label>
-                <ul id="users">
-                    <li class="block ml-4">
-                        <p>
-                            {{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username }})</span>
-                            at {{ task.created_at }}
-                        </p>
-                    </li>
-                </ul>
+                <p class="ml-4">
+                    {{ task.creator.first_name }} {{ task.creator.last_name }} <span class="has-text-grey-light">({{ task.creator.username }})</span>
+                    at {{ task.created_at }}
+                </p>
             </div>
-            <div class="field">
+            <div class="block">
                 <label class="label" for="params">
                     <i class="fa fa-list"></i>&nbsp;Parameters:
                 </label>
                 <div id="params">
-                    <pre class="block ml-4">{{ task.parameters | pprint }}</pre>
+                    <pre class="block ml-4 mr-4">{{ task.parameters | pprint }}</pre>
                 </div>
             </div>
-            <div id="task_results" class="field">
+            <div id="task_results" class="block">
                 <label class="label" for="result">
                     <i class="fa fa-clipboard-check"></i>&nbsp;Result:
                 </label>
@@ -57,5 +53,4 @@
             </div>
         </div>
     </div>
-</div>
 {% endblock content %}

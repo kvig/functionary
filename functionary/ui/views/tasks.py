@@ -2,7 +2,7 @@ import csv
 
 from django.core.exceptions import BadRequest
 from django.shortcuts import render
-from django_htmx.http import HttpResponseClientRefresh
+from django_htmx import http
 
 from core.models import Task
 
@@ -72,13 +72,13 @@ def _format_table(result):
         raise ValueError("Unable to convert result to table")
 
 
-def _show_output_selector(result, result_type, completed):
+def _show_output_selector(result):
     """Determines if the output format selector should be rendered"""
-    if not completed:
-        return False
+    result_type = type(result)
 
     if result_type is list:
-        show_selector = True
+        # Don't offer a table for a list of non-dictionaries
+        show_selector = result and type(result[0]) is dict
     elif result_type is str:
         show_selector = _detect_csv(result)
     else:
@@ -87,7 +87,7 @@ def _show_output_selector(result, result_type, completed):
     return show_selector
 
 
-def _format_result(result, result_type, format):
+def _format_result(result, format):
     """Inspects the task result and formats the result data for in the desired format
     as appropriate"""
     output_format = "table"
@@ -96,7 +96,7 @@ def _format_result(result, result_type, format):
 
     match format:
         case "display_raw":
-            if result_type in [list, dict]:
+            if type(result) in [list, dict]:
                 output_format = "json"
             else:
                 output_format = "string"
@@ -115,22 +115,16 @@ def _get_result_context(context, format):
     task = context["task"]
 
     completed = task.status in FINISHED_STATUS
-    result_type = type(task.result)
 
-    output_format, format_error, formatted_result = _format_result(
-        task.result, result_type, format
-    )
+    output_format, format_error, formatted_result = _format_result(task.result, format)
 
     context["completed"] = completed
-    context["show_output_selector"] = _show_output_selector(
-        task.result, result_type, completed
+    context["show_output_selector"] = (
+        False if not completed else _show_output_selector(task.result)
     )
     context["format_error"] = format_error
     context["formatted_result"] = formatted_result
     context["output_format"] = output_format
-    context["get_endpoint"] = (
-        "display_raw" if output_format != "table" else "display_table"
-    )
     return context
 
 
@@ -153,47 +147,42 @@ class TaskDetailView(PermissionedEnvironmentDetailView):
         )
 
     def get_context_data(self, **kwargs):
-        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
-
-        return _get_result_context(
-            context,
+        format = (
             self.request.GET["output"]
             if "output" in self.request.GET
-            else "display_raw",
+            else "display_raw"
         )
+
+        return _get_result_context(context, format)
 
 
 class TaskResultsView(PermissionedEnvironmentDetailView):
-    """View for handling the task detail view along with the various dynamically
-    rendered elements"""
+    """View for retrieving the results in a given output format."""
 
     model = Task
-
-    output_format = "string"
-    format_error = None
-    formatted_result = None
 
     def get_queryset(self):
         return (
             super()
             .get_queryset()
             .select_related(
-                "environment", "creator", "function", "taskresult", "environment__team"
+                "environment",
+                "taskresult",
             )
         )
 
     def get_context_data(self, **kwargs):
-        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
 
         return _get_result_context(context, self.request.GET["output"])
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
         context = self.get_context_data()
         completed = context["completed"]
 
         if "poll" in request.GET and completed:
-            return HttpResponseClientRefresh()
+            return http.HttpResponseClientRefresh()
 
         return render(request, "partials/task_result.html", context=context)
