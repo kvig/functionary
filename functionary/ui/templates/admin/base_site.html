@@ -1,0 +1,81 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block extrahead %}
+    <link rel="shortcut icon"
+          type="image/png"
+          sizes="32x32"
+          href="{% static 'admin_favicon/favicon-32x32.png' %}"/>
+    <link rel="stylesheet"
+          href="{% static 'css/bulma-0.9.4.min.css' %}"
+          type="text/css"/>
+    <link rel="stylesheet"
+          href="{% static 'css/fontawesome-all-5.15.4.min.css' %}"
+          type="text/css"/>
+    <link rel="stylesheet"
+          href="{% static 'css/functionary.css' %}"
+          type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}" type="text/css"/>
+{% endblock extrahead %}
+<!-- Header -->
+{% block branding %}
+    <div class="columns">
+        <div class="columns column is-12">
+            <div class="column is-8">
+                <h1 id="site-name">
+                    <div onclick="location.href={% url 'admin:index' %}" class="admin-header">
+                        <img src="{% static 'functionary_f_logo.png' %}"
+                             alt="F"
+                             width="64"
+                             height="64"/>
+                        <span class="functionary-title">unctionary administration</span>
+                    </div>
+                </h1>
+            </div>
+            <div class="column is-4">
+                <div id="user-tools" class="top-right-container has-text-right">
+                    {% if user.is_authenticated %}
+                        <div>
+                            <p>
+                                <span>{% translate "Welcome," %}</span>&nbsp;{{ user }}
+                            </p>
+                        </div>
+                        <div>
+                            {% if user.is_active and user.is_staff %}
+                                {% url 'django-admindocs-docroot' as docsroot %}
+                                {% if docsroot %}
+                                    <p>
+                                        <a href="{{ docsroot }}">{% translate "Documentation" %}</a> /
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                            {% if user.has_usable_password %}
+                                <p>
+                                    <span class="icon"><i class="fa fa-key"></i></span>
+                                    <a href="{% url 'admin:password_change' %}">{% translate "Change password" %}</a>
+                                </p>
+                            {% endif %}
+                            <p>
+                                <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+                                    {% csrf_token %}
+                                    <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
+                                    <button type="submit">{% translate "Log out" %}</button>
+                                </form>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock branding %}
+{% block usertools %}
+{% endblock usertools %}
+{% block nav-sidebar %}
+    <button class="sticky toggle-nav-sidebar"
+            id="toggle-nav-sidebar"
+            aria-label="{% translate 'Toggle navigation' %}">
+    </button>
+    <nav class="sticky" id="nav-sidebar">
+        {% include "admin/app_list.html" with app_list=available_apps show_changelinks=False %}
+    </nav>
+{% endblock nav-sidebar %}

@@ -1,9 +1,10 @@
 """ Admin panel overrides for User model """
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm
 
-from core.models import User
+from core.models import EnvironmentUserRole, TeamUserRole, User
 
 
 class UserAdminCreationForm(forms.ModelForm):
@@ -55,6 +56,47 @@ class UserAdminChangeForm(UserChangeForm):
         password = self.fields.get("password")
         if password:
             password.help_text = password.help_text.format("../password/")
+
+
+class EnvironmentRoleInline(admin.TabularInline):
+    """Inline form for adding the user to a role in an environment"""
+
+    model = EnvironmentUserRole
+    extra = 0
+    verbose_name = "Environment Role"
+
+    def has_change_permission(self, request, obj):
+        return False
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = super().formfield_for_dbfield(db_field, request, **kwargs)
+        # By default, Django wraps the widget to allow you to create these
+        # objects inline with the form. Unwrap the widget since this is not
+        # what we want.
+        if db_field.attname == "environment_id":
+            field.widget = field.widget.widget
+            field.queryset = field.queryset.order_by("team__name", "name")
+        return field
+
+
+class TeamRoleInline(admin.TabularInline):
+    """Inline form for adding the user to a role on a team"""
+
+    model = TeamUserRole
+    extra = 0
+    verbose_name = "Team Role"
+
+    def has_change_permission(self, request, obj):
+        return False
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = super().formfield_for_dbfield(db_field, request, **kwargs)
+        # By default, Django wraps the widget to allow you to create these
+        # objects inline with the form. Unwrap the widget since this is not
+        # what we want.
+        if db_field.attname == "team_id":
+            field.widget = field.widget.widget
+        return field
 
 
 class UserAdmin(BaseUserAdmin):
@@ -114,3 +156,7 @@ class UserAdmin(BaseUserAdmin):
     )
     list_filter = ("is_staff", "is_superuser", "is_active")
     filter_horizontal = ()
+    inlines = (
+        TeamRoleInline,
+        EnvironmentRoleInline,
+    )

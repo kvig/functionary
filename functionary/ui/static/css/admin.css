@@ -1,0 +1,39 @@
+:root {
+    --breadcrumbs-fg: #FFFFCC;
+}
+.admin-header {
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+}
+.admin-header img {
+    /* Filter to convert the white to yellow. Calculation from: https://codepen.io/sosuke/pen/Pjoqqp */
+    filter: invert(22%) sepia(46%) saturate(585%) hue-rotate(6deg);
+}
+.submit-row a.deletelink {
+    height: 35px;
+}
+.module h2 {
+    text-transform: capitalize;
+}
+#branding {
+    width: 100%;
+}
+#nav-sidebar tr > * {
+    padding: 10px;
+}
+td.original {
+    display: none;
+}
+th.original {
+    display: none;
+}
+td.delete::before {
+    all: revert;
+}
+td.delete::after {
+    all: revert;
+}
+td.delete {
+    all: revert;
+}
