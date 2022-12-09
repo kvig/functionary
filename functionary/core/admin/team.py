@@ -10,6 +10,9 @@ class EnvironmentChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return obj.name
 
+    def widget_attrs(self, widget):
+        return {"disabled": "disabled"}
+
 
 class UserRoleInline(admin.TabularInline):
     """Inline form to add users to the Team"""
@@ -48,8 +51,8 @@ class TeamForm(forms.ModelForm):
         # Since the Team doesn't have a direct reference to the
         # Environments, add the queryset manually for this Team
         if self.instance and "environments" in self.fields:
-            self.fields["environments"].queryset = Environment.objects.filter(
-                team=self.instance
+            self.fields["environments"].queryset = self.instance.environments.order_by(
+                "name"
             )
 
 

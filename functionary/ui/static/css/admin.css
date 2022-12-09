@@ -10,8 +10,9 @@
     /* Filter to convert the white to yellow. Calculation from: https://codepen.io/sosuke/pen/Pjoqqp */
     filter: invert(22%) sepia(46%) saturate(585%) hue-rotate(6deg);
 }
-.submit-row a.deletelink {
-    height: 35px;
+.deletelink-box:not(:last-child) {
+    margin-bottom: 0em;
+    box-sizing: content-box;
 }
 .module h2 {
     text-transform: capitalize;
@@ -21,6 +22,9 @@
 }
 #nav-sidebar tr > * {
     padding: 10px;
+}
+#nav-filter {
+    display: none;
 }
 td.original {
     display: none;
@@ -34,6 +38,9 @@ td.delete::before {
 td.delete::after {
     all: revert;
 }
-td.delete {
+tr.form-row td.delete {
     all: revert;
+}
+a.cancel-link {
+    box-sizing: content-box;
 }

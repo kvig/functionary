@@ -1,6 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
-{% block extrahead %}
+{% block extrastyle %}
     <link rel="shortcut icon"
           type="image/png"
           sizes="32x32"
@@ -15,7 +15,7 @@
           href="{% static 'css/functionary.css' %}"
           type="text/css"/>
     <link rel="stylesheet" href="{% static 'css/admin.css' %}" type="text/css"/>
-{% endblock extrahead %}
+{% endblock extrastyle %}
 <!-- Header -->
 {% block branding %}
     <div class="columns">
@@ -70,12 +70,3 @@
 {% endblock branding %}
 {% block usertools %}
 {% endblock usertools %}
-{% block nav-sidebar %}
-    <button class="sticky toggle-nav-sidebar"
-            id="toggle-nav-sidebar"
-            aria-label="{% translate 'Toggle navigation' %}">
-    </button>
-    <nav class="sticky" id="nav-sidebar">
-        {% include "admin/app_list.html" with app_list=available_apps show_changelinks=False %}
-    </nav>
-{% endblock nav-sidebar %}
