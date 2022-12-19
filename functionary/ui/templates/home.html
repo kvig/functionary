@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-{% if not user.is_authenticated %}
-  <p>You are not logged in</p>
-  <a href="{% url 'ui:login' %}">Log In</a>
-{% endif %}
-
+  <div class="content">
+    <h1>Hello {{ user.username }}!</h1>
+    {% if not user.environments and not user.is_superuser %}
+      <p>
+        You are not a member of any environments. Please contact an administrator to be assigned to an environment to start using Functionary.
+      </p>
+    {% endif %}
+  </div>
 {% endblock content %}

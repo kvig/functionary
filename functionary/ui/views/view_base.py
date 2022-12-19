@@ -16,7 +16,7 @@ class PermissionedEnvironmentListView(LoginRequiredMixin, ListView):
         """Filters out object not in the environment then sorts based
         on the value of order_by_fields."""
 
-        env_id = self.request.session["environment_id"]
+        env_id = self.request.session.get("environment_id", "")
         env_is_selected = len(env_id) > 2
         env = Environment.objects.get(id=env_id) if env_is_selected else None
         if env:

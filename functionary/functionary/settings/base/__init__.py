@@ -14,6 +14,7 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 
+from .auth_ import *  # noqa
 from .builder_ import *  # noqa
 from .celery_ import *  # noqa
 from .core_ import *  # noqa
@@ -49,6 +50,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "django.contrib.admin",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -59,7 +65,6 @@ INSTALLED_APPS = [
     "core",
     "builder",
     "ui",
-    "django.contrib.admin",
 ]
 
 MIDDLEWARE = [
@@ -77,7 +82,7 @@ ROOT_URLCONF = "functionary.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR.parent.parent / "ui" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -148,6 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "core.auth.backends.CoreBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 

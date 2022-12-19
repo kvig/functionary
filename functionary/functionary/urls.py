@@ -40,6 +40,7 @@ urlpatterns = [
         name="redoc",
     ),
     path("ui/", include("ui.urls")),
+    path("accounts/", include("allauth.urls")),
 ]
 
 

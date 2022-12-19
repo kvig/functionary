@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+    Signup
+{% endblock title %}
+{% block content %}
+    <div class="content">
+        <h1>Sign Up</h1>
+        <p>
+            You are about to use your {{ account.get_provider.name }} account to login to Functionary. As a final step, please complete the following form:
+        </p>
+        <form class="signup"
+              id="signup_form"
+              method="post"
+              action="{% url 'socialaccount_signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button class="button is-link" type="submit">Sign Up</button>
+        </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,6 @@
+{% for message in messages %}
+    <div class="notification is-info is-light">
+        <button class="delete" onclick="return this.parentNode.remove();"></button>
+        {{ message }}
+    </div>
+{% endfor %}

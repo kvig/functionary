@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}
+    OpenID Sign In
+{% endblock title %}
+{% block content %}
+    <div class="content">
+        <h1>OpenID Sign In</h1>
+        <form id="openid_login_form"
+              method="post"
+              action="{% url 'openid_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+{% endblock content %}
