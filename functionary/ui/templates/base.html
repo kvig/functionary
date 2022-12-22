@@ -29,6 +29,8 @@
         <link rel="stylesheet"
               href="{% static 'css/functionary.css' %}"
               type="text/css"/>
+        {% block extra_style %}
+        {% endblock extra_style %}
         <title>
             {% block title %}
                 Functionary
@@ -66,12 +68,13 @@
                                     </p>
                                     {% include "partials/env_selector.html" %}
                                 </div>
-                                <div>
-                                    <p>
-                                        <span class="icon has-text-danger"><i class="fa fa-door-open"></i></span>
-                                        <a class="is-underlined" href="{% url 'account_logout' %}">Logout</a>
-                                    </p>
-                                </div>
+                                <form method="post" action="{% url 'account_logout' %}">
+                                    {% csrf_token %}
+                                    <button class="button is-underlined is-ghost has-text-white pr-0 pb-0"
+                                            type="submit">
+                                        <span class="icon has-text-danger mr-2"><i class="fa fa-door-open"></i></span>Logout
+                                    </button>
+                                </form>
                             {% endif %}
                         </div>
                     </div>

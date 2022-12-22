@@ -1,43 +1,74 @@
 {% extends "base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% load social_helper %}
+{% block extra_style %}
+    <link rel="stylesheet" href="{% static 'css/brands.css' %}" />
+{% endblock extra_style %}
 {% block title %}
     Account Connections
 {% endblock title %}
 {% block content %}
     <div class="content">
         <h1>Account Connections</h1>
-        {% if form.accounts %}
-            <p>You can sign in to your account using any of the following third party accounts:</p>
-            <form method="post" action="{% url 'socialaccount_connections' %}">
-                {% csrf_token %}
-                <fieldset>
-                    {% if form.non_field_errors %}<div id="errorMsg">{{ form.non_field_errors }}</div>{% endif %}
-                    {% for base_account in form.accounts %}
-                        {% with base_account.get_provider_account as account %}
-                            <div>
-                                <label for="id_account_{{ base_account.id }}">
-                                    <input id="id_account_{{ base_account.id }}"
-                                           type="radio"
-                                           name="account"
-                                           value="{{ base_account.id }}"/>
-                                    <span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{ account.get_brand.name }}</span>
-                                    {{ account }}
-                                </label>
-                            </div>
-                        {% endwith %}
-                    {% endfor %}
-                    <br/>
-                    <div>
-                        <button class="button is-danger" type="submit">Remove Connection</button>
-                    </div>
-                </fieldset>
-            </form>
+        {% get_providers as socialaccount_providers %}
+        {% if not socialaccount_providers %}
+            <span>No third party accounts available to connect</span>
         {% else %}
-            <p>You currently have no third party accounts connected to this account.</p>
+            <p>
+                <span>Manage third party account login connections here.</span>
+            </p>
+            <div class="columns">
+                <form class="column is-6" hx-post="{% url 'socialaccount_connections' %}">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div id="errorMsg">{{ form.non_field_errors }}</div>{% endif %}
+                    <table class="table is-striped">
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Account</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for provider in socialaccount_providers %}
+                                {% find_account provider.id as existing_account %}
+                                <tr>
+                                    <td class="is-narrow">
+                                        <span class="icon-{{ provider.id }}">&nbsp;{{ provider.name }}</span>
+                                    </td>
+                                    <td>
+                                        {% if existing_account %}{{ existing_account.extra_data.username }}{% endif %}
+                                    </td>
+                                    <td class="is-narrow">
+                                        {% if existing_account %}
+                                            {% comment %} <span class="button is-ghost is-small has-text-center">
+                                            <a title="Disconnect {{ acct.provider.name }} account" class="is-small has-text-danger fa fa-unlink"></a>
+                                            </span> {% endcomment %}
+                                            <input id="id_account_{{ existing_account.id }}"
+                                                   type="hidden"
+                                                   name="account"
+                                                   value="{{ existing_account.id }}"/>
+                                            <button class="button is-ghost is-small is-danger fa fa-unlink"
+                                                    title="Disconnect {{ provider.name }} account"
+                                                    type="submit"
+                                                    hx-params="id_account_{{ existing_account.id }}">
+                                            </button>
+                                        {% else %}
+                                            <span class="button is-ghost is-small has-text-center">
+                                                <a title="Connect {{ provider.name }} account"
+                                                   class="is-small is-link fa fa-plus"
+                                                   href="{% provider_login_url provider.id process="connect" scope=scope auth_params=auth_params %}"></a>
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
         {% endif %}
-        <h2>Add a Third Party Account</h2>
-        <ul class="socialaccount_providers">
-            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-        </ul>
         {% include "socialaccount/snippets/login_extra.html" %}
     </div>
 {% endblock content %}

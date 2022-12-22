@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% load extras %}
+{% block extra_style %}
+    <link rel="stylesheet"
+          href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
+{% endblock extra_style %}
 {% block content %}
     <div class="column is-full">
         <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
@@ -105,8 +109,6 @@
             </div>
         </div>
     </div>
-    <link rel="stylesheet"
-          href="{% static 'css/bulma-accordion-2.0.1.min.css' %}"/>
     <script src="{% static 'js/bulma-accordion-2.0.1.min.js' %}" defer></script>
     <script>
         window.addEventListener('load', (event) => {

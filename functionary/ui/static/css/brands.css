@@ -1,0 +1,258 @@
+@font-face {
+    font-family: 'icomoon';
+    src:  url('../webfonts/brands.woff2?cozn80') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+  
+  [class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .icon-eventbrite:before {
+    content: "\e900";
+    color: #f05537;
+  }
+  .icon-facebook:before {
+    content: "\e901";
+    color: #1877f2;
+  }
+  .icon-figma:before {
+    content: "\e902";
+    color: #f24e1e;
+  }
+  .icon-flickr:before {
+    content: "\e903";
+    color: #0063dc;
+  }
+  .icon-gitea:before {
+    content: "\e904";
+    color: #609926;
+  }
+  .icon-github:before {
+    content: "\e905";
+  }
+  .icon-gumroad:before {
+    content: "\e906";
+    color: #36a9ae;
+  }
+  .icon-hubspot:before {
+    content: "\e907";
+    color: #ff7a59;
+  }
+  .icon-instagram:before {
+    content: "\e908";
+    color: #e4405f;
+  }
+  .icon-line:before {
+    content: "\e909";
+    color: #00c300;
+  }
+  .icon-linkedin:before {
+    content: "\e90a";
+    color: #0077b5;
+  }
+  .icon-mailchimp:before {
+    content: "\e90b";
+    color: #ffe01b;
+  }
+  .icon-mozillafirefox:before {
+    content: "\e90c";
+    color: #ff7139;
+  }
+  .icon-nextcloud:before {
+    content: "\e90d";
+    color: #0082c9;
+  }
+  .icon-odnoklassniki:before {
+    content: "\e90e";
+    color: #f4731c;
+  }
+  .icon-openstreetmap:before {
+    content: "\e90f";
+    color: #7ebc6f;
+  }
+  .icon-orcid:before {
+    content: "\e910";
+    color: #a6ce39;
+  }
+  .icon-patreon:before {
+    content: "\e911";
+    color: #f96854;
+  }
+  .icon-paypal:before {
+    content: "\e912";
+    color: #00457c;
+  }
+  .icon-pinterest:before {
+    content: "\e913";
+    color: #bd081c;
+  }
+  .icon-pocket:before {
+    content: "\e914";
+    color: #ef3f56;
+  }
+  .icon-reddit:before {
+    content: "\e915";
+    color: #ff4500;
+  }
+  .icon-salesforce:before {
+    content: "\e916";
+    color: #00a1e0;
+  }
+  .icon-shopify:before {
+    content: "\e917";
+    color: #7ab55c;
+  }
+  .icon-slack:before {
+    content: "\e918";
+    color: #4a154b;
+  }
+  .icon-snapchat:before {
+    content: "\e919";
+    color: #fffc00;
+  }
+  .icon-soundcloud:before {
+    content: "\e91a";
+    color: #f30;
+  }
+  .icon-stackoverflow:before {
+    content: "\e91b";
+    color: #fe7a16;
+  }
+  .icon-steam:before {
+    content: "\e91c";
+  }
+  .icon-strava:before {
+    content: "\e91d";
+    color: #fc4c02;
+  }
+  .icon-telegram:before {
+    content: "\e91e";
+    color: #2ca5e0;
+  }
+  .icon-trello:before {
+    content: "\e91f";
+    color: #0079bf;
+  }
+  .icon-twitch:before {
+    content: "\e920";
+    color: #6441a4;
+  }
+  .icon-twitter:before {
+    content: "\e921";
+    color: #1da1f2;
+  }
+  .icon-untappd:before {
+    content: "\e922";
+    color: #ffc000;
+  }
+  .icon-vimeo:before {
+    content: "\e923";
+    color: #1ab7ea;
+  }
+  .icon-vk:before {
+    content: "\e924";
+    color: #4680c2;
+  }
+  .icon-wikipedia:before {
+    content: "\e925";
+  }
+  .icon-windows:before {
+    content: "\e926";
+    color: #0078d6;
+  }
+  .icon-yahoo:before {
+    content: "\e927";
+    color: #6001d2;
+  }
+  .icon-zoom:before {
+    content: "\e928";
+    color: #2d8cff;
+  }
+  .icon-evernote1:before {
+    content: "\e929";
+    color: #00a82d;
+  }
+  .icon-evernote:before {
+    content: "\e92a";
+    color: #00a82d;
+  }
+  .icon-draugiem-dot-lv:before {
+    content: "\e92b";
+    color: #f60;
+  }
+  .icon-discord:before {
+    content: "\e92c";
+    color: #7289da;
+  }
+  .icon-digitalocean:before {
+    content: "\e92d";
+    color: #0080ff;
+  }
+  .icon-dropbox:before {
+    content: "\e92e";
+    color: #0061ff;
+  }
+  .icon-box:before {
+    content: "\e92f";
+    color: #0061d5;
+  }
+  .icon-bitbucket:before {
+    content: "\e930";
+    color: #0052cc;
+  }
+  .icon-basecamp:before {
+    content: "\e931";
+    color: #5ecc62;
+  }
+  .icon-auth0:before {
+    content: "\e932";
+    color: #eb5424;
+  }
+  .icon-apple:before {
+    content: "\e933";
+    color: #999;
+  }
+  .icon-angellist:before {
+    content: "\e934";
+  }
+  .icon-amazonaws:before {
+    content: "\e935";
+  }
+  .icon-amazon:before {
+    content: "\e936";
+    color: #f90;
+  }
+  .icon-500px:before {
+    content: "\e937";
+    color: #0099e5;
+  }
+  .icon-google:before {
+    content: "\e938";
+    color: #4285f4;
+  }
+  .icon-openid:before {
+    content: "\e939";
+    color: #f78c40;
+  }
+  .icon-deepin:before {
+    content: "\e93a";
+    color: #007cff;
+  }
+  .icon-gitlab:before {
+    content: "\e93b";
+    color: #fca121;
+  }

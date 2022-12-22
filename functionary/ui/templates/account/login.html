@@ -1,39 +1,137 @@
-{% extends "base.html" %}
-{% load account socialaccount %}
-{% block title %}
-    Sign In
-{% endblock title %}
-{% block content %}
-    <div class="content">
-        <h1>Sign In</h1>
-        {% get_providers as socialaccount_providers %}
-        {% if socialaccount_providers %}
-            <p>
-                Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for an account and sign in below:
-            </p>
-            <div class="socialaccount_ballot">
-                <ul class="socialaccount_providers">
-                    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-                </ul>
-                <div class="login-or">or</div>
-                <br/>
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="description" content="Functionary Login"/>
+        <meta name="keywords" content="Functionary"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'favicon/favicon-32x32.png' %}"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'favicon/favicon-16x16.png' %}"/>
+        <link rel="shortcut icon"
+              type="image/png"
+              href="{% static 'favicon/favicon.ico' %}"/>
+        <link rel="stylesheet"
+              href="{% static 'css/bulma-0.9.4.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet" href="{% static 'css/brands.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/fontawesome-6.2.1.min.css' %}" />
+        <link rel="stylesheet"
+              href="{% static 'css/fontawesome-brands-6.2.1.min.css' %}"/>
+        <link rel="stylesheet"
+              href="{% static 'css/functionary.css' %}"
+              type="text/css"/>
+        <title>
+            {% block title %}
+                Functionary Login
+            {% endblock title %}
+        </title>
+    </head>
+    <body>
+        <section class="hero is-small mb-r">
+            <div class="hero-body">
+                <p class="has-text-centered">
+                    <img class="logo-blue"
+                         src="{% static 'functionary_f_logo.png' %}"
+                         alt="F"
+                         width="64"
+                         height="64"/>
+                    <span class="functionary-title is-size-2 has-text-link">unctionary</span>
+                </p>
             </div>
-            {% include "socialaccount/snippets/login_extra.html" %}
-        {% else %}
-            <p>
-                If you have not created an account yet, then please <a href="{{ signup_url }}">sign up</a> first.
-            </p>
-        {% endif %}
-        <form method="post" action="{% url 'account_login' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}"/>
-            {% endif %}
-            <br/>
-            <button class="button is-link" type="submit">Sign In</button>
-        </form>
-    </div>
-{% endblock content %}
+        </section>
+        {% block content %}
+            <div class="container has-text-centered">
+                <div class="columns">
+                    <div class="column is-6 container ">
+                        {% if messages %}
+                            {% include "partials/auth_messages.html" %}
+                        {% endif %}
+                        <form method="post" action="{% url 'account_login' %}">
+                            {% csrf_token %}
+                            <div class="card">
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        <span class="is-size-4">Please Sign in</span>
+                                    </p>
+                                </header>
+                                <div class="card-content">
+                                    <div class="field">
+                                        <label class="label has-text-left" for="id_login">Name</label>
+                                        <div class="control">
+                                            <input class="input"
+                                                   type="text"
+                                                   name="login"
+                                                   id="id_login"
+                                                   required
+                                                   value="{{ form.cleaned_data.login }}"/>
+                                            {% comment %} {{ form.login }} {% endcomment %}
+                                        </div>
+                                        {{ form.login.errors }}
+                                    </div>
+                                    <div class="field">
+                                        <label class="label has-text-left" for="password">Password</label>
+                                        <div class="control">
+                                            <input class="input"
+                                                   type="password"
+                                                   name="password"
+                                                   id="id_password"
+                                                   required/>
+                                        </div>
+                                        {{ form.password.errors }}
+                                    </div>
+                                    {{ form.non_field_errors }}
+                                </div>
+                                <footer class="card-footer">
+                                    <p class="card-footer-item">
+                                        <button class="button is-success" type="submit">Sign In</button>
+                                    </p>
+                                </footer>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endblock content %}
+        {% block extracontent %}
+            {% get_providers as socialaccount_providers %}
+            <div class="container has-text-centered">
+                <div class="columns">
+                    <div class="column is-6 container has-text-centered">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="is-size-4">Or login with:</span>
+                                <div class="columns is-multiline is-mobile">
+                                    {% for provider in socialaccount_providers %}
+                                        {% if provider.id == "openid" %}
+                                            {% for brand in provider.get_brands %}
+                                                {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
+                                                <a title="{{ brand.name }}"
+                                                   class="button icon-{{ provider.id }} icon-{{ brand.id }}"
+                                                   href="{% provider_login_url provider.id openid=brand.openid_url process=process %}">{{ brand.name }}</a>
+                                            {% endfor %}
+                                        {% endif %}
+                                        <div class="column">
+                                            <a title="{{ provider.name }}"
+                                               class="button icon-{{ provider.id }}"
+                                               href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+                                                &nbsp;{{ provider.name }}
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock extracontent %}
+    </body>
+</html>
