@@ -1,19 +1,23 @@
-{% extends "base.html" %}
+{% extends "partials/modal.html" %}
 {% block title %}
-    Sign In
+    {% if process == "connect" %}
+        Connect {{ provider.name }}
+    {% else %}
+        Sign in via {{ provider.name }}
+    {% endif %}
 {% endblock title %}
-{% block content %}
+{% block description %}
+    {% if process == "connect" %}
+        <p>You are about to connect a new third party account from {{ provider.name }}.</p>
+    {% else %}
+        <p>You are about to sign in using a third party account from {{ provider.name }}.</p>
+    {% endif %}
+{% endblock description %}
+{% block modal_content %}
     <div class="content">
-        {% if process == "connect" %}
-            <h1>Connect {{ provider.name }}</h1>
-            <p>You are about to connect a new third party account from {{ provider.name }}.</p>
-        {% else %}
-            <h1>Sign In via {{ provider.name }}</h1>
-            <p>You are about to sign in using a third party account from {{ provider.name }}.</p>
-        {% endif %}
-        <form method="post">
+        <form method="post"  action="{{ request.path }}">
             {% csrf_token %}
             <button class="button is-link" type="submit">Continue</button>
         </form>
     </div>
-{% endblock content %}
+{% endblock modal_content %}
