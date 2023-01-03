@@ -22,9 +22,8 @@
               href="{% static 'css/bulma-0.9.4.min.css' %}"
               type="text/css"/>
         <link rel="stylesheet" href="{% static 'css/brands.css' %}" />
-        <link rel="stylesheet" href="{% static 'css/fontawesome-6.2.1.min.css' %}" />
         <link rel="stylesheet"
-              href="{% static 'css/fontawesome-brands-6.2.1.min.css' %}"/>
+              href="{% static 'css/fontawesome-solid-5.15.4.min.css' %}"/>
         <link rel="stylesheet"
               href="{% static 'css/functionary.css' %}"
               type="text/css"/>
@@ -103,47 +102,49 @@
         {% endblock content %}
         {% block extracontent %}
             {% get_providers as socialaccount_providers %}
-            <form>
-                {% csrf_token %}
-                <div class="container has-text-centered">
-                    <div class="columns">
-                        <div class="column is-6 container has-text-centered">
-                            <div class="card">
-                                <div class="card-content">
-                                    <span class="is-size-4">Or login with:</span>
-                                    <div class="columns is-multiline is-mobile">
-                                        {% for provider in socialaccount_providers %}
-                                            {% if provider.id == "openid" %}
-                                                {% for brand in provider.get_brands %}
-                                                    {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
-                                                    <button title="{{ brand.name }}"
-                                                            class="button icon-{{ provider.id }} icon-{{ brand.id }}"
+            {% if socialaccount_providers %}
+                <form>
+                    {% csrf_token %}
+                    <div class="container has-text-centered">
+                        <div class="columns">
+                            <div class="column is-6 container has-text-centered">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <span class="is-size-4">Or login with:</span>
+                                        <div class="columns is-multiline is-mobile">
+                                            {% for provider in socialaccount_providers %}
+                                                {% if provider.id == "openid" %}
+                                                    {% for brand in provider.get_brands %}
+                                                        {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
+                                                        <button title="{{ brand.name }}"
+                                                                class="button icon-{{ provider.id }} icon-{{ brand.id }}"
+                                                                type="submit"
+                                                                hx-target="#show_modal"
+                                                                hx-swap="innerHTML"
+                                                                hx-get="{% provider_login_url provider.id openid=brand.openid_url process=process %}">
+                                                            &nbsp;{{ brand.name }}
+                                                        </button>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                <div class="column">
+                                                    <button title="{{ provider.name }}"
+                                                            class="button icon-{{ provider.id }}"
                                                             type="submit"
                                                             hx-target="#show_modal"
                                                             hx-swap="innerHTML"
-                                                            hx-get="{% provider_login_url provider.id openid=brand.openid_url process=process %}">
-                                                        &nbsp;{{ brand.name }}
+                                                            hx-get="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+                                                        &nbsp;{{ provider.name }}
                                                     </button>
-                                                {% endfor %}
-                                            {% endif %}
-                                            <div class="column">
-                                                <button title="{{ provider.name }}"
-                                                        class="button icon-{{ provider.id }}"
-                                                        type="submit"
-                                                        hx-target="#show_modal"
-                                                        hx-swap="innerHTML"
-                                                        hx-get="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
-                                                    &nbsp;{{ provider.name }}
-                                                </button>
-                                            </div>
-                                        {% endfor %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            {% endif %}
         {% endblock extracontent %}
         <div id="show_modal"/>
     </body>

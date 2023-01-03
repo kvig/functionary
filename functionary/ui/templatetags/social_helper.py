@@ -16,8 +16,8 @@ def find_account(context, provider_id: str) -> ProviderAccount | None:
     Returns:
         The matching ProviderAccount or None
     """
-    if "form" in context:
-        for account in context["form"].accounts:
+    if form := context.get("form"):
+        for account in form.accounts:
             if account.provider == provider_id:
                 return account.get_provider_account().account
     return None
