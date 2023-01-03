@@ -1,18 +1,18 @@
 {% extends "partials/modal.html" %}
-{% block title %}
+{% block modal_title %}
     {% if process == "connect" %}
         Connect {{ provider.name }}
     {% else %}
         Sign in via {{ provider.name }}
     {% endif %}
-{% endblock title %}
-{% block description %}
+{% endblock modal_title %}
+{% block modal_description %}
     {% if process == "connect" %}
         <p>You are about to connect a new third party account from {{ provider.name }}.</p>
     {% else %}
         <p>You are about to sign in using a third party account from {{ provider.name }}.</p>
     {% endif %}
-{% endblock description %}
+{% endblock modal_description %}
 {% block modal_content %}
     <div class="content">
         <form method="post"  action="{{ request.path }}">
@@ -21,3 +21,5 @@
         </form>
     </div>
 {% endblock modal_content %}
+{% block modal_nofooter %}
+{% endblock modal_nofooter %}

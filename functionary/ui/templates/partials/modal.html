@@ -22,10 +22,12 @@
                 {% endblock modal_content %}
             </div>
         </section>
-        <footer class="modal-card-foot">
-            {% block modal_footer %}
-            {% endblock modal_footer %}
-        </footer>
+        {% block modal_nofooter %}
+            <footer class="modal-card-foot">
+                {% block modal_footer %}
+                {% endblock modal_footer %}
+            </footer>
+        {% endblock modal_nofooter %}
         {% block form_end %}
         {% endblock form_end %}
     </div>
