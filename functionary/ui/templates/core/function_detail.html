@@ -59,40 +59,36 @@
                 <span class="ml-4">{{ function.return_type }}</span>
             </div>
         {% endif %}
-        {% if function.output_format %}
-            <div class="field ml-4">
-                <label class="label" for="desc">Output Format:</label>
-                <span class="ml-4">{{ function.output_format }}</span>
-            </div>
-        {% endif %}
-        {% if form %}
+        {% if form is not None %}
             <div class="field ml-4">
                 <label class="label">Create Task:</label>
-                <div class="has-background-white-ter ml-4">
+                <div class="ml-4">
                     <form id="djangoForm"
                           method="post"
                           action="{% url 'ui:function-execute' %}">
                         {% csrf_token %}
-                        <input type="hidden" name="function_id" value="{{ function.id }}"/>
-                        <div class="column has-addons">
-                            {{ form.non_field_errors }}
-                            {{ form }}
-                            {% if missing_variables %}
-                                <div class="field ml-4 missing-variables has-background-danger-light has-text-danger">
-                                    <span>Tasking this function may not work as expected; the following variables are missing:</span>
-                                    <ul>
-                                        {% for missing in missing_variables %}
-                                            <li>
-                                                <span>{{ missing }}</span>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                            <input class="button {% if missing_variables %}is-warning{% else %}is-link{% endif %}"
-                                   type="submit"
-                                   value="Execute"/>
+                        <div class="has-background-white-ter">
+                            <input type="hidden" name="function_id" value="{{ function.id }}"/>
+                            <div class="column has-addons">
+                                {{ form.non_field_errors }}
+                                {{ form }}
+                                {% if missing_variables %}
+                                    <div class="field ml-4 missing-variables has-background-danger-light has-text-danger">
+                                        <span>Tasking this function may not work as expected; the following variables are missing:</span>
+                                        <ul>
+                                            {% for missing in missing_variables %}
+                                                <li>
+                                                    <span>{{ missing }}</span>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
+                        <input class="button mt-2 {% if missing_variables %}is-warning{% else %}is-link{% endif %}"
+                               type="submit"
+                               value="Execute"/>
                     </form>
                 </div>
             </div>

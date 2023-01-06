@@ -38,6 +38,7 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
         context = super().get_context_data(**kwargs)
         function = self.object
         env = function.package.environment
+        form = None
 
         missing_variables = []
         if function.variables:
@@ -49,7 +50,7 @@ class FunctionDetailView(PermissionedEnvironmentDetailView):
         if self.request.user.has_perm(Permission.TASK_CREATE, env):
             form = TaskParameterForm(function)
 
-            context["form"] = form.render("forms/task_parameters.html")
+        context["form"] = form.render("forms/task_parameters.html") if form else None
         return context
 
 
