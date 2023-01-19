@@ -50,11 +50,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
+    "constance",
+    "constance.backends.database",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "django.contrib.admin",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.gitlab",
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.google",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -65,6 +69,7 @@ INSTALLED_APPS = [
     "core",
     "builder",
     "ui",
+    "django.contrib.admin",
 ]
 
 MIDDLEWARE = [

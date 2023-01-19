@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.apps import apps
-from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -24,7 +23,6 @@ from drf_spectacular.views import (
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("api/v1/", include("core.api.v1.urls")),
     path("api/v1/", include("builder.api.v1.urls")),
     path("api/v1/api-token-auth", obtain_auth_token),
@@ -40,6 +38,7 @@ urlpatterns = [
         name="redoc",
     ),
     path("ui/", include("ui.urls")),
+    path("admin/", include("ui.admin.urls")),
     path("accounts/", include("allauth.urls")),
 ]
 

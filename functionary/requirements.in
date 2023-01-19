@@ -2,6 +2,8 @@ celery
 django
 django-allauth
 django-celery-beat
+django-constance
+django-constance[database]
 django-htmx
 django-widget-tweaks
 docker
