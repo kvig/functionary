@@ -2,12 +2,8 @@ import pprint
 
 from allauth.socialaccount.models import SocialAccount
 from constance import admin as constance_admin
-
-# from django.contrib import admin
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.sessions.models import Session
-
-# from django.contrib.sites.models import Site
 from rest_framework.authtoken.models import Token
 
 from core.admin.environment import EnvironmentAdmin
@@ -18,13 +14,14 @@ from core.models import Environment, Team, User
 
 
 class UIAdminSite(AdminSite):
-
     site_header = "Functionary Administration"
     site_title = "Functionary Admin"
     site_url = "/ui"
 
 
 class SessionAdmin(ModelAdmin):
+    """Custom Admin for the Session Model that decodes the session data."""
+
     def _session_data(self, obj):
         return pprint.pformat(obj.get_decoded())
 

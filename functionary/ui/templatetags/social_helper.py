@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from allauth.socialaccount import providers
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.base import Provider, ProviderAccount
@@ -28,13 +26,15 @@ def find_account(context, provider_id: str) -> ProviderAccount | None:
 
 
 @register.simple_tag()
-def configured_providers() -> list[Tuple[str, Provider]] | None:
+def configured_providers() -> list[dict[str, Provider]]:
     """This tag returns a list of tuples of the configured Providers.
 
     Returns:
         List of tuples of configured provider name and Provider
     """
-    return [
-        (app.name, providers.registry.by_id(app.provider))
-        for app in SocialApp.objects.all()
-    ]
+    provider_pairs = []
+    for app in SocialApp.objects.all():
+        provider_pairs.append(
+            {"name": app.name, "provider": providers.registry.by_id(app.provider)}
+        )
+    return provider_pairs

@@ -31,36 +31,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for provider in socialaccount_providers %}
-                                {% find_account provider.1.id as existing_account %}
+                            {% for provider_pair in socialaccount_providers %}
+                                {% find_account provider_pair.provider.id as existing_account %}
                                 <tr>
                                     <td class="is-narrow">
-                                        <span class="icon-{{ provider.1.id }}">&nbsp;{{ provider.0 }}</span>
+                                        <span class="icon-{{ provider_pair.provider.id }}">&nbsp;{{ provider_pair.name }}</span>
                                     </td>
                                     <td>
                                         {% if existing_account %}{{ existing_account.extra_data.username }}{% endif %}
                                     </td>
                                     <td class="is-narrow">
                                         {% if existing_account %}
-                                            {% comment %} <span class="button is-ghost is-small has-text-center">
-                                            <a title="Disconnect {{ acct.provider.name }} account" class="is-small has-text-danger fa fa-unlink"></a>
-                                            </span> {% endcomment %}
                                             <input id="id_account_{{ existing_account.id }}"
                                                    type="hidden"
                                                    name="account"
                                                    value="{{ existing_account.id }}"/>
                                             <button class="button is-ghost is-small is-danger fa fa-unlink"
-                                                    title="Disconnect {{ provider.0 }} account"
+                                                    title="Disconnect {{ provider_pair.name }} account"
                                                     type="submit"
                                                     hx-params="id_account_{{ existing_account.id }}">
                                             </button>
                                         {% else %}
                                             <span class="button is-ghost is-small has-text-center">
-                                                <a title="Connect {{ provider.0 }} account"
+                                                <a title="Connect {{ provider_pair.name }} account"
                                                    class="is-small is-link fa fa-plus"
                                                    hx-target="#connect_modal"
                                                    hx-swap="innerHTML"
-                                                   hx-get="{% provider_login_url provider.1.id process="connect" scope=scope auth_params=auth_params %}"></a>
+                                                   hx-get="{% provider_login_url provider_pair.provider.id process="connect" scope=scope auth_params=auth_params %}"></a>
                                             </span>
                                         {% endif %}
                                     </td>
