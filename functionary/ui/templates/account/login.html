@@ -117,27 +117,28 @@
                                             {% for provider_pair in socialaccount_providers %}
                                                 {% if provider_pair.provider.id == "openid" %}
                                                     {% for brand in provider_pair.provider.get_brands %}
-                                                        {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
-                                                        <button title="{{ brand.name }}"
-                                                                class="button icon-{{ provider_pair.provider.id }} icon-{{ brand.id }}"
+                                                        <div class="column">
+                                                            {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
+                                                            <button title="{{ brand.name }}"
+                                                                    class="button icon-{{ provider_pair.provider.id }} icon-{{ brand.id }}"
+                                                                    type="submit"
+                                                                    hx-get="{% provider_login_url provider_pair.provider.id openid=brand.openid_url process=process %}">
+                                                                &nbsp;{{ brand.name }}
+                                                            </button>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="column">
+                                                        <button title="{{ provider_pair.name }}"
+                                                                class="button icon-{{ provider_pair.provider.id }}"
                                                                 type="submit"
                                                                 hx-target="#show_modal"
                                                                 hx-swap="innerHTML"
-                                                                hx-get="{% provider_login_url provider_pair.provider.id openid=brand.openid_url process=process %}">
-                                                            &nbsp;{{ brand.name }}
+                                                                hx-get="{% provider_login_url provider_pair.provider.id process=process scope=scope auth_params=auth_params %}">
+                                                            &nbsp;{{ provider_pair.name }}
                                                         </button>
-                                                    {% endfor %}
+                                                    </div>
                                                 {% endif %}
-                                                <div class="column">
-                                                    <button title="{{ provider_pair.name }}"
-                                                            class="button icon-{{ provider_pair.provider.id }}"
-                                                            type="submit"
-                                                            hx-target="#show_modal"
-                                                            hx-swap="innerHTML"
-                                                            hx-get="{% provider_login_url provider_pair.provider.id process=process scope=scope auth_params=auth_params %}">
-                                                        &nbsp;{{ provider_pair.name }}
-                                                    </button>
-                                                </div>
                                             {% endfor %}
                                         </div>
                                     </div>

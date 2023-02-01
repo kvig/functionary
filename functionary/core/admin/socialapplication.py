@@ -2,6 +2,7 @@ from allauth.socialaccount.models import SocialApp
 from constance import config as constance_config
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 
 
 def provider_config_from_constance(provider: str) -> dict:
@@ -38,7 +39,11 @@ class SocialAppForm(forms.ModelForm):
     actual SocialApp for authentication.
     """
 
-    provider_config = forms.fields.JSONField(required=False)
+    provider_config = forms.fields.JSONField(
+        required=False,
+        help_text="Click <a href='https://django-allauth.readthedocs.io/"
+        + "en/latest/providers.html'>here</a> for provider configuration options.",
+    )
 
     class Meta:
         model = ConfiguredSocialApp
@@ -60,9 +65,21 @@ class SocialAppForm(forms.ModelForm):
         self.cleaned_data["provider_config"] = None
         return super().save(commit)
 
+    def clean_provider(self):
+        provider = self.cleaned_data["provider"]
+        if not provider:
+            raise ValueError("Provider is required")
+        elif (
+            SocialApp.objects.filter(provider=provider)
+            .exclude(id=self.instance.id)
+            .exists()
+        ):
+            raise ValidationError("Provider already configured")
+        return provider
+
     def clean(self):
         data = super().clean()
-        provider = data["provider"]
+        provider = data.get("provider", None)
         config = data.get("provider_config", None)
 
         if provider:
@@ -73,6 +90,7 @@ class SocialAppForm(forms.ModelForm):
             # probably ignored the setting so grab it from Constance.
             if config is None or (self.instance.id is None and not config):
                 data["provider_config"] = provider_config_from_constance(provider)
+
         return data
 
 

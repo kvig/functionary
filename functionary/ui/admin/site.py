@@ -1,7 +1,6 @@
 import pprint
 
 from allauth.socialaccount.models import SocialAccount
-from constance import admin as constance_admin
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.sessions.models import Session
 from rest_framework.authtoken.models import Token
@@ -40,4 +39,3 @@ ui_admin_site.register(Team, TeamAdmin)
 ui_admin_site.register(User, UserAdmin)
 ui_admin_site.register(SocialAccount)
 ui_admin_site.register(ConfiguredSocialApp, SocialAppAdmin)
-ui_admin_site.register([constance_admin.Config], constance_admin.ConstanceAdmin)

@@ -16,9 +16,9 @@ CONSTANCE_ADDITIONAL_FIELDS = {"config_field": ["django.forms.fields.JSONField",
 CONSTANCE_CONFIG = {
     "SOCIALACCOUNT_PROVIDERS": (
         {
-            "facebook": {"SCOPE": ["public_profile"]},
-            "github": {"SCOPE": ["user", "repo", "read:org"]},
-            "gitlab": {"GITLAB_URL": "https://gitlab.com"},
+            "github": {},
+            "gitlab": {},
+            "keycloak": {},
         },
         "SocialAccount Providers Configuration",
         "config_field",
