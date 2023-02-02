@@ -23,6 +23,8 @@ class ConfiguredSocialApp(SocialApp):
 
     class Meta:
         proxy = True
+        app_label = "socialaccount"
+        verbose_name = "Social application"
 
     @classmethod
     def from_db(cls, db, field_names, values):
