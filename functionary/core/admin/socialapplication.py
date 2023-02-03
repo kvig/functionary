@@ -69,9 +69,7 @@ class SocialAppForm(forms.ModelForm):
 
     def clean_provider(self):
         provider = self.cleaned_data["provider"]
-        if not provider:
-            raise ValueError("Provider is required")
-        elif (
+        if (
             SocialApp.objects.filter(provider=provider)
             .exclude(id=self.instance.id)
             .exists()

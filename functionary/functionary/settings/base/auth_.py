@@ -52,7 +52,7 @@ def constance_settings_proxy(setting_name, default_value):
         value = json.loads(value)
     except Exception:
         pass
-    if not value:
+    if value is None:
         value = getattr(settings, setting_name, default_value)
 
     return value
