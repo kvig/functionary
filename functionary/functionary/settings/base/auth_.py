@@ -48,14 +48,12 @@ def constance_settings_proxy(setting_name, default_value):
     from django.conf import settings
 
     value = getattr(config, setting_name, None)
-    try:
-        value = json.loads(value)
-    except Exception:
-        pass
     if value is None:
-        value = getattr(settings, setting_name, default_value)
-
-    return value
+        return getattr(settings, setting_name, default_value)
+    try:
+        return json.loads(value)
+    except Exception:
+        return value
 
 
 ALLAUTH_SETTING_GETTER = constance_settings_proxy
