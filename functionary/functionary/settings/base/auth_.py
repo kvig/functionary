@@ -42,18 +42,12 @@ def constance_settings_proxy(setting_name, default_value):
         The configured setting from Constance. If it's not found, the setting
         from django.conf.settings, otherwise the default_value.
     """
-    import json
-
     from constance import config
     from django.conf import settings
 
-    value = getattr(config, setting_name, None)
-    if value is None:
-        return getattr(settings, setting_name, default_value)
-    try:
-        return json.loads(value)
-    except Exception:
-        return value
+    if (value := getattr(config, setting_name, None)) is None:
+        value = getattr(settings, setting_name, default_value)
+    return value
 
 
 ALLAUTH_SETTING_GETTER = constance_settings_proxy
