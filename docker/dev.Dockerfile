@@ -15,8 +15,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 RUN apt-get update && \
     apt-get install -y \
     # python build deps
-    make gcc python3-dev libpq-dev && \
-    adduser $user --uid $uid --disabled-password && \
+    make gcc python3-dev libpq-dev
+
+RUN useradd -l -m -u $uid $user && \
     mkdir -p $install_dir && \
     chown $user:$user -R $install_dir
 
