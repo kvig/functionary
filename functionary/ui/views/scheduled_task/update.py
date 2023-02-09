@@ -58,7 +58,10 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
 
         data["parameters"] = task_parameter_form.cleaned_data
         form = ScheduledTaskForm(
-            data=data, environment=scheduled_task.environment, instance=scheduled_task
+            data=data,
+            environment=scheduled_task.environment,
+            instance=scheduled_task,
+            existing_errors=task_parameter_form.errors,
         )
         if form.is_valid():
             form.save()

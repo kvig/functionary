@@ -96,6 +96,7 @@ def validate_parameters(parameters: dict, instance: Union["Function", "Workflow"
     """
     try:
         pydantic_model = _get_pydantic_model(instance)
+        # KeyError will get thrown if one or more parameters are invalid
         _ = pydantic_model(**_serialize_json_parameters(parameters, instance))
-    except (ValidationError, json.JSONDecodeError) as exc:
+    except (KeyError, ValidationError, json.JSONDecodeError) as exc:
         raise DjangoValidationError(exc)

@@ -2,261 +2,232 @@
 {% load widget_tweaks %}
 {% load static %}
 {% block content %}
-<div class="block">
-    {% if form %}
-        
-        {% if update %}
-            <form method="post" action="{% url 'ui:scheduledtask-update' scheduledtask.id %}" enctype="multipart/form-data">
-        {% else %}
-            <form method="post" action="{% url 'ui:scheduledtask-create' %}" enctype="multipart/form-data">
-        {% endif %}
-            
-        {% csrf_token %}
-            
-            <!-- Non-Field Errors display -->
-            <div class="columns is-centered">
-                <div class="column has-text-centered is-half">
-                    {% if form.non_field_errors %}
-                    <div class="notification is-warning has-text-black">
-                        <button class="delete" onclick="return this.parentNode.remove();"></button>
-                        Non-Field Errors:
-                        {{ form.non_field_errors }}
-                    </div>
+    <div class="block">
+        {% if form %}
+            {% if update %}
+                <form method="post"
+                      action="{% url 'ui:scheduledtask-update' scheduledtask.id %}"
+                      enctype="multipart/form-data">
+                {% else %}
+                    <form method="post"
+                          action="{% url 'ui:scheduledtask-create' %}"
+                          enctype="multipart/form-data">
                     {% endif %}
-                </div>
-            </div>
-
-            <!-- Name row/field -->
-            <div class="box">
-
-                <div class="field">
-                    <div class="columns is-8">
-                        <div class="column is-one-third">
-                            <label for="{{ form.name.id_for_label }}">
-                                <b class="title is-size-4">{{ form.name.label }}</b> 
-                                <span class="is-small has-text-grey-light">{{ form.name.label_suffix }}</span>
-                                &nbsp;&nbsp;&nbsp;{{ form.name.help_text }}
-                            </label>
-                            <div class="column is-one-half p-0 is-italic subtitle is-size-6">
-                                <p>Give a descriptive name for your scheduled task.</p>
-                            </div>
-                            <div class="errorlist">
-                                {{ form.name.errors }}
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="control">
-                                {{ form.name }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr/>
-
-                {% if update %}
-                <div class="field">
-                    <div class="columns is-8">
-                        <div class="column is-one-third">
-                            <label for="{{ form.status.id_for_label }}">
-                                <b class="title is-size-4">{{ form.status.label }}</b> 
-                                <span class="is-small has-text-grey-light">{{ form.status.label_suffix }}</span>
-                                &nbsp;&nbsp;&nbsp;{{ form.status.help_text }}
-                            </label>
-                            <div class="column is-one-half p-0 is-italic subtitle is-size-6">
-                                <p>Update the status of your scheduled task.</p>
-                            </div>
-                            <div class="errorlist">
-                                {{ form.status.errors }}
-                            </div>
-                        </div>
-                        <div class="column is-one-third">
-                            <div class="control">
-                                {{ form.status }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <hr/>
-                {% endif %}
-
-                <!-- Description row/field -->
-                <div class="field">
-                    <div class="columns is-8">
-                        <div class="column is-one-third">
-                            <label for="{{ form.description.id_for_label }}">
-                                <b {% if form.description.errors %}class="errors"{% endif %} class="title is-size-4">{{ form.description.label }}</b> 
-                                <span class="is-small has-text-grey-light">{{ form.description.label_suffix }}</span>
-                                &nbsp;&nbsp;&nbsp;{{ form.description.help_text }}
-                            </label>
-                            <div class="column is-one-half p-0 is-italic subtitle is-size-6">
-                                <p>Give a description for your scheduled task.</p>
-                            </div>
-                            <div class="errorlist">
-                                {{ form.description.errors }}
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="control">
-                                {{ form.description }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr/>
-
-                <!-- Function row/field -->
-                <div class="field">
-                    <div class="columns">
-                        <div class="column is-one-third">
-                            <label for="{{ form.function.id_for_label }}">
-                                <b class="title is-size-4">{{ form.function.label }}</b> 
-                                <span class="is-small has-text-grey-light">{{ form.function.label_suffix }}</span>
-                                &nbsp;&nbsp;&nbsp;{{ form.function.help_text }}
-                            </label>
-                            <div class="column p-0 is-italic subtitle is-size-6">
-                                <p>Select which function you want to schedule.</p>
-                            </div>
-                            <div class="errorlist">
-                                {{ form.function.errors }}
-                            </div>
-                        </div>
-                        <div class="column is-one-third">
-                            {% if update %}
-                            <div class="control">
-                                {% render_field form.function disabled=True %}
-                            </div>
-                            {% else %}
-                            <div class="control">
-                                {{ form.function }}
-                            </div>
+                    {% csrf_token %}
+                    <!-- Non-Field Errors display -->
+                    <div class="columns is-centered">
+                        <div class="column has-text-centered is-half">
+                            {% if form.non_field_errors %}
+                                <div class="notification is-warning has-text-black">
+                                    <button class="delete" onclick="return this.parentNode.remove();"></button>
+                                    Non-Field Errors:
+                                    {{ form.non_field_errors }}
+                                </div>
                             {% endif %}
                         </div>
                     </div>
-                </div>
-
-                <hr/>
-
-                <!-- Crontab row/field -->
-                <div class="field">
-                    <div class="columns">
-                        <div class="column is-one-third">
-                            <label>
-                                <b class="title is-size-4">Crontab Schedule</b> 
-                            </label>
-                            <div class="column p-0 is-italic subtitle is-size-6">
-                                <p>Setup the Crontab-style schedule.</p>
-                            </div>
-                        </div>
-
-                        <div class="columns is-multiline">
-                            <div class="column is-one-third">
-                                <div class="box">
-                                    <label for="{{ form.scheduled_minute.id_for_label }}">
-                                        <span>{{ form.scheduled_minute.label }}</span>
+                    <!-- Name row/field -->
+                    <div class="box">
+                        <div class="field">
+                            <div class="columns is-8">
+                                <div class="column is-one-third">
+                                    <label for="{{ form.name.id_for_label }}">
+                                        <b class="title is-size-4">{{ form.name.label }}</b>
+                                        <span class="is-small has-text-grey-light">{{ form.name.label_suffix }}</span>
+                                        &nbsp;&nbsp;&nbsp;{{ form.name.help_text }}
                                     </label>
-                                    <div class="control">
-                                        {{ form.scheduled_minute }}
-                                        {{ form.scheduled_minute.errors }}
+                                    <div class="column is-one-half p-0 is-italic subtitle is-size-6">
+                                        <p>Give a descriptive name for your scheduled task.</p>
                                     </div>
-                                    <div id="{{ form.scheduled_minute.id_for_label }}_errors">
-                                    </div>
+                                    <div class="errorlist">{{ form.name.errors }}</div>
                                 </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="box">
-                                    <label for="{{ form.scheduled_hour.id_for_label }}">
-                                        <span>{{ form.scheduled_hour.label }}</span>
-                                    </label>
-                                    <div class="control">
-                                        {{ form.scheduled_hour }}
-                                        {{ form.scheduled_hour.errors }}
-                                    </div>
-                                    <div id="{{ form.scheduled_hour.id_for_label }}_errors">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="box">
-                                    <label for="{{ form.scheduled_day_of_week.id_for_label }}">
-                                        <span>{{ form.scheduled_day_of_week.label }}</span>
-                                    </label>
-                                    <div class="control">
-                                        {{ form.scheduled_day_of_week }}
-                                        {{ form.scheduled_day_of_week.errors }}
-                                    </div>
-                                    <div id="{{ form.scheduled_day_of_week.id_for_label }}_errors">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="box">
-                                    <label for="{{ form.scheduled_day_of_month.id_for_label }}">
-                                        <span>{{ form.scheduled_day_of_month.label }}</span>
-                                    </label>
-                                    <div class="control">
-                                        {{ form.scheduled_day_of_month }}
-                                        {{ form.scheduled_day_of_month.errors }}
-                                    </div>
-                                    <div id="{{ form.scheduled_day_of_month.id_for_label }}_errors">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="box">
-                                    <label for="{{ form.scheduled_month_of_year.id_for_label }}">
-                                        <span>{{ form.scheduled_month_of_year.label }}</span>
-                                    </label>
-                                    <div class="control">
-                                        {{ form.scheduled_month_of_year }}
-                                        {{ form.scheduled_month_of_year.errors }}
-                                    </div>
-                                    <div id="{{ form.scheduled_month_of_year.id_for_label }}_errors">
-                                    </div>
+                                <div class="column">
+                                    <div class="control">{{ form.name }}</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <hr/>
-
-                <!-- Load function parameters -->
-                <div class="field">
-                    <div class="columns">
-                        <div class="column is-one-third">
-                            <label for="{{ form.parameters.id_for_label }}">
-                                <b class="title is-size-4">{{ form.parameters.label }}</b> 
-                                <span class="is-small has-text-grey-light">{{ form.parameters.label_suffix }}</span>
-                                &nbsp;&nbsp;&nbsp;{{ form.parameters.help_text }}
-                            </label>
-                            <div class="column p-0 is-italic subtitle is-size-6">
-                                Please enter the parameters for the function.
+                        <hr/>
+                        {% if update %}
+                            <div class="field">
+                                <div class="columns is-8">
+                                    <div class="column is-one-third">
+                                        <label for="{{ form.status.id_for_label }}">
+                                            <b class="title is-size-4">{{ form.status.label }}</b>
+                                            <span class="is-small has-text-grey-light">{{ form.status.label_suffix }}</span>
+                                            &nbsp;&nbsp;&nbsp;{{ form.status.help_text }}
+                                        </label>
+                                        <div class="column is-one-half p-0 is-italic subtitle is-size-6">
+                                            <p>Update the status of your scheduled task.</p>
+                                        </div>
+                                        <div class="errorlist">{{ form.status.errors }}</div>
+                                    </div>
+                                    <div class="column is-one-third">
+                                        <div class="control">{{ form.status }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                        {% endif %}
+                        <!-- Description row/field -->
+                        <div class="field">
+                            <div class="columns is-8">
+                                <div class="column is-one-third">
+                                    <label for="{{ form.description.id_for_label }}">
+                                        <b {% if form.description.errors %}class="errors"{% endif %}
+                                           class="title is-size-4">{{ form.description.label }}</b>
+                                        <span class="is-small has-text-grey-light">{{ form.description.label_suffix }}</span>
+                                        &nbsp;&nbsp;&nbsp;{{ form.description.help_text }}
+                                    </label>
+                                    <div class="column is-one-half p-0 is-italic subtitle is-size-6">
+                                        <p>Give a description for your scheduled task.</p>
+                                    </div>
+                                    <div class="errorlist">{{ form.description.errors }}</div>
+                                </div>
+                                <div class="column">
+                                    <div class="control">{{ form.description }}</div>
+                                </div>
                             </div>
                         </div>
-
-                        {% comment %} Render function param form if available. Else, lazy load. {% endcomment %}
-                        {% if task_parameter_form %}
-                            <div class="column" id="function-parameters">
-                                {{ task_parameter_form }}
+                        <hr/>
+                        <!-- Function row/field -->
+                        <div class="field">
+                            <div class="columns">
+                                <div class="column is-one-third">
+                                    <label for="{{ form.function.id_for_label }}">
+                                        <b class="title is-size-4">{{ form.function.label }}</b>
+                                        <span class="is-small has-text-grey-light">{{ form.function.label_suffix }}</span>
+                                        &nbsp;&nbsp;&nbsp;{{ form.function.help_text }}
+                                    </label>
+                                    <div class="column p-0 is-italic subtitle is-size-6">
+                                        <p>Select which function you want to schedule.</p>
+                                    </div>
+                                    <div class="errorlist">{{ form.function.errors }}</div>
+                                </div>
+                                <div class="column is-one-third">
+                                    {% if update %}
+                                        <div class="control">{% render_field form.function disabled=True %}</div>
+                                    {% else %}
+                                        <div class="control">{{ form.function }}</div>
+                                    {% endif %}
+                                </div>
                             </div>
+                        </div>
+                        <hr/>
+                        <!-- Crontab row/field -->
+                        <div class="field">
+                            <div class="columns">
+                                <div class="column is-one-third">
+                                    <label>
+                                        <b class="title is-size-4">Crontab Schedule</b>
+                                    </label>
+                                    <div class="column p-0 is-italic subtitle is-size-6">
+                                        <p>Setup the Crontab-style schedule.</p>
+                                    </div>
+                                </div>
+                                <div class="columns is-multiline">
+                                    <div class="column is-one-third">
+                                        <div class="box">
+                                            <label for="{{ form.scheduled_minute.id_for_label }}">
+                                                <span>{{ form.scheduled_minute.label }}</span>
+                                            </label>
+                                            <div class="control">
+                                                {{ form.scheduled_minute }}
+                                                {{ form.scheduled_minute.errors }}
+                                            </div>
+                                            <div id="{{ form.scheduled_minute.id_for_label }}_errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-one-third">
+                                        <div class="box">
+                                            <label for="{{ form.scheduled_hour.id_for_label }}">
+                                                <span>{{ form.scheduled_hour.label }}</span>
+                                            </label>
+                                            <div class="control">
+                                                {{ form.scheduled_hour }}
+                                                {{ form.scheduled_hour.errors }}
+                                            </div>
+                                            <div id="{{ form.scheduled_hour.id_for_label }}_errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-one-third">
+                                        <div class="box">
+                                            <label for="{{ form.scheduled_day_of_week.id_for_label }}">
+                                                <span>{{ form.scheduled_day_of_week.label }}</span>
+                                            </label>
+                                            <div class="control">
+                                                {{ form.scheduled_day_of_week }}
+                                                {{ form.scheduled_day_of_week.errors }}
+                                            </div>
+                                            <div id="{{ form.scheduled_day_of_week.id_for_label }}_errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-one-third">
+                                        <div class="box">
+                                            <label for="{{ form.scheduled_day_of_month.id_for_label }}">
+                                                <span>{{ form.scheduled_day_of_month.label }}</span>
+                                            </label>
+                                            <div class="control">
+                                                {{ form.scheduled_day_of_month }}
+                                                {{ form.scheduled_day_of_month.errors }}
+                                            </div>
+                                            <div id="{{ form.scheduled_day_of_month.id_for_label }}_errors">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-one-third">
+                                        <div class="box">
+                                            <label for="{{ form.scheduled_month_of_year.id_for_label }}">
+                                                <span>{{ form.scheduled_month_of_year.label }}</span>
+                                            </label>
+                                            <div class="control">
+                                                {{ form.scheduled_month_of_year }}
+                                                {{ form.scheduled_month_of_year.errors }}
+                                            </div>
+                                            <div id="{{ form.scheduled_month_of_year.id_for_label }}_errors">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- Load function parameters -->
+                        <div class="field">
+                            <div class="columns">
+                                <div class="column is-one-third">
+                                    <label for="{{ form.parameters.id_for_label }}">
+                                        <b class="title is-size-4">{{ form.parameters.label }}</b>
+                                        <span class="is-small has-text-grey-light">{{ form.parameters.label_suffix }}</span>
+                                        &nbsp;&nbsp;&nbsp;{{ form.parameters.help_text }}
+                                    </label>
+                                    <div class="column p-0 is-italic subtitle is-size-6">
+                                        Please enter the parameters for the function.
+                                    </div>
+                                    {{ form.parameters.errors }}
+                                </div>
+                                {% comment %} Render function param form if available. Else, lazy load. {% endcomment %}
+                                {% if task_parameter_form %}
+                                    <div class="column" id="function-parameters">
+                                        {{ task_parameter_form }}
+                                    </div>
+                                {% else %}
+                                    <div class="column"
+                                         id="function-parameters"
+                                         hx-trigger="load"
+                                         hx-get="{% url 'ui:function-parameters' %}"
+                                         hx-vals='{"function": "{{ function_id }}"}'>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr/>
+                        {% if update %}
+                            <input class="button is-link" type="submit" value="Update"/>
                         {% else %}
-                            <div class="column" id="function-parameters" hx-trigger="load" hx-get="{% url 'ui:function-parameters' %}" hx-vals='{"function": "{{ function_id }}"}'>
-                            </div>
+                            <input class="button is-link" type="submit" value="Create"/>
                         {% endif %}
                     </div>
-                </div>
-
-                <hr/>
-                {% if update %}
-                    <input class="button is-link" type="submit" value="Update"/>
-                {% else %}
-                    <input class="button is-link" type="submit" value="Create"/>
-                {% endif %}
-            </div>
-        </form>
-    {% endif %}
-</div>
-{% endblock content %}
+                </form>
+            {% endif %}
+        </div>
+    {% endblock content %}
