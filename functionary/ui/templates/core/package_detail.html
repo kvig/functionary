@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_old.html" %}
 {% block content %}
     {% with package.active_functions as functions %}
         <div class="column is-full">
@@ -41,9 +41,7 @@
                     <ul id="funcs">
                         {% for function in functions %}
                             <li class="block ml-4">
-                                <a href="{% url 'ui:function-detail' function.id %}">
-                                    {{ function.render_name }}
-                                </a>
+                                <a href="{% url 'ui:function-detail' function.id %}">{{ function.render_name }}</a>
                                 <br/>
                                 <span class="ml-4">{{ function.summary }}</span>
                             </li>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_old.html" %}
 {% block content %}
     <div class="column is-full">
         <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
@@ -27,10 +27,7 @@
                     <i class="fa fa-users"></i>&nbsp;{{ environment.team.name }}
                 </div>
             </div>
-
-            <div class="field">
-                {% include "partials/environments/environment_management.html" %}
-            </div>
+            <div class="field">{% include "partials/environments/environment_management.html" %}</div>
             {% include 'partials/variables_section.html' with parent_object=environment parent_id=environment.id %}
             <div class="field">
                 <label class="label" for="packages">

@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="description" content="Functionary User Interface"/>
+        <meta name="keywords" content="Functionary"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'favicon/favicon-32x32.png' %}"/>
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'favicon/favicon-16x16.png' %}"/>
+        <link rel="shortcut icon"
+              type="image/png"
+              href="{% static 'favicon/favicon.ico' %}"/>
+        <link rel="stylesheet"
+              href="{% static 'css/bulma-0.9.4.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/fontawesome-6.2.1.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/fontawesome-solid-6.2.1.min.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/pretty-print-json-1.2.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="{% static 'css/functionary.css' %}"
+              type="text/css"/>
+        {% block extra_style %}
+        {% endblock extra_style %}
+        <title>
+            {% block title %}
+                Functionary
+            {% endblock title %}
+        </title>
+        <script src="{% static 'js/htmx-1.8.4.min.js' %}"></script>
+        <script src="{% static 'js/pretty-print-json-1.2.min.js' %}"></script>
+        <!-- This script will run when the page loads and the menus are available -->
+        <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
+    </head>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+        <section class="hero is-small is-link mb-r">
+            <div class="hero-body">
+                <div class="columns">
+                    <div class="column">
+                        <a href="{% url 'ui:home' %}">
+                            <h1 class="title is-1">
+                                <img class="functionary-logo"
+                                     src="{% static 'functionary_f_logo.png' %}"
+                                     alt="F"
+                                     width="64"
+                                     height="64"/>
+                                <span class="functionary-title">unctionary</span>
+                            </h1>
+                            <p class="subtitle is-4">Run your functions</p>
+                        </a>
+                    </div>
+                    <div class="column is-4">
+                        <div class="top-right-container has-text-right">
+                            {% if user.is_authenticated %}
+                                <div>
+                                    <p>
+                                        <span class="icon"><i class="fa fa-user"></i></span>
+                                        <a href="{% url 'socialaccount_connections' %}">{{ user }}</a>
+                                    </p>
+                                    {% include "partials/env_selector.html" %}
+                                </div>
+                                <form method="post" action="{% url 'account_logout' %}">
+                                    {% csrf_token %}
+                                    <button class="button is-underlined is-ghost has-text-white pr-0 pb-0"
+                                            type="submit">
+                                        <span class="icon has-text-danger mr-2"><i class="fa fa-door-open"></i></span>Logout
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="columns">
+            {% if user.is_authenticated %}
+                <aside class="column is-3 menu">
+                    <ul class="menu-list block">
+                    </ul>
+                    <ul class="menu-list block">
+                        <li class="menu-item">
+                            <a href="{% url 'ui:task-list' %}">
+                                <span class="icon has-text-success"><i class="fa fa-lg fa-clipboard-list"></i></span>
+                                &nbsp;Tasking
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="menu-list block">
+                        <li class="menu-item">
+                            <a href="{% url 'ui:build-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-wrench"></i></span>
+                                &nbsp;Builds
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'ui:package-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-cubes"></i></span>
+                                &nbsp;Packages
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'ui:function-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-cube"></i></span>
+                                &nbsp;Functions
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'ui:workflow-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-diagram-next"></i></span>
+                                &nbsp;Workflows
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'ui:scheduledtask-list' %}">
+                                <span class="icon has-text-info"><i class="fa fa-lg fa-clock"></i></span>
+                                &nbsp;Schedules
+                            </a>
+                        </li>
+                    </ul>
+                    {% if user.is_superuser %}
+                        <ul class="menu-list block">
+                            <li class="menu-item">
+                                <a href="{% url 'ui:environment-list' %}">
+                                    <span class="icon has-text-info"><i class="fa fa-lg fa-building"></i></span>
+                                    &nbsp;Environments
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{% url 'ui:team-list' %}">
+                                    <span class="icon has-text-info"><i class="fa fa-lg fa-users"></i></span>
+                                    &nbsp;Teams
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </aside>
+            {% endif %}
+            <main class="column is-9 container">
+                {% if messages %}
+                    {% include "partials/auth_messages.html" %}
+                {% endif %}
+                <div id="data_div"
+                     hx-get="{{ request.get_full_path }}"
+                     hx-trigger="reloadData from:body"
+                     hx-select="#dataBlock"
+                     hx-swap="innerHTML"
+                     hx-swap-oob="true">
+                    <div id="dataBlock" hx-disinherit="*">
+                        {% block content %}
+                        {% endblock content %}
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script>
+            // Show an error message when a bad status comes back from an HTMX call
+            document.body.addEventListener('htmx:beforeOnLoad', (event) => {
+                if (event.detail.xhr.status >= 400) {
+                    alert(event.detail.xhr.responseText)
+                }
+            });
+        </script>
+    </body>
+</html>

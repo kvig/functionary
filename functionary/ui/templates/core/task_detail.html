@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_old.html" %}
 {% block content %}
     <div id="task_detail"
          {% if not completed %} hx-get="{% url 'ui:task-results' task.id %}?output=display_raw&poll=true" hx-trigger="every 5s"{% endif %}>

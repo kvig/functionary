@@ -1,97 +1,90 @@
-{% extends "base.html" %}
+{% extends "base_old.html" %}
 {% load static %}
 {% block content %}
-
-
-<nav class="breadcrumb has-arrow-separator mt-3" aria-label="breadcrumbs">
-    <ul>
-        <li>
-            <a href="{% url 'ui:scheduledtask-list' %}">Schedules List</a>
-        </li>
-        <li class="is-active">
-            <a href="#">
-                {{ scheduledtask.name }}
-            </a>
-        </li>
-    </ul>
-</nav>
-<div class="block mt-4">
-    <h1 class="title is-1">
-        <p>
-            <i class="fa fa-clock"></i>
-            <span>
-                {{ scheduledtask.name }}
-            </span>
-        </p>
-    </h1>
-</div>
-<div class="block has-addons">
-    <div class="block">
-        <label class="label" for="users">
-            <i class="fa fa-user"></i>&nbsp;Creator:
-        </label>
-        <p class="ml-4">
-            {{ scheduledtask.creator.first_name }} {{ scheduledtask.creator.last_name }} <span class="has-text-grey-light">({{ scheduledtask.creator.username }})</span>
-            at {{ scheduledtask.created_at }}
-        </p>
+    <nav class="breadcrumb has-arrow-separator mt-3" aria-label="breadcrumbs">
+        <ul>
+            <li>
+                <a href="{% url 'ui:scheduledtask-list' %}">Schedules List</a>
+            </li>
+            <li class="is-active">
+                <a href="#">{{ scheduledtask.name }}</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="block mt-4">
+        <h1 class="title is-1">
+            <p>
+                <i class="fa fa-clock"></i>
+                <span>{{ scheduledtask.name }}</span>
+            </p>
+        </h1>
     </div>
-    <div class="field">
-        <label class="label" for="status">
-            <i class="fa fa-heart-pulse"></i>&nbsp;Status:
-        </label>
-        <span class="ml-4">{{ scheduledtask.status }}</span>
-    </div>
-    {% if scheduledtask.description %}
+    <div class="block has-addons">
+        <div class="block">
+            <label class="label" for="users">
+                <i class="fa fa-user"></i>&nbsp;Creator:
+            </label>
+            <p class="ml-4">
+                {{ scheduledtask.creator.first_name }} {{ scheduledtask.creator.last_name }} <span class="has-text-grey-light">({{ scheduledtask.creator.username }})</span>
+                at {{ scheduledtask.created_at }}
+            </p>
+        </div>
         <div class="field">
-            <label class="label" for="desc">Description:</label>
-            <div class="ml-4">
-                <span id="desc">{{ scheduledtask.description }}</span>
+            <label class="label" for="status">
+                <i class="fa fa-heart-pulse"></i>&nbsp;Status:
+            </label>
+            <span class="ml-4">{{ scheduledtask.status }}</span>
+        </div>
+        {% if scheduledtask.description %}
+            <div class="field">
+                <label class="label" for="desc">Description:</label>
+                <div class="ml-4">
+                    <span id="desc">{{ scheduledtask.description }}</span>
+                </div>
+            </div>
+        {% endif %}
+        <div class="field">
+            <label class="label" for="function">
+                <i class="fa fa-cube"></i>&nbsp;Function:
+            </label>
+            <a href="{% url 'ui:function-detail' scheduledtask.function.id %}"><span class="ml-4">{{ scheduledtask.function.render_name }}</span></a>
+        </div>
+        <div class="field">
+            <label class="label" for="crontab">
+                <i class="fa fa-calendar"></i>&nbsp;Crontab:
+            </label>
+            <span class="ml-4">{{ scheduledtask.periodic_task.crontab }}</span>
+        </div>
+        <div class="field">
+            <label class="label" for="params">
+                <i class="fa fa-list"></i>&nbsp;Parameters:
+            </label>
+            <pre class="block ml-4 mr-4" id="params">{{ scheduledtask.parameters | pprint }}</pre>
+        </div>
+        <div class="field">
+            <label class="label" for="params">
+                <i class="fa fa-clock-rotate-left"></i>&nbsp;Recent History:
+            </label>
+            <div class="table-container ml-4">
+                <table class="table is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Ran at</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in history %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'ui:task-detail' task.id %}">{{ task.created_at }}</a>
+                                </td>
+                                <td>{{ task.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-    {% endif %}
-    <div class="field">
-        <label class="label" for="function">
-            <i class="fa fa-cube"></i>&nbsp;Function:
-        </label>
-        <a href="{% url 'ui:function-detail' scheduledtask.function.id %}"><span class="ml-4">{{ scheduledtask.function.render_name }}</span></a>
     </div>
-    <div class="field">
-        <label class="label" for="crontab">
-            <i class="fa fa-calendar"></i>&nbsp;Crontab:
-        </label>
-        <span class="ml-4">{{ scheduledtask.periodic_task.crontab }}</span>
-    </div>
-    <div class="field">
-        <label class="label" for="params">
-            <i class="fa fa-list"></i>&nbsp;Parameters:
-        </label>
-        <pre class="block ml-4 mr-4" id="params">{{ scheduledtask.parameters | pprint }}</pre>
-    </div>
-
-   <div class="field">
-        <label class="label" for="params">
-            <i class="fa fa-clock-rotate-left"></i>&nbsp;Recent History:
-        </label>
-        <div class="table-container ml-4">
-            <table class="table is-hoverable">
-                <thead>
-                    <tr>
-                        <th>Ran at</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for task in history %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'ui:task-detail' task.id %}">{{ task.created_at }}</a>
-                        </td>
-                        <td>{{ task.status }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-   </div> 
-</div>
 {% endblock content %}
