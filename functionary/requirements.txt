@@ -54,6 +54,10 @@ django==4.1.5
     #   drf-spectacular-sidecar
 django-allauth==0.52.0
     # via -r requirements.in
+django-bootstrap5==22.2
+    # via -r requirements.in
+django-browser-reload==1.6.0
+    # via -r requirements.in
 django-celery-beat==2.4.0
     # via -r requirements.in
 django-constance[database]==2.9.1

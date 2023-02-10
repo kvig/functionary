@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "builder",
     "ui",
     "django.contrib.admin",
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -183,3 +184,11 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Bootstrap settings
+# https://django-bootstrap5.readthedocs.io/en/latest/settings.html
+
+BOOTSTRAP5 = {
+    # Customize by building /static/scss/custom.scss with Sass CLI tool into below file
+    "theme_url": os.path.join(BASE_DIR.parent.parent, "/static/css/custom.css"),
+}

@@ -43,8 +43,12 @@ urlpatterns = [
 ]
 
 
-# Add URLs for Django Debug Toolbar if it is an installed app
+# Add URLs for debug plugins if they are installed
 if apps.is_installed("debug_toolbar"):
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
+    ]
+if apps.is_installed("django_browser_reload"):
+    urlpatterns += [
+        path("__reload__/", include("django_browser_reload.urls")),
     ]

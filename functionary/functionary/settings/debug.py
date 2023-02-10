@@ -4,10 +4,13 @@ from .base import *  # noqa
 
 DEBUG = True
 
-INSTALLED_APPS += ["debug_toolbar"]
+INSTALLED_APPS += ["debug_toolbar", "django_browser_reload"]
 
 # Note: Order of MIDDLEWARE content matters
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+MIDDLEWARE += [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+]
 
 
 # Docker specific method for setting INTERNAL_IPS

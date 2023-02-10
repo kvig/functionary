@@ -1,0 +1,52 @@
+// Custom.scss
+// Option B: Include parts of Bootstrap
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "./functions";
+
+// 2. Include any default variable overrides here
+
+$white: #FFFFFF;
+$black: #000000;
+$blue: #485FC7;
+$purple: #693980;
+$indigo: #5A35AC;
+$red: #A30000;
+$orange: #C54616;
+$yellow: #DCAC00;
+$green: #4B7B4B;
+$teal: #197994;
+$cyan: #1AB7D1;
+$gray-100: #F6F7F9;
+$gray-800: #343E40;
+
+$info: $teal;
+$primary: $blue;
+$secondary: $purple;
+$body-bg: $gray-100;
+
+$link-color: $primary;
+$link-hover-color: darken($link-color, 45%);
+$emphasized-link-hover-darken-percentage: 25%;
+
+$navbar-dark-color: $white;
+$navbar-dark-hover-color: rgba($navbar-dark-color, .55);
+$navbar-light-color: rgba($black, .9);
+$navbar-light-hover-color: rgba($black, .5);
+
+$hr-border-color: rgba($black, .75);
+
+@import "./bootstrap";
+// 3. Include remainder of required Bootstrap stylesheets
+// @import "./variables";
+// @import "./mixins";
+
+// 4. Include any optional Bootstrap components as you like
+// @import "./root";
+// @import "./reboot";
+// @import "./type";
+// @import "./images";
+// @import "./containers";
+// @import "./grid";
+
+// 5. Add additional custom code here
