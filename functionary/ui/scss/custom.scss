@@ -1,0 +1,78 @@
+// Custom.scss
+// Option B: Include parts of Bootstrap
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "./functions";
+@import "./variables";
+@import "./mixins";
+@import "./maps";
+
+// 2. Include any default variable overrides here
+
+$white: #FFFFFF;
+$black: #000000;
+$blue: #485FC7;
+$purple: #693980;
+$indigo: #5A35AC;
+$red: #B84028;
+$orange: #b44a04;
+$yellow: #DDB934;
+$green: #536B4F;
+$teal: #1c7373;
+$cyan: #05718f; // #98c0c5
+$gray-100: #F6F7F9;
+$gray-800: #343E40;
+
+$primary: $blue;
+$secondary: #693980;
+$body-bg: #EAECEC;
+
+$link-color: $primary;
+$link-hover-color: darken($link-color, 45%);
+$emphasized-link-hover-darken-percentage: 25%;
+$text-light: $body-bg;
+$text-dark: $gray-800;
+
+$navbar-brand-color: $body-bg;
+$navbar-dark-color: $body-bg;
+$navbar-dark-hover-color: $secondary;
+// $navbar-light-color: rgba($black, .9);
+// $navbar-light-hover-color: rgba($black, .5);
+
+$hr-border-color: $secondary;
+
+$input-bg: adjust-color($body-bg, $lightness: +10%);
+
+// fix for weird bug where the RGB isn't getting calculated correctly
+$custom-theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "danger": $red,
+    "warn": $yellow,
+    "info": $cyan,
+    "body": $body-bg
+);
+
+// Regenerate bg-* text-*
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+$utilities-colors: map-merge($utilities-colors, $theme-colors-rgb);
+$utilities-text-colors: map-loop($utilities-colors, rgba-css-var, "$key", "text");
+$utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg");
+
+
+@import "./bootstrap";
+
+// 3. Include remainder of required Bootstrap stylesheets
+// @import "./maps";
+// @import "./utilities";
+
+// 4. Include any optional Bootstrap components as you like
+// @import "./root";
+// @import "./reboot";
+// @import "./type";
+// @import "./images";
+// @import "./containers";
+// @import "./grid";
+
+// 5. Add additional custom code here

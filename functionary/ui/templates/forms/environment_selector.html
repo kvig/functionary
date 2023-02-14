@@ -1,15 +1,14 @@
 {% csrf_token %}
-{% comment %} <i class="fa fa-building"></i> {% endcomment %}
 {% with request.session.environment_id as environment_id %}
     <select id="env_select"
             name="environment_id"
             aria-label="Environment select"
-            class="form-select form-select-md bg-primary text-light border-primary cursor-click"
+            class="form-select form-select-md bg-body text-primary border-0"
             role="button"
             hx-trigger="change"
             hx-post="{% url 'ui:set-environment' %}"
             hx-swap="none">
-        <option value="-1">
+        <option disabled value="-1">
             Choose
         </option>
         {% for team, envs in environments.items %}
