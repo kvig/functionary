@@ -1,6 +1,4 @@
-from django.core import validators
-from django.core.serializers.json import DjangoJSONEncoder
-from django.forms import CharField, JSONField, ModelChoiceField, ModelForm
+from django.forms import CharField, ModelChoiceField, ModelForm
 from django.urls import reverse
 from django_celery_beat.validators import (
     day_of_month_validator,
@@ -13,26 +11,7 @@ from django_celery_beat.validators import (
 from core.models import Environment, Function, ScheduledTask
 
 
-class NotNoneJSONField(JSONField):
-    """This class creates a JSONField that overrides the return value when the field
-    holds a normally empty value. This is to ensure that validation still runs."""
-
-    def __init__(self, default_value=dict, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.default_value = default_value()
-        self.empty_values = [
-            v for v in validators.EMPTY_VALUES if v != self.default_value
-        ]
-
-    def to_python(self, value):
-        """This override returns a default_value if the field evaluates
-        the value to empty."""
-        python_value = super().to_python(value)
-        return python_value if python_value is not None else self.default_value
-
-
 class ScheduledTaskForm(ModelForm):
-    existing_errors = None
     scheduled_minute = CharField(
         max_length=60 * 4, label="Minute", initial="*", validators=[minute_validator]
     )
@@ -58,7 +37,6 @@ class ScheduledTaskForm(ModelForm):
         validators=[month_of_year_validator],
     )
     function = ModelChoiceField(queryset=Function.objects.all(), required=True)
-    parameters = NotNoneJSONField(encoder=DjangoJSONEncoder)
 
     class Meta:
         model = ScheduledTask
@@ -77,7 +55,6 @@ class ScheduledTaskForm(ModelForm):
     def __init__(
         self,
         environment: Environment = None,
-        existing_errors=None,
         *args,
         **kwargs,
     ):
@@ -85,9 +62,6 @@ class ScheduledTaskForm(ModelForm):
         self._setup_field_choices(kwargs.get("instance") is not None)
         self._update_function_queryset(environment)
         self._setup_field_classes()
-        self.existing_errors = (
-            [f"'{k}'" for k in existing_errors.keys()] if existing_errors else {}
-        )
 
     def _update_function_queryset(self, environment: Environment):
         if environment:
@@ -160,17 +134,3 @@ class ScheduledTaskForm(ModelForm):
                     "hx-target": f"#{field_id}_errors",
                 }
             )
-
-    def is_valid(self):
-        return not self.existing_errors and super().is_valid()
-
-    def add_error(self, field, error):
-        # If field is defined, it's for the form. If it's not, it's probably
-        # from the parameters. This error is already shown on the field, so
-        # don't show it again for the whole form.
-        if not field:
-            for _, val in error:
-                found = [v for v in val if v in self.existing_errors]
-                if found:
-                    return
-        super().add_error(field, error)
