@@ -26,16 +26,10 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
     return Function.objects.create(
         name="testfunction",
         environment=package.environment,
         package=package,
-        schema=function_schema,
         active=True,
     )
 

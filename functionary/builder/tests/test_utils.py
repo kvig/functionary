@@ -2,6 +2,7 @@ import pytest
 
 from builder import utils
 from core.models import Function, Package, Team, User
+from core.utils.parameter import PARAMETER_TYPE
 
 
 @pytest.fixture
@@ -31,67 +32,45 @@ def package2(environment):
 
 @pytest.fixture
 def function1(package1):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
-
-    return Function.objects.create(
+    function = Function.objects.create(
         name="function1",
         environment=package1.environment,
         package=package1,
-        schema=function_schema,
         active=True,
     )
+
+    function.parameters.create(name="param1", parameter_type=PARAMETER_TYPE.INTEGER)
+    function.parameters.create(name="param2", parameter_type=PARAMETER_TYPE.INTEGER)
+
+    return function
 
 
 @pytest.fixture
 def function2(package1):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
-
     return Function.objects.create(
         name="function2",
         environment=package1.environment,
         package=package1,
-        schema=function_schema,
         active=True,
     )
 
 
 @pytest.fixture
 def function3(package2):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
-
     return Function.objects.create(
         name="function3",
         environment=package2.environment,
         package=package2,
-        schema=function_schema,
         active=True,
     )
 
 
 @pytest.fixture
 def function4(package2):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
     return Function.objects.create(
         name="function4",
         environment=package2.environment,
         package=package2,
-        schema=function_schema,
         active=True,
     )
 
@@ -111,14 +90,16 @@ def package1_definitions_without_function2(function1):
 
 @pytest.mark.django_db
 @pytest.mark.usefixtures("function1", "function2", "function3", "function4")
-def test_deactivate_functions(
+def test_deactivate_removed_functions(
     package1_definitions_without_function2, package1, package2
 ):
     db_functions = Function.objects.all()
     for function in db_functions:
         assert function.active is True
 
-    utils._deactivate_functions(package1_definitions_without_function2, package1)
+    utils._deactivate_removed_functions(
+        package1_definitions_without_function2, package1
+    )
 
     # package2 functions should still all be active
     assert package2.functions.count() == package2.active_functions.count()
@@ -126,3 +107,15 @@ def test_deactivate_functions(
     # package1 function1 should be active, function2 inactive
     assert package1.functions.get(name="function1").active is True
     assert package1.functions.get(name="function2").active is False
+
+
+@pytest.mark.django_db
+def test_delete_removed_function_parameters(function1):
+    assert function1.parameters.count() == 2
+
+    parameters_to_keep = function1.parameters.get(name="param1")
+
+    utils._delete_removed_function_parameters([parameters_to_keep], function1.package)
+
+    assert function1.parameters.count() == 1
+    assert function1.parameters.filter(name="param1").exists()

@@ -4,6 +4,8 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from core.utils.parameter import get_schema
+
 
 def list_of_strings(value):
     if isinstance(value, list) and all(isinstance(item, str) for item in value):
@@ -27,7 +29,6 @@ class Function(models.Model):
         description: more details about the function
         variables: list of variable names to set before execution
         return_type: the type of the object being returned
-        schema: the function's OpenAPI definition
         active: whether the function is currently activated
     """
 
@@ -43,7 +44,6 @@ class Function(models.Model):
     description = models.TextField(null=True)
     variables = models.JSONField(default=list, validators=[list_of_strings])
     return_type = models.CharField(max_length=64, null=True)
-    schema = models.JSONField()
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -81,6 +81,17 @@ class Function(models.Model):
             scheduled_task.pause()
 
     @property
+    def parameters(self):
+        """Convenience alias for functionparameter_set"""
+        # Provides better static type checking than using related_name
+        return self.functionparameter_set
+
+    @property
     def render_name(self) -> str:
         """Returns the template-renderable name of the function"""
         return self.display_name if self.display_name else self.name
+
+    @property
+    def schema(self) -> dict:
+        """Function definition schema"""
+        return get_schema(self)

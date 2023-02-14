@@ -1,6 +1,7 @@
 import pytest
 
 from core.models import Function, Package, Team, User, Workflow, WorkflowStep
+from core.utils.parameter import PARAMETER_TYPE
 from core.utils.workflow import add_step, move_step, remove_step
 
 
@@ -26,17 +27,15 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
-    return Function.objects.create(
+    _function = Function.objects.create(
         name="testfunction",
         package=package,
         environment=package.environment,
-        schema=function_schema,
     )
+
+    _function.parameters.create(name="prop1", parameter_type=PARAMETER_TYPE.INTEGER)
+
+    return _function
 
 
 @pytest.fixture

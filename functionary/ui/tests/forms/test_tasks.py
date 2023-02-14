@@ -1,6 +1,7 @@
 import pytest
 
 from core.models import Function, Package, Team
+from core.utils.parameter import PARAMETER_TYPE
 from ui.forms.tasks import TaskParameterTemplateForm
 
 
@@ -17,20 +18,16 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {
-            "int_param": {"type": "integer", "title": "int_param"},
-            "json_param": {"type": "json", "title": "json_param"},
-        },
-    }
-    return Function.objects.create(
+    _function = Function.objects.create(
         name="testfunction",
         package=package,
         environment=package.environment,
-        schema=function_schema,
     )
+
+    _function.parameters.create(name="int_param", parameter_type=PARAMETER_TYPE.INTEGER)
+    _function.parameters.create(name="json_param", parameter_type=PARAMETER_TYPE.JSON)
+
+    return _function
 
 
 @pytest.mark.django_db

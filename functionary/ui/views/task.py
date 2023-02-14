@@ -14,11 +14,11 @@ from django_htmx import http
 
 from core.auth import Permission
 from core.models import Environment, Task
+from ui.tables.task import TaskListTable
 
 from .generic import PermissionedDetailView, PermissionedListView
 
 FINISHED_STATUS = ["COMPLETE", "ERROR"]
-PAGINATION_AMOUNT = 15
 
 
 def _detect_csv(result):
@@ -138,8 +138,7 @@ def _get_result_context(context: dict, format: str) -> dict:
 class TaskListView(PermissionedListView):
     model = Task
     ordering = ["-created_at"]
-    queryset = Task.objects.select_related("environment", "function", "creator").all()
-    paginate_by = PAGINATION_AMOUNT
+    table_class = TaskListTable
 
 
 class TaskDetailView(PermissionedDetailView):

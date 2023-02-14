@@ -8,6 +8,7 @@ from django.db import models
 from django.template import Context
 
 from core.models import Task
+from core.utils.parameter import validate_parameters
 
 
 class WorkflowRun(models.Model):
@@ -82,6 +83,10 @@ class WorkflowRun(models.Model):
         if self.status != status:
             self.status = status
             self.save()
+
+    def clean(self):
+        """Model validation"""
+        validate_parameters(self.parameters, self.workflow)
 
     def complete(self) -> None:
         """Set the WorkflowRun status to COMPLETE"""

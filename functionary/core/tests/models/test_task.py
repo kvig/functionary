@@ -36,34 +36,21 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "variables": ["env_var1"],
-        "properties": {"prop1": {"type": "integer"}},
-    }
     return Function.objects.create(
         name="testfunction",
         environment=package.environment,
         package=package,
-        schema=function_schema,
         variables=["env_var1"],
+        active=True,
     )
 
 
 @pytest.fixture
 def inactive_function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "variables": ["env_var1"],
-        "properties": {"prop1": {"type": "integer"}},
-    }
     return Function.objects.create(
         name="inactivefunction",
         environment=package.environment,
         package=package,
-        schema=function_schema,
         variables=["env_var1"],
         active=False,
     )

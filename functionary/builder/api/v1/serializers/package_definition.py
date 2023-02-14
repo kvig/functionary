@@ -1,19 +1,10 @@
 """ Serializers for defining a package """
 from rest_framework import serializers
 
+from core.utils.parameter import PARAMETER_TYPE_CHOICES
+
 LANGUAGES = [("python", "Python"), ("javascript", "JavaScript")]
-PARAMETER_TYPES = [
-    ("integer", "Integer"),
-    ("string", "String"),
-    ("text", "String (Long)"),
-    ("float", "Float"),
-    ("file", "File"),
-    ("boolean", "Boolean"),
-    ("date", "Date"),
-    ("datetime", "Date Time"),
-    ("json", "JSON"),
-]
-RETURN_TYPES = PARAMETER_TYPES[:]
+RETURN_TYPE_CHOICES = PARAMETER_TYPE_CHOICES[:]
 
 
 class ParameterOptionSerializer(serializers.Serializer):
@@ -31,7 +22,7 @@ class ParameterSerializer(serializers.Serializer):
     display_name = serializers.CharField(required=False)
     description = serializers.CharField(required=False)
 
-    type = serializers.ChoiceField(choices=PARAMETER_TYPES, required=True)
+    type = serializers.ChoiceField(choices=PARAMETER_TYPE_CHOICES, required=True)
 
     required = serializers.BooleanField(default=False)
     options = ParameterOptionSerializer(many=True, required=False)
@@ -52,7 +43,7 @@ class FunctionSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=256, required=False), required=False
     )
     parameters = ParameterSerializer(many=True)
-    return_type = serializers.ChoiceField(choices=RETURN_TYPES, required=False)
+    return_type = serializers.ChoiceField(choices=RETURN_TYPE_CHOICES, required=False)
 
 
 class PackageDefinitionSerializer(serializers.Serializer):

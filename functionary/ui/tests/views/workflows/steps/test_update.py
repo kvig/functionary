@@ -13,6 +13,7 @@ from core.models import (
     Workflow,
     WorkflowStep,
 )
+from core.utils.parameter import PARAMETER_TYPE
 
 
 @pytest.fixture
@@ -28,19 +29,15 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {
-            "prop1": {"type": "integer", "title": "prop1"},
-        },
-    }
-    return Function.objects.create(
+    _function = Function.objects.create(
         name="testfunction",
         package=package,
         environment=package.environment,
-        schema=function_schema,
     )
+
+    _function.parameters.create(name="prop1", parameter_type=PARAMETER_TYPE.INTEGER)
+
+    return _function
 
 
 @pytest.fixture

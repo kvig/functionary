@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django_celery_beat import schedulers
 
 from core.celery import app
+from core.management.commands.utils import run
 from core.utils.messaging import initialize_messaging, wait_for_connection
 
 LOG_LEVEL = settings.LOG_LEVEL
@@ -29,4 +30,5 @@ class Command(BaseCommand):
             scheduler=schedulers.DatabaseScheduler,
             loglevel=LOG_LEVEL,
         )
-        scheduler.run()
+
+        run(scheduler.run)

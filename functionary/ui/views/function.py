@@ -13,20 +13,17 @@ from django.views.decorators.http import require_GET, require_POST
 
 from core.auth import Permission
 from core.models import Environment, Function, Task
-from core.utils.minio import handle_file_parameters
+from core.utils.minio import S3ConnectionError, handle_file_parameters
 from ui.forms.tasks import TaskParameterForm, TaskParameterTemplateForm
+from ui.tables.function import FunctionTable
 
 from .generic import PermissionedDetailView, PermissionedListView
-
-PAGINATION_AMOUNT = 15
 
 
 class FunctionListView(PermissionedListView):
     model = Function
-    environment_through_field = "package"
-    queryset = Function.objects.select_related("package").filter(active=True)
     ordering = ["package__name", "name"]
-    paginate_by = PAGINATION_AMOUNT
+    table_class = FunctionTable
 
 
 class FunctionDetailView(PermissionedDetailView):
@@ -67,6 +64,7 @@ class FunctionDetailView(PermissionedDetailView):
 def execute(request: HttpRequest) -> HttpResponse:
     func = None
     form = None
+    status_code = None
 
     env = Environment.objects.get(id=request.session.get("environment_id"))
     if not request.user.has_perm(Permission.TASK_CREATE, env):
@@ -95,6 +93,7 @@ def execute(request: HttpRequest) -> HttpResponse:
             # Redirect to the newly created task:
             return HttpResponseRedirect(reverse("ui:task-detail", args=(task.id,)))
         except ValidationError:
+            status_code = 400
             form.add_error(
                 None,
                 ValidationError(
@@ -102,9 +101,18 @@ def execute(request: HttpRequest) -> HttpResponse:
                     code="invalid",
                 ),
             )
+        except S3ConnectionError:
+            status_code = 503
+            form.add_error(
+                None,
+                (
+                    "Unable to upload file. Please try again. "
+                    "If the problem persists, contact your system administrator."
+                ),
+            )
 
     args = {"form": form, "function": func}
-    return render(request, "core/function_detail.html", args)
+    return render(request, "core/function_detail.html", args, status=status_code)
 
 
 @require_GET

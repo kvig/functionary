@@ -1,13 +1,12 @@
 from core.models import Package
+from ui.tables.package import PackageTable
 
 from .generic import PermissionedDetailView, PermissionedListView
-
-PAGINATION_AMOUNT = 15
 
 
 class PackageListView(PermissionedListView):
     model = Package
-    paginate_by = PAGINATION_AMOUNT
+    table_class = PackageTable
 
 
 class PackageDetailView(PermissionedDetailView):

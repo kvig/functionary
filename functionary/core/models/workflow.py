@@ -63,3 +63,9 @@ class Workflow(models.Model):
                 steps.append(step)
 
         return steps
+
+    @property
+    def parameters(self):
+        """Convenience alias for workflowparameter_set"""
+        # Provides better static type checking than using related_name
+        return self.workflowparameter_set

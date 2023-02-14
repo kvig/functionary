@@ -40,17 +40,10 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "variables": ["env_var1", "dont_hide", "team_var1"],
-        "properties": {"prop1": {"type": "integer"}},
-    }
     return Function.objects.create(
         name="testfunction",
         package=package,
         environment=package.environment,
-        schema=function_schema,
         variables=["env_var1", "dont_hide", "team_var1"],
     )
 
@@ -60,7 +53,7 @@ def task(function, environment, admin_user):
     return Task.objects.create(
         function=function,
         environment=environment,
-        parameters={"prop1": "value1"},
+        parameters={},
         creator=admin_user,
     )
 

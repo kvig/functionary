@@ -1,15 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.list import ListView
+from django_tables2 import SingleTableView
 
 from core.models import Environment
+from ui.tables.enviroment import EnvironmentTable
 
 PAGINATION_AMOUNT = 15
 
 
-class EnvironmentListView(LoginRequiredMixin, ListView):
+class EnvironmentListView(LoginRequiredMixin, SingleTableView):
     model = Environment
+    table_class = EnvironmentTable
     paginate_by = PAGINATION_AMOUNT
-
-    def get_queryset(self):
-        """Sorts based on team name, then env name."""
-        return self.request.user.environments.select_related("team")
+    template_name = "default_list.html"

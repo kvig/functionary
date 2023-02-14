@@ -7,6 +7,7 @@ django-celery-beat
 django-constance
 django-constance[database]
 django-htmx
+django-tables2
 django-widget-tweaks
 docker
 jsonschema

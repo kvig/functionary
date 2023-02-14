@@ -17,28 +17,6 @@
                 <div class="mb-5"></div>
             {% endif %}
         </div>
-        <div class="table-container">
-            <table class="table is-striped is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Creator</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for workflow in page_obj %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'ui:workflow-detail' workflow.id %}">{{ workflow.name }}</a>
-                            </td>
-                            <td>{{ workflow.description }}</td>
-                            <td>{{ workflow.creator.username }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% include "partials/table.html" %}
     </div>
-    {% include "partials/pagination_navbar.html" with page_obj=page_obj paginator=paginator %}
 {% endblock content %}

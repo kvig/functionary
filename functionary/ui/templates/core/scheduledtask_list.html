@@ -13,47 +13,5 @@
             </a>
         </div>
     </div>
-    <div class="table-container">
-        <table class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Function</th>
-                    <th>Last Run</th>
-                    <th>Schedule</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for schedule in page_obj %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'ui:scheduledtask-detail' schedule.id %}">{{ schedule.name }}</a>
-                        </td>
-                        <td>
-                            <a href="{% url 'ui:function-detail' schedule.function.id %}">{{ schedule.function.name }}</a>
-                        </td>
-                        <td>
-                            {% if schedule.most_recent_task %}
-                                <a href="{% url 'ui:task-detail' schedule.most_recent_task.id %}">{{ schedule.most_recent_task.created_at }}</a>
-                            {% else %}
-                                Not run yet
-                            {% endif %}
-                        </td>
-                        <td>{{ schedule.periodic_task.crontab }}</td>
-                        <td>{{ schedule.status }}</td>
-                        <td>
-                            <a href="{% url 'ui:scheduledtask-update' schedule.id %}">
-                                <button class="button is-small has-text-link is-white singletonActive">
-                                    <span class="fa fa-pencil-alt"></span>
-                                </button>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% include "partials/pagination_navbar.html" with page_obj=page_obj paginator=paginator %}
+    {% include "partials/table.html" %}
 {% endblock content %}

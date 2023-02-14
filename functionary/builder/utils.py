@@ -1,11 +1,10 @@
-import datetime
 import io
 import json
 import logging
 import os
 import shutil
 import tarfile
-from typing import TypeVar
+from typing import List
 from uuid import UUID
 
 import docker
@@ -15,9 +14,8 @@ from django.conf import settings
 from django.db import transaction
 from django.template.loader import get_template
 from docker.errors import APIError, BuildError, DockerException
-from pydantic import Field, FileUrl, Json, create_model
 
-from core.models import Environment, Function, Package, User
+from core.models import Environment, Function, FunctionParameter, Package, User
 
 from .celery import app
 from .exceptions import InvalidPackage
@@ -179,6 +177,7 @@ def build_package(build_id: UUID):
     package = build.package
     package_contents = build.resources.package_contents
     package_definition = build.resources.package_definition
+    function_definitions = package_definition.get("functions")
 
     image_name, dockerfile = build.resources.image_details
     full_image_name = f"{settings.REGISTRY}/{image_name}"
@@ -191,16 +190,15 @@ def build_package(build_id: UUID):
             build.package = package
             build.save()
 
-    try:
-        # Need to validate the potentially new function schema, but
-        # don't save it until the build has finished.
-        db_functions = _create_functions_from_definition(
-            package_definition.get("functions"), package
-        )
-        _deactivate_functions(package_definition.get("functions"), package)
-        _extract_package_contents(package_contents, workdir)
-        _load_dockerfile_template(dockerfile, workdir)
+    # Need to validate the potentially new function schema, but
+    # don't save it until the build has finished.
+    functions, function_parameters = _create_functions_from_definition(
+        function_definitions, package
+    )
+    _extract_package_contents(package_contents, workdir)
+    _load_dockerfile_template(dockerfile, workdir)
 
+    try:
         image, build_result = docker_client.images.build(
             path=workdir, pull=True, forcerm=True, tag=full_image_name
         )
@@ -224,10 +222,17 @@ def build_package(build_id: UUID):
     with transaction.atomic():
         # Build has succeeded, save all the things now
         if build.status == Build.COMPLETE:
-            for func in db_functions:
+            for func in functions:
                 func.save()
+
+            for parameter in function_parameters:
+                parameter.save()
+
             package.image_name = image_name
             package.save()
+
+            _delete_removed_function_parameters(function_parameters, package)
+            _deactivate_removed_functions(function_definitions, package)
 
         BuildLog.objects.create(build=build, log=build_log)
         build.save()
@@ -281,14 +286,45 @@ def _create_package_from_definition(
     package_obj.summary = package_definition.get("summary")
     package_obj.description = package_definition.get("description")
     package_obj.language = package_definition.get("language")
+
     package_obj.save()
 
     return package_obj
 
 
+def _create_parameters_from_definition(
+    function_definition: dict, function: Function
+) -> List[FunctionParameter]:
+    """Creates the FunctionParameter objects for the provided function based on the
+    function_definition"""
+    parameters = []
+    parameter_defs = function_definition.get("parameters", [])
+
+    for parameter in parameter_defs:
+        try:
+            function_parameter = FunctionParameter.objects.get(
+                function=function, name=parameter.get("name")
+            )
+        except FunctionParameter.DoesNotExist:
+            function_parameter = FunctionParameter(
+                function=function, name=parameter.get("name")
+            )
+
+        function_parameter.description = parameter.get("description")
+        function_parameter.parameter_type = parameter.get("type")
+        function_parameter.default = parameter.get("default")
+        function_parameter.required = parameter.get("required")
+
+        parameters.append(function_parameter)
+
+    return parameters
+
+
 def _create_functions_from_definition(definitions: list[dict], package: Package):
     """Creates the functions in the package from the definition file"""
-    db_functions = []
+    functions = []
+    function_parameters = []
+
     for function_def in definitions:
         name = function_def.get("name")
         try:
@@ -303,17 +339,18 @@ def _create_functions_from_definition(definitions: list[dict], package: Package)
         function_obj.return_type = function_def.get("return_type")
         function_obj.description = function_def.get("description")
         function_obj.variables = function_def.get("variables", [])
-        function_obj.schema = _generate_function_schema(
-            name, function_def.get("parameters")
-        )
         function_obj.active = True
-        db_functions.append(function_obj)
 
-    return db_functions
+        functions.append(function_obj)
+        function_parameters.extend(
+            _create_parameters_from_definition(function_def, function_obj)
+        )
+
+    return functions, function_parameters
 
 
-def _deactivate_functions(definitions, package: Package):
-    """Grabs all functions from DB, deactivates any that aren't in the definition"""
+def _deactivate_removed_functions(definitions, package: Package):
+    """Deactivate and package functions not present in the definitions"""
     function_names = []
 
     for function_def in definitions:
@@ -327,32 +364,14 @@ def _deactivate_functions(definitions, package: Package):
         function.deactivate()
 
 
-def _generate_function_schema(name: str, parameters) -> str:
-    """Creates a pydantic model from the parameter definitions and returns the schema
-    as a JSON string"""
-    type_map = {
-        "integer": int,
-        "string": str,
-        "text": TypeVar("text", str, bytes),
-        "float": float,
-        "file": TypeVar("file", FileUrl, bytes),
-        "boolean": bool,
-        "date": datetime.date,
-        "datetime": datetime.datetime,
-        "json": TypeVar("json", Json, str),
-    }
-    params_dict = {}
+def _delete_removed_function_parameters(
+    function_parameters: List[FunctionParameter], package: Package
+) -> None:
+    """Deletes any FunctionParameters that are not in the provided function_parameters
+    for the supplied package
+    """
+    ids_to_keep = [parameter.id for parameter in function_parameters]
 
-    for parameter in parameters:
-        field = Field()
-        field.alias = parameter.get("name")
-        field.title = parameter.get("display_name", field.alias)
-        field.description = parameter.get("description")
-        field.default = parameter.get("default", ...)
-        type_ = type_map[parameter["type"]]
-
-        params_dict[field.alias] = (type_, field)
-
-    model = create_model(name, **params_dict)
-
-    return model.schema()
+    FunctionParameter.objects.filter(function__package=package).exclude(
+        id__in=ids_to_keep
+    ).delete()

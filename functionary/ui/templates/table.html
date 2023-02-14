@@ -1,0 +1,4 @@
+{% extends "django_tables2/table.html" %}
+{% block pagination %}
+    {% include "partials/pagination_navbar.html" with page_obj=table.page paginator=table.paginator %}
+{% endblock pagination %}

@@ -1,6 +1,8 @@
 import pytest
+from django.core.exceptions import ValidationError
 
-from core.models import Function, Package, Team, User, Workflow, WorkflowStep
+from core.models import Function, Package, Team, User, Workflow, WorkflowRun
+from core.utils.parameter import PARAMETER_TYPE
 
 
 @pytest.fixture
@@ -25,50 +27,48 @@ def package(environment):
 
 @pytest.fixture
 def function(package):
-    function_schema = {
-        "title": "test",
-        "type": "object",
-        "properties": {"prop1": {"type": "integer"}},
-    }
-    return Function.objects.create(
+    _function = Function.objects.create(
         name="testfunction",
         package=package,
         environment=package.environment,
-        schema=function_schema,
+        active=True,
     )
+
+    _function.parameters.create(name="prop1", parameter_type=PARAMETER_TYPE.INTEGER)
+
+    return _function
 
 
 @pytest.fixture
 def workflow(function, environment, user):
-    workflow_ = Workflow.objects.create(
+    _workflow = Workflow.objects.create(
         environment=environment, name="workflow", creator=user
     )
 
-    last = WorkflowStep.objects.create(
-        workflow=workflow_,
+    _workflow.parameters.create(name="wfprop1", parameter_type=PARAMETER_TYPE.INTEGER)
+
+    last = _workflow.steps.create(
         name="last",
         function=function,
         parameter_template='{"prop1": 3}',
         next=None,
     )
 
-    middle = WorkflowStep.objects.create(
-        workflow=workflow_,
+    middle = _workflow.steps.create(
         name="middle",
         function=function,
         parameter_template='{"prop1": 2}',
         next=last,
     )
 
-    _ = WorkflowStep.objects.create(
-        workflow=workflow_,
+    _ = _workflow.steps.create(
         name="first",
         function=function,
         parameter_template='{"prop1": 1}',
         next=middle,
     )
 
-    return workflow_
+    return _workflow
 
 
 @pytest.mark.django_db
@@ -89,3 +89,17 @@ def test_ordered_steps(workflow):
     assert ordered_steps[0] == first
     assert ordered_steps[1] == middle
     assert ordered_steps[2] == last
+
+
+@pytest.mark.django_db
+def test_workflow_run_parameters_validation(workflow):
+    """Invalid WorkflowRun parameters raises ValidationError"""
+    run = WorkflowRun(
+        workflow=workflow,
+        environment=workflow.environment,
+        parameters={"wfprop1": "notanint"},
+        creator=workflow.creator,
+    )
+
+    with pytest.raises(ValidationError):
+        run.clean()

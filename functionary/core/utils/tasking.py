@@ -15,7 +15,7 @@ from core.models import (
 )
 from core.utils.messaging import get_route, send_message
 from core.utils.minio import MinioInterface, generate_filename
-from core.utils.parameters import parameter_mapping
+from core.utils.parameter import PARAMETER_TYPE
 
 logger = get_task_logger(__name__)
 logger.setLevel(getattr(logging, settings.LOG_LEVEL))
@@ -179,14 +179,14 @@ def _handle_file_parameters(task: Task) -> None:
     """
     environment = task.environment
     parameters = task.parameters
-    schema: dict = task.function.schema
 
-    param_map = parameter_mapping(schema)
-    for param_name, param_meta in param_map.items():
-        param_formats = [_format for _, _format in param_meta]
-        if "uri" in param_formats:
-            filename = generate_filename(task, param_name, parameters[param_name])
-            parameters[param_name] = _get_presigned_url(filename, environment)
+    for parameter in task.function.parameters.filter(
+        parameter_type=PARAMETER_TYPE.FILE, name__in=parameters.keys()
+    ):
+        param_name = parameter.name
+
+        filename = generate_filename(task, param_name, parameters[param_name])
+        parameters[param_name] = _get_presigned_url(filename, environment)
 
 
 def _get_presigned_url(filename: str, environment: Environment) -> str:

@@ -18,6 +18,8 @@ from django.forms import (
 )
 from django.forms.widgets import DateInput, DateTimeInput, Widget
 
+from core.utils.parameter import PARAMETER_TYPE
+
 if TYPE_CHECKING:
     from django.http import QueryDict
 
@@ -33,18 +35,18 @@ class HTMLDateTimeInput(DateTimeInput):
 
 
 _field_mapping = {
-    "integer": (IntegerField, None),
-    "string": (CharField, None),
-    "text": (CharField, Textarea),
-    "number": (FloatField, None),
-    "file": (CharField, FileInput),
-    "boolean": (BooleanField, None),
-    "date": (DateField, HTMLDateInput),
-    "date-time": (
+    PARAMETER_TYPE.INTEGER: (IntegerField, None),
+    PARAMETER_TYPE.STRING: (CharField, None),
+    PARAMETER_TYPE.TEXT: (CharField, Textarea),
+    PARAMETER_TYPE.FLOAT: (FloatField, None),
+    PARAMETER_TYPE.FILE: (CharField, FileInput),
+    PARAMETER_TYPE.BOOLEAN: (BooleanField, None),
+    PARAMETER_TYPE.DATE: (DateField, HTMLDateInput),
+    PARAMETER_TYPE.DATETIME: (
         DateTimeField,
         HTMLDateTimeInput,
     ),
-    "json": (JSONField, Textarea),
+    PARAMETER_TYPE.JSON: (JSONField, Textarea),
 }
 
 
@@ -58,36 +60,7 @@ def _transform_json(value: Union[str, dict]) -> Union[str, dict]:
     return value
 
 
-_transform_initial_mapping = {"json": _transform_json}
-
-
-def _get_param_type(param_dict: dict) -> str:
-    """Finds the type of the parameter from the definition in the schema.
-
-    Pydantic maps to python types correctly, but we want to use the actual
-    schema type for input purposes. If there is a format in the param_dict,
-    the input field has a definition of what type it is. If there is an anyOf,
-    inspect it and try find out what type it should be. Otherwise, return the
-    value of 'type' in param_dict.
-
-    NOTE: This is coupled with builder/utils.py:333
-    """
-    keys = param_dict.keys()
-
-    # pydantic hides the date type in the format field
-    if "format" in keys:
-        return param_dict["format"]
-    # json and text get mapped to TypeVars to preserve the distinction vs string
-    elif "anyOf" in keys:
-        for param_types in param_dict["anyOf"]:
-            if (param_type := param_types.get("format", None)) == "json-string":
-                return "json"
-            elif param_type == "uri":
-                return "file"
-            else:
-                return "text"
-    else:
-        return param_dict["type"]
+_transform_initial_mapping = {PARAMETER_TYPE.JSON: _transform_json}
 
 
 def _prepare_initial_value(param_type: str, initial: dict) -> Union[dict, None]:
@@ -135,23 +108,23 @@ class TaskParameterForm(Form):
         if initial is None:
             initial = {}
 
-        for param, value in function.schema["properties"].items():
-            initial_value = initial.get(param, None) or value.get("default", None)
-            input_value = data.get(f"{self.prefix}-{param}") if data else None
-            req = initial_value is None
-            param_type = _get_param_type(value)
+        for parameter in function.parameters.all():
+            param_name = parameter.name
+            param_type = parameter.parameter_type
+            initial_value = initial.get(param_name, None) or parameter.default
+            input_value = data.get(f"{self.prefix}-{param_name}") if data else None
 
             field_class, widget = self.get_field_info(param_type, input_value)
 
             if not field_class:
-                raise ValueError(f"Unknown field type for {param}: {param_type}")
+                raise ValueError(f"Unknown field type for {param_name}: {param_type}")
 
             kwargs = {
-                "label": value["title"],
+                "label": param_name,
                 "label_suffix": param_type,
                 "initial": _prepare_initial_value(param_type, initial_value),
-                "required": req,
-                "help_text": value.get("description", None),
+                "required": parameter.required,
+                "help_text": parameter.description,
             }
 
             if widget:
@@ -160,9 +133,10 @@ class TaskParameterForm(Form):
             field = field_class(**kwargs)
 
             # Style all inputfields except the checkbox with the "input" class
-            if param_type != "boolean":
+            if param_type != PARAMETER_TYPE.BOOLEAN:
                 field.widget.attrs.update({"class": "input"})
-            self.fields[param] = field
+
+            self.fields[param_name] = field
 
     def get_field_info(
         self, parameter_type: str, input_value: str | None
@@ -228,7 +202,11 @@ class TaskParameterTemplateForm(TaskParameterForm):
         """
         field_class, widget = super().get_field_info(parameter_type, input_value)
 
-        if parameter_type in ["integer", "number", "json"]:
+        if parameter_type in [
+            PARAMETER_TYPE.INTEGER,
+            PARAMETER_TYPE.FLOAT,
+            PARAMETER_TYPE.JSON,
+        ]:
             widget = TextInput
 
             if input_value and re.match(r"{{[\w\.]+}}", input_value):
