@@ -63,27 +63,29 @@
                             <div class="card-body text-bg-body">
                                 <form id="loginForm" method="post" action="{% url 'account_login' %}">
                                     {% csrf_token %}
-                                    <div class="mb-3">
+                                    <div class="mb-1">
                                         <label for="id_login" class="form-label">Name</label>
                                         <input type="text"
                                                class="form-control"
+                                               name="login"
                                                id="id_login"
                                                placeholder="Name"
                                                required
                                                value="{{ form.cleaned_data.login }}"/>
-                                        {{ form.login.errors }}
                                     </div>
-                                    <div class="mb-3">
+                                    {{ form.login.errors }}
+                                    <div class="mb-1">
                                         <label for="id_password" class="form-label">Password</label>
                                         <input type="password"
                                                class="form-control"
+                                               name="password"
                                                id="id_password"
                                                required
                                                placeholder="Password"/>
-                                        {{ form.password.errors }}
                                     </div>
-                                    {{ form.non_field_errors }}
+                                    {{ form.password.errors }}
                                 </form>
+                                {{ form.non_field_errors }}
                             </div>
                             <div class="card-footer text-center text-bg-body">
                                 <button class="btn btn-success" form="loginForm" type="submit">Sign In</button>
