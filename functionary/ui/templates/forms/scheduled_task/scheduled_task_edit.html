@@ -203,7 +203,6 @@
                                     <div class="column p-0 is-italic subtitle is-size-6">
                                         Please enter the parameters for the function.
                                     </div>
-                                    {{ form.parameters.errors }}
                                 </div>
                                 {% comment %} Render function param form if available. Else, lazy load. {% endcomment %}
                                 {% if task_parameter_form %}
@@ -222,6 +221,7 @@
                         </div>
                         <hr/>
                         {% if update %}
+                            <input type="hidden" name="function" value="{{ scheduledtask.function_id }}"/>
                             <input class="button is-link" type="submit" value="Update"/>
                         {% else %}
                             <input class="button is-link" type="submit" value="Create"/>

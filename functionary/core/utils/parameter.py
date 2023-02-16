@@ -63,7 +63,9 @@ def _serialize_json_parameters(
     """Serializes json type parameters for use in validation"""
     parameters_copy = deepcopy(parameters)
 
-    for parameter_obj in instance.parameters.filter(parameter_type=PARAMETER_TYPE.JSON):
+    for parameter_obj in instance.parameters.filter(
+        name__in=parameters.keys(), parameter_type=PARAMETER_TYPE.JSON
+    ):
         name = parameter_obj.name
         parameters_copy[name] = json.dumps(parameters_copy[name])
 
@@ -96,7 +98,6 @@ def validate_parameters(parameters: dict, instance: Union["Function", "Workflow"
     """
     try:
         pydantic_model = _get_pydantic_model(instance)
-        # KeyError will get thrown if one or more parameters are invalid
         _ = pydantic_model(**_serialize_json_parameters(parameters, instance))
-    except (KeyError, ValidationError, json.JSONDecodeError) as exc:
+    except (ValidationError, json.JSONDecodeError) as exc:
         raise DjangoValidationError(exc)
