@@ -26,7 +26,6 @@ def function(package):
         name="testfunction",
         package=package,
         environment=package.environment,
-        # parameters=["env_var1", "dont_hide", "team_var1"],
     )
 
 
@@ -78,8 +77,6 @@ def test_functions_without_parameters(task):
 @pytest.mark.usefixtures("param1", "param2")
 def test_missing_parameter(task):
     """Check for missing param2"""
-    with pytest.raises(ValidationError):
-        validate_parameters({"json_param": 1, "dont_hide": False}, task.function)
     with pytest.raises(ValidationError, match=r".*dont_hide.*"):
         validate_parameters({"json_param": {"hello": 1}}, task.function)
 
@@ -88,8 +85,20 @@ def test_missing_parameter(task):
 @pytest.mark.usefixtures("param1")
 def test_incorrect_parameters(task):
     """Check that incorrect parameters don't work."""
-    with pytest.raises(ValidationError, match=r".*json_param.*missing.*"):
+    with pytest.raises(ValidationError, match=r".*json_param.*is a required.*"):
         validate_parameters({}, task.function)
 
-    with pytest.raises(ValidationError, match=r".*json_param.*missing.*"):
+    with pytest.raises(ValidationError, match=r".*json_param.*is a required.*"):
         validate_parameters({"true": False}, task.function)
+
+
+@pytest.mark.django_db
+@pytest.mark.usefixtures("param1", "param2")
+def test_incorrect_parameters2(task):
+    """Check that incorrect parameters don't work."""
+    with pytest.raises(ValidationError, match=r".*dont_hide.*"):
+        validate_parameters({"json_param": 1, "dont_hide": False}, task.function)
+
+    # The following should fail but doesn't
+    # with pytest.raises(ValidationError, match=r".*dont_hide.*"):
+    #     validate_parameters({"json_param": 1, "dont_hide": "False"}, task.function)
