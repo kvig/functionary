@@ -1,4 +1,4 @@
-<div>
+<div id="modal-group">
     <div class="modal show"
          id="form-modal"
          tabindex="-1"
@@ -18,7 +18,7 @@
                             data-bs-dismiss="modal"
                             data-bs-target="#form-modal"
                             aria-label="Close"
-                            onclick="return this.parentNode.parentNode.parentNode.parentNode.parentNode.remove();">
+                            onclick="return document.querySelector('#modal-group').remove();">
                     </button>
                 </div>
                 {% block form_declaration %}

@@ -14,3 +14,4 @@ djlint
 
 # Django debugging
 django-debug-toolbar
+django-browser-reload

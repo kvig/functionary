@@ -2,7 +2,6 @@ celery
 django
 django-allauth
 django-bootstrap5
-django-browser-reload
 django-celery-beat
 django-constance
 django-constance[database]
