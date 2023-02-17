@@ -8,14 +8,7 @@
         <meta name="description" content="Functionary Login"/>
         <meta name="keywords" content="Functionary"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link rel="icon"
-              type="image/png"
-              sizes="32x32"
-              href="{% static 'favicon/favicon-32x32.png' %}"/>
-        <link rel="icon"
-              type="image/png"
-              sizes="16x16"
-              href="{% static 'favicon/favicon-16x16.png' %}"/>
+        <link rel="stylesheet" href="{% static 'webfonts/Playball-Regular.tff' %}" />
         <link rel="shortcut icon"
               type="image/png"
               href="{% static 'favicon/favicon.ico' %}"/>
@@ -41,27 +34,23 @@
     </head>
     <body>
         <div class="container p-2">
-            <div class="row text-center mt-3">
+            <div class="row text-center text-primary mt-3">
                 <h1>
-                    <img class="logo-blue"
-                         src="{% static 'functionary_f_logo.png' %}"
-                         alt="F"
-                         width="64"
-                         height="64"/>
+                    <span class="display-1">F</span>
                     <span class="functionary-title">unctionary</span>
                 </h1>
             </div>
             <div class="row mt-3">
                 <div class="col"></div>
-                <div class="col-8">
+                <div class="col-6">
                     {% block content %}
                         {% if messages %}
                             {% include "partials/auth_messages.html" %}
                         {% endif %}
                         <div class="card shadow">
-                            <h5 class="card-header text-bg-primary">Please Sign in</h5>
-                            <div class="card-body text-bg-body">
-                                <form id="loginForm" method="post" action="{% url 'account_login' %}">
+                            <h5 class="card-header text-light bg-primary">Please Sign in</h5>
+                            <div class="card-body text-primary bg-body">
+                                <form method="post" action="{% url 'account_login' %}" id="loginForm">
                                     {% csrf_token %}
                                     <div class="mb-1">
                                         <label for="id_login" class="form-label">Name</label>
@@ -87,50 +76,49 @@
                                 </form>
                                 {{ form.non_field_errors }}
                             </div>
-                            <div class="card-footer text-center text-bg-body">
-                                <button class="btn btn-success" form="loginForm" type="submit">Sign In</button>
+                            <div class="card-footer text-center bg-body">
+                                <button class="btn btn-success text-light" form="loginForm" type="submit">Sign In</button>
                             </div>
                         </div>
                     {% endblock content %}
                     {% block extracontent %}
                         {% configured_providers as socialaccount_providers %}
                         {% if socialaccount_providers %}
-                            <div class="card shadow text-bg-body">
+                            <div class="card shadow text-primary bg-body">
                                 <div class="card-body">
                                     <h5 class="card-title text-center">Or login with:</h5>
-                                    <form>
-                                        {% csrf_token %}
-                                        <div class="container text-center">
-                                            <div class="row">
-                                                {% for provider_pair in socialaccount_providers %}
-                                                    {% if provider_pair.provider.id == "openid" %}
-                                                        {% for brand in provider_pair.provider.get_brands %}
-                                                            <div class="col">
-                                                                {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
-                                                                <button title="{{ brand.name }}"
-                                                                        class="btn icon-{{ provider_pair.provider.id }} icon-{{ brand.id }}"
-                                                                        type="submit"
-                                                                        hx-get="{% provider_login_url provider_pair.provider.id openid=brand.openid_url process=process %}">
-                                                                    {{ brand.name }}
-                                                                </button>
-                                                            </div>
-                                                        {% endfor %}
-                                                    {% else %}
+                                    <div class="container text-center">
+                                        <div class="row">
+                                            {% for provider_pair in socialaccount_providers %}
+                                                {% if provider_pair.provider.id == "openid" %}
+                                                    {% for brand in provider_pair.provider.get_brands %}
                                                         <div class="col">
-                                                            <button title="{{ provider_pair.name }}"
-                                                                    class="btn icon-{{ provider_pair.provider.id }}"
-                                                                    type="submit"
-                                                                    hx-target="#show_modal"
-                                                                    hx-swap="innerHTML"
-                                                                    hx-get="{% provider_login_url provider_pair.provider.id process=process scope=scope auth_params=auth_params %}">
-                                                                {{ provider_pair.name }}
+                                                            {% csrf_token %}
+                                                            {% comment %}The double class on here will default to openid's icon if the brand doesn't have one{% endcomment %}
+                                                            <button title="{{ brand.name }}"
+                                                                    class="btn icon-{{ provider_pair.provider.id }} icon-{{ brand.id }}"
+                                                                    type="button"
+                                                                    hx-get="{% provider_login_url provider_pair.provider.id openid=brand.openid_url process=process %}">
+                                                                {{ brand.name }}
                                                             </button>
                                                         </div>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="col">
+                                                        {% csrf_token %}
+                                                        <button title="{{ provider_pair.name }}"
+                                                                class="btn icon-{{ provider_pair.provider.id }}"
+                                                                type="submit"
+                                                                hx-target="#show_modal"
+                                                                hx-swap="innerHTML"
+                                                                hx-get="{% provider_login_url provider_pair.provider.id process=process scope=scope auth_params=auth_params %}">
+                                                            {{ provider_pair.name }}
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         {% endif %}

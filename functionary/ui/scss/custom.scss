@@ -1,6 +1,3 @@
-// Custom.scss
-// Option B: Include parts of Bootstrap
-
 // 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "./functions";
 @import "./variables";
@@ -8,49 +5,62 @@
 @import "./maps";
 
 // 2. Include any default variable overrides here
-
 $white: #FFFFFF;
 $black: #000000;
-$blue: #485FC7;
-$purple: #693980;
-$indigo: #5A35AC;
-$red: #B84028;
-$orange: #b44a04;
-$yellow: #DDB934;
-$green: #536B4F;
-$teal: #1c7373;
-$cyan: #05718f; // #98c0c5
-$gray-100: #F6F7F9;
-$gray-800: #343E40;
+$gunmetal: #343E40;
 
-$primary: $blue;
-$secondary: #693980;
-$body-bg: #EAECEC;
+$primary: #A05F64;
+$secondary: #C6C6C3;
+$panel: #D4D4D2;
+$body-bg: #F7F8F8;
+$tertiary: #06647F;
+$danger: #D27370;
+$warning: #FFCDA3;
+$info: #7CAFB6;
+$success: #5a7a57;
 
 $link-color: $primary;
-$link-hover-color: darken($link-color, 45%);
+$link-hover-color: $gunmetal;
 $emphasized-link-hover-darken-percentage: 25%;
 $text-light: $body-bg;
-$text-dark: $gray-800;
+$text-dark: $gunmetal;
+
+@font-face {
+    font-family: 'Playball';
+    src: url('../webfonts/Playball-Regular.ttf');
+}
+$display-font-family: 'Playball', cursive;
+$display-font-sizes: (1: 7rem, 2: 5rem);
 
 $navbar-brand-color: $body-bg;
 $navbar-dark-color: $body-bg;
 $navbar-dark-hover-color: $secondary;
-// $navbar-light-color: rgba($black, .9);
-// $navbar-light-hover-color: rgba($black, .5);
+$nav-link-color: $tertiary;
 
-$hr-border-color: $secondary;
+$hr-border-color: $tertiary;
 
-$input-bg: adjust-color($body-bg, $lightness: +10%);
+$btn-close-color: $body-bg;
 
-// fix for weird bug where the RGB isn't getting calculated correctly
+$modal-footer-bg: $panel;
+
+$input-focus-border-color: $primary;
+$input-btn-focus-color: $primary;
+$input-bg: adjust-color($body-bg, $lightness: +5%);
+
+// 3. Include remainder of required Bootstrap stylesheets
+
+// 4. Include any default map overrides here
 $custom-theme-colors: (
     "primary": $primary,
     "secondary": $secondary,
-    "danger": $red,
-    "warn": $yellow,
-    "info": $cyan,
-    "body": $body-bg
+    "tertiary": $tertiary,
+    "danger": $danger,
+    "warning": $warning,
+    "info": $info,
+    "success": $success,
+    "bg-light": $body-bg,
+    "bg-dark": $gunmetal,
+    "panel": $panel,
 );
 
 // Regenerate bg-* text-*
@@ -60,19 +70,63 @@ $utilities-colors: map-merge($utilities-colors, $theme-colors-rgb);
 $utilities-text-colors: map-loop($utilities-colors, rgba-css-var, "$key", "text");
 $utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg");
 
+// Must import after theme mapping or it breaks color for panel :(
+@import "./utilities";
 
-@import "./bootstrap";
+$utilities: map-merge(
+  $utilities,
+  (
+    "viewport-height": (
+      property: height,
+      class: vh,
+      values: (100: 100vh, 92: 92vh)
+    ),
+    "min-viewport-height": (
+      property: min-height,
+      class: min-vh,
+      values: (100: 100vh, 92: 92vh)
+    )
+  )
+);
 
-// 3. Include remainder of required Bootstrap stylesheets
-// @import "./maps";
-// @import "./utilities";
+// 5. Include remainder of required Bootstrap stylesheets
+@import "./root";
 
-// 4. Include any optional Bootstrap components as you like
-// @import "./root";
-// @import "./reboot";
-// @import "./type";
+// 6. Include additional Bootstrap components
+@import "./reboot";
+@import "./type";
 // @import "./images";
-// @import "./containers";
-// @import "./grid";
+@import "./containers";
+@import "./grid";
+@import "./tables";
+@import "./forms";
+@import "./buttons";
+// @import "./card";
+// @import "./button-group";
+@import "./dropdown";
+@import "./transitions";
+// @import "./accordion";
+// @import "./breadcrumb";
+// @import "./pagination";
+// @import "./badge";
+@import "./alert";
+// @import "./progress";
+// @import "./ist-group";
+@import "./close";
+// @import "./toasts";
+// @import "./breadcrumb";
+@import "./modal";
+// @import "./tooltip";
+// @import "./popover";
+// @import "./carousel";
+// @import "./spinners";
+// @import "./offcanvas";
+// @import "./placeholders";
+// @import "./code";
+@import "./nav";
+@import "./navbar";
 
-// 5. Add additional custom code here
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "./utilities/api";
+
+// 8. Add additional custom code here

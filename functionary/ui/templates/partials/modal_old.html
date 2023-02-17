@@ -1,0 +1,34 @@
+<div class="modal is-active" id="form-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <h1 class="modal-card-title is-2">
+                {% block modal_title %}
+                {% endblock modal_title %}
+            </h1>
+            <button class="delete"
+                    aria-label="close"
+                    onclick="return this.parentNode.parentNode.parentNode.remove();"></button>
+        </header>
+        {% block form_declaration %}
+        {% endblock form_declaration %}
+        <section class="modal-card-body">
+            <div class="subtitle is-6">
+                {% block modal_description %}
+                {% endblock modal_description %}
+            </div>
+            <div class="block">
+                {% block modal_content %}
+                {% endblock modal_content %}
+            </div>
+        </section>
+        {% block modal_nofooter %}
+            <footer class="modal-card-foot">
+                {% block modal_footer %}
+                {% endblock modal_footer %}
+            </footer>
+        {% endblock modal_nofooter %}
+        {% block form_end %}
+        {% endblock form_end %}
+    </div>
+</div>

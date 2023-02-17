@@ -6,20 +6,16 @@
         Sign in via {{ provider.name }}
     {% endif %}
 {% endblock modal_title %}
-{% block modal_description %}
-    {% if process == "connect" %}
-        <p>You are about to connect a new third party account from {{ provider.name }}.</p>
-    {% else %}
-        <p>You are about to sign in using a third party account from {{ provider.name }}.</p>
-    {% endif %}
-{% endblock modal_description %}
 {% block modal_content %}
-    <div class="content">
-        <form method="post"  action="{{ request.get_full_path }}">
-            {% csrf_token %}
-            <button class="button is-link" type="submit">Continue</button>
-        </form>
-    </div>
+    {% if process == "connect" %}
+        You are about to connect a new third party account from {{ provider.name }}.
+    {% else %}
+        You are about to sign in using a third party account from {{ provider.name }}.
+    {% endif %}
 {% endblock modal_content %}
-{% block modal_nofooter %}
-{% endblock modal_nofooter %}
+{% block modal_footer %}
+    <form method="post"  action="{{ request.get_full_path }}">
+        {% csrf_token %}
+        <button class="btn btn-info" type="submit">Continue</button>
+    </form>
+{% endblock modal_footer %}

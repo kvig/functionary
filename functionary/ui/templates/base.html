@@ -6,14 +6,7 @@
         <meta name="description" content="Functionary User Interface"/>
         <meta name="keywords" content="Functionary"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link rel="icon"
-              type="image/png"
-              sizes="32x32"
-              href="{% static 'favicon/favicon-32x32.png' %}"/>
-        <link rel="icon"
-              type="image/png"
-              sizes="16x16"
-              href="{% static 'favicon/favicon-16x16.png' %}"/>
+        <link rel="stylesheet" href="{% static 'webfonts/Playball-Regular.tff' %}" />
         <link rel="shortcut icon"
               type="image/png"
               href="{% static 'favicon/favicon.ico' %}"/>
@@ -48,16 +41,12 @@
         <script src="{% static 'js/highlight-menu-item.js' %}" defer></script>
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-primary p-2">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary px-2 py-0">
             <div class="container-fluid">
                 <a href="{% url 'ui:home' %}" class="navbar-brand">
                     <h1>
-                        <img class="functionary-logo d-inline-block align-text-top"
-                             src="{% static 'functionary_f_logo.png' %}"
-                             alt="F"
-                             width="64"
-                             height="64"/>
-                        <span>unctionary</span>
+                        <span class="display-2">F</span>
+                        <span class="functionary-title fs-4">unctionary</span>
                     </h1>
                 </a>
                 <h2 class="navbar-brand">Run your functions</h2>
@@ -65,56 +54,56 @@
         </nav>
         <div class="container-fluid">
             <div class="row flex-nowrap">
-                <div class="col-auto px-sm-2 px-0 shadow">
-                    <div class="d-flex flex-column justify-content-between px-3 pt-2 min-vh-100 max-vh-100">
+                <div class="col-auto px-sm-2 px-0 bg-panel shadow">
+                    <div class="d-flex flex-column justify-content-between mx-3 mt-2 p-0 min-vh-92 max-vh-92">
                         {% if user.is_authenticated %}
                             <nav class="nav nav-pills flex-column mb-auto align-items-center align-items-md-start">
                                 {% include "partials/env_selector.html" %}
                                 <a class="nav-link px-0" href="{% url 'ui:task-list' %}">
-                                    <i class="fa fa-lg fa-clipboard-list text-secondary"></i>
+                                    <i class="fa fa-lg fa-clipboard-list"></i>
                                     <span class="ms-1 d-none d-md-inline">Tasking</span>
                                 </a>
                                 <a class="nav-link px-0" href="{% url 'ui:build-list' %}">
-                                    <i class="fa fa-lg fa-wrench text-secondary"></i>
+                                    <i class="fa fa-lg fa-wrench"></i>
                                     <span class="ms-1 d-none d-md-inline">Builds</span>
                                 </a>
                                 <a class="nav-link px-0" href="{% url 'ui:package-list' %}">
-                                    <i class="fa fa-lg fa-cubes text-secondary"></i>
+                                    <i class="fa fa-lg fa-cubes"></i>
                                     <span class="ms-1 d-none d-md-inline">Packages</span>
                                 </a>
                                 <a class="nav-link px-0" href="{% url 'ui:function-list' %}">
-                                    <i class="fa fa-lg fa-cube text-secondary"></i>
+                                    <i class="fa fa-lg fa-cube"></i>
                                     <span class="ms-1 d-none d-md-inline">Functions</span>
                                 </a>
                                 <a class="nav-link px-0" href="{% url 'ui:workflow-list' %}">
-                                    <i class="fa fa-lg fa-diagram-next text-secondary"></i>
+                                    <i class="fa fa-lg fa-diagram-next"></i>
                                     <span class="ms-1 d-none d-md-inline">Workflows</span>
                                 </a>
                                 <a class="nav-link px-0" href="{% url 'ui:scheduledtask-list' %}">
-                                    <i class="fa fa-lg fa-clock text-secondary"></i>
+                                    <i class="fa fa-lg fa-clock"></i>
                                     <span class="ms-1 d-none d-md-inline">Schedules</span>
                                 </a>
                                 {% if user.is_superuser %}
                                     <a class="nav-link px-0" href="{% url 'ui:environment-list' %}">
-                                        <i class="fa fa-lg fa-building text-secondary"></i>
+                                        <i class="fa fa-lg fa-building"></i>
                                         <span class="ms-1 d-none d-md-inline">Environments</span>
                                     </a>
                                     <a class="nav-link px-0" href="{% url 'ui:team-list' %}">
-                                        <i class="fa fa-lg fa-users text-secondary"></i>
+                                        <i class="fa fa-lg fa-users"></i>
                                         <span class="ms-1 d-none d-md-inline">Teams</span>
                                     </a>
                                 {% endif %}
                             </nav>
                             <hr/>
-                            <nav class="nav nav-pills flex-column mb-auto align-items-center align-items-md-start">
+                            <nav class="nav nav-pills flex-column mb-5 align-items-center align-items-md-start mh-15">
                                 <a class="nav-link px-0" href="{% url 'socialaccount_connections' %}">
-                                    <i class="fa fa-lg fa-user text-secondary"></i>
+                                    <i class="fa fa-lg fa-user"></i>
                                     <span class="ms-1 d-none d-md-inline">{{ user }}</span>
                                 </a>
                                 <form method="post" action="{% url 'account_logout' %}">
                                     {% csrf_token %}
                                     <button class="btn nav-link px-0" type="submit">
-                                        <i class="fa fa-md fa-door-open text-danger"></i>
+                                        <i class="fa fa-md fa-door-open text-primary"></i>
                                         <span class="ms-1 d-none d-md-inline">Logout</span>
                                     </button>
                                 </form>
