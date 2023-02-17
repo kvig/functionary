@@ -42,10 +42,11 @@ cryptography==39.0.1
     # via pyjwt
 defusedxml==0.7.1
     # via python3-openid
-django==4.1.6
+django==4.1.7
     # via
     #   -r requirements.in
     #   django-allauth
+    #   django-bootstrap5
     #   django-celery-beat
     #   django-htmx
     #   django-picklefield
@@ -57,18 +58,16 @@ django-allauth==0.52.0
     # via -r requirements.in
 django-bootstrap5==22.2
     # via -r requirements.in
-django-browser-reload==1.6.0
-    # via -r requirements-dev.in
 django-celery-beat==2.4.0
     # via -r requirements.in
 django-constance[database]==2.9.1
     # via -r requirements.in
 django-htmx==1.13.0
     # via -r requirements.in
-django-tables2==2.5.1
-    # via -r requirements.in
 django-picklefield==3.1
     # via django-constance
+django-tables2==2.5.2
+    # via -r requirements.in
 django-timezone-field==5.0
     # via django-celery-beat
 django-widget-tweaks==1.4.12
@@ -107,7 +106,7 @@ psycopg2==2.9.5
     # via -r requirements.in
 pycparser==2.21
     # via cffi
-pydantic==1.10.4
+pydantic==1.10.5
     # via -r requirements.in
 pyjwt[crypto]==2.6.0
     # via django-allauth
@@ -145,7 +144,7 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.4.3
     # via django
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via pydantic
 tzdata==2022.7
     # via django-celery-beat
