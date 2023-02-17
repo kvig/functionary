@@ -38,3 +38,32 @@ def configured_providers() -> list[dict[str, Provider]]:
             {"name": app.name, "provider": providers.registry.by_id(app.provider)}
         )
     return provider_pairs
+
+
+@register.simple_tag(takes_context=True)
+def unwrap_exception(context) -> dict[str, str | None]:
+    """This tag attempts to unwrap the exception stored in auth_error.
+    It will recurse until it finds a populated 'strerror' value.
+    """
+    exc = context.get("auth_error", {}).get("exception", None)
+
+    try:
+        while exc:
+            # Ultimately verify_message or strerror is the informative value to display.
+            # Check if args is populated when reason isnt, it's the desired exception
+            # to unwind. Otherwise check if reason is populated.
+            if hasattr(exc, "strerror") and exc.strerror:
+                return {
+                    "reason": exc.reason,
+                    "message": exc.verify_message or exc.strerror,
+                }
+            elif not hasattr(exc, "reason") and hasattr(exc, "args"):
+                exc = exc.args[0]
+            elif hasattr(exc, "reason"):
+                exc = exc.reason
+            else:
+                break
+    except Exception:
+        pass
+
+    return {"reason": "Unknown", "message": None}

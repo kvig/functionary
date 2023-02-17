@@ -1,10 +1,22 @@
 {% extends "base.html" %}
+{% load social_helper %}
 {% block title %}
     Third Party Login Failure
 {% endblock title %}
 {% block content %}
     <div class="content">
         <h1>Third Party Login Failure</h1>
-        <p>An error occurred while attempting to login via your third party account.</p>
+        <p>An error occurred while attempting to login via your {{ auth_error.provider | capfirst }} account.</p>
+        {% if debug %}
+            {% unwrap_exception as unwrapped %}
+            <div class="columns mb-0 pl-4">
+                <span class="column is-2 p-2 has-text-weight-semibold">Failure Reason:</span>
+                <span class="column is-10 p-2 is-family-monospace">{{ unwrapped.reason }}</span>
+            </div>
+            <div class="columns pl-4">
+                <span class="column is-2 p-2 has-text-weight-semibold">Message:</span>
+                <span class="column is-10 p-2">{{ unwrapped.message }}</span>
+            </div>
+        {% endif %}
     </div>
 {% endblock content %}
