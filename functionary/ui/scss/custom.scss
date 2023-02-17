@@ -5,22 +5,22 @@
 @import "./maps";
 
 // 2. Include any default variable overrides here
-$white: #FFFFFF;
-$black: #000000;
 $gunmetal: #343E40;
+$persian-blue: #3436ad;
+$eggshell: #E9E7CF;
 
-$primary: #A05F64;
-$secondary: #C6C6C3;
-$panel: #D4D4D2;
+$primary: #0A174B;
+$secondary: #E9E7CF;
+$tertiary: #2B405B;
+$panel: #D7ACA9;
 $body-bg: #F7F8F8;
-$tertiary: #06647F;
-$danger: #D27370;
+$danger: #8a1b19;
 $warning: #FFCDA3;
 $info: #7CAFB6;
 $success: #5a7a57;
 
 $link-color: $primary;
-$link-hover-color: $gunmetal;
+$link-hover-color: $persian-blue;
 $emphasized-link-hover-darken-percentage: 25%;
 $text-light: $body-bg;
 $text-dark: $gunmetal;
@@ -32,16 +32,21 @@ $text-dark: $gunmetal;
 $display-font-family: 'Playball', cursive;
 $display-font-sizes: (1: 7rem, 2: 5rem);
 
-$navbar-brand-color: $body-bg;
-$navbar-dark-color: $body-bg;
-$navbar-dark-hover-color: $secondary;
+$navbar-dark-brand-color: $secondary;
+$navbar-dark-color: $primary;
+$navbar-light-color: $panel;
 $nav-link-color: $tertiary;
+
+$table-striped-bg-factor: .45;
+$table-striped-bg: rgba($secondary, $table-striped-bg-factor);
+$table-striped-order: even;
 
 $hr-border-color: $tertiary;
 
 $btn-close-color: $body-bg;
 
-$modal-footer-bg: $panel;
+$modal-footer-bg: $secondary;
+$modal-content-bg: $body-bg;
 
 $input-focus-border-color: $primary;
 $input-btn-focus-color: $primary;

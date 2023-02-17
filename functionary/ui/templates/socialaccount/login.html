@@ -16,6 +16,6 @@
 {% block modal_footer %}
     <form method="post"  action="{{ request.get_full_path }}">
         {% csrf_token %}
-        <button class="btn btn-info" type="submit">Continue</button>
+        <button class="btn btn-tertiary" type="submit">Continue</button>
     </form>
 {% endblock modal_footer %}
