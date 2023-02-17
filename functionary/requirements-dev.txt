@@ -25,15 +25,13 @@ coverage==7.1.0
     # via -r requirements-dev.in
 cssbeautifier==1.14.7
     # via djlint
-django==4.1.6
+django==4.1.7
     # via
     #   -c requirements.txt
     #   django-browser-reload
     #   django-debug-toolbar
 django-browser-reload==1.6.0
-    # via
-    #   -c requirements.txt
-    #   -r requirements-dev.in
+    # via -r requirements-dev.in
 django-debug-toolbar==3.8.1
     # via -r requirements-dev.in
 djlint==1.19.14
