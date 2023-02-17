@@ -51,7 +51,7 @@ fi
 
 # Make sure sass is installed and run it
 echo "Compiling CSS"
-"${SCRIPT_DIR}/node_modules/.bin/sass" custom.scss "${SCRIPT_DIR}/../static/css/custom.css"
+"${SCRIPT_DIR}/node_modules/.bin/sass" custom.scss "${SCRIPT_DIR}/../static/css/custom_bootstrap.css"
 if [ $? -ne 0 ]; then
     echo "Failed to generate the custom css!"
     exit 3

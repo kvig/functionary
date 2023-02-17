@@ -1,5 +1,4 @@
 {% load static %}
-{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,6 +11,9 @@
               type="image/png"
               href="{% static 'favicon/favicon.ico' %}"/>
         <link rel="stylesheet"
+              href="{% static 'css/custom_bootstrap.css' %}"
+              type="text/css"/>
+        <link rel="stylesheet"
               href="{% static 'css/fontawesome-6.2.1.min.css' %}"
               type="text/css"/>
         <link rel="stylesheet"
@@ -23,11 +25,6 @@
         <link rel="stylesheet"
               href="{% static 'css/functionary.css' %}"
               type="text/css"/>
-        {# Load the bootstrap libraries #}
-        {% bootstrap_css %}
-        {% bootstrap_javascript %}
-        {# Display django.contrib.messages as Bootstrap alerts #}
-        {% bootstrap_messages %}
         {% block extra_style %}
         {% endblock extra_style %}
         <title>

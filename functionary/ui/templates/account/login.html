@@ -13,6 +13,9 @@
         <link rel="shortcut icon"
               type="image/png"
               href="{% static 'favicon/favicon.ico' %}"/>
+        <link rel="stylesheet"
+              href="{% static 'css/custom_bootstrap.css' %}"
+              type="text/css"/>
         <link rel="stylesheet" href="{% static 'css/brands.css' %}" type="text/css"/>
         <link rel="stylesheet"
               href="{% static 'css/fontawesome-6.2.1.min.css' %}"
@@ -22,9 +25,6 @@
         <link rel="stylesheet"
               href="{% static 'css/functionary.css' %}"
               type="text/css"/>
-        {# Load the bootstrap libraries #}
-        {% bootstrap_css %}
-        {% bootstrap_javascript %}
         <title>
             {% block title %}
                 Functionary Login

@@ -152,23 +152,15 @@ use the host name and port number appropriate to your setup.
 ## Compile Custom CSS
 
 The theme colors and other CSS are handled by Bootstrap and customized via Sass
-overrides. They exist in `ui/scss/custom.scss`. These overrides along with
-all the other Bootstrap defaults are compiled into CSS which is then used by the
-app. Compiling the Sass files into CSS files is a "manual" process but only
-needs to be done if changes are made to the scss files. The Sass CLI makes this
-an easy process.
-
-First, install the sass CLI tool - this will require NodeJS installed - by using
-`npm install -g sass`, ensuring to install as a global module. See
-[Sass site](https://sass-lang.com/install) for alternate installations if
-necessary
+overrides. They exist in `ui/scss/custom.scss`. These overrides along with all
+the other Bootstrap defaults are compiled into CSS which is then used by the
+app. Compiling the Sass files into CSS files is handled by a bash script. This
+script downloads Bootstrap, compiles our custom CSS using our defined overrides
+over the Bootstrap base CSS, and then removes any downloaded files.
 
 Then, simply use the following command to compile the Sass files. The output
-file is used as the `theme_url` in Bootstrap settings.
+file is used directly in the HTML files.
 
 ```bash
-sass ui/scss/custom.scss ui/static/css/custom.css
+bash ./ui/scss/compile_scss.sh
 ```
-
-After the CSS files are generated, the Sass CLI tool can be uninstalled if
-desired.
