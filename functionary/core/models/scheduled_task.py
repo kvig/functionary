@@ -49,7 +49,7 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
         to="Function", on_delete=models.CASCADE, related_name="scheduled_tasks"
     )
     environment = models.ForeignKey(to="Environment", on_delete=models.CASCADE)
-    parameters = models.JSONField(encoder=DjangoJSONEncoder)
+    parameters = models.JSONField(encoder=DjangoJSONEncoder, blank=True, default=dict)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=PENDING)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -93,6 +93,8 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
 
     def _clean_parameters(self):
         """Validate that the parameters conform to the function's schema"""
+        if self.parameters is None:
+            self.parameters = {}
         validate_parameters(self.parameters, self.function)
 
     def clean(self):
@@ -150,7 +152,8 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
         """
         if self.periodic_task is None:
             self.periodic_task = PeriodicTask.objects.create(
-                name=self.name,
+                name=self.id,
+                description=self.description or self.name,
                 crontab=crontab_schedule,
                 task="core.utils.tasking.run_scheduled_task",
                 args=f'["{self.id}"]',

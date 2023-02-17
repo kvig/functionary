@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from core.models import Environment, ScheduledTask
@@ -52,21 +52,22 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
         data["function"] = scheduled_task.function
         task_parameter_form = TaskParameterForm(data["function"], data)
 
-        # Run is valid to clean fields and generate errors if present
-        if task_parameter_form.is_valid():
-            pass
+        if not task_parameter_form.is_valid():
+            form = self.get_form()
+        else:
+            data["parameters"] = task_parameter_form.cleaned_data
+            form = ScheduledTaskForm(
+                data=data,
+                environment=scheduled_task.environment,
+                instance=scheduled_task,
+            )
+            if form.is_valid():
+                form.save()
+                scheduled_task.set_status(form.cleaned_data["status"])
+                crontab_schedule = get_crontab_schedule(form.cleaned_data)
+                scheduled_task.set_schedule(crontab_schedule)
 
-        data["parameters"] = task_parameter_form.cleaned_data
-        form = ScheduledTaskForm(
-            data=data, environment=scheduled_task.environment, instance=scheduled_task
-        )
-        if form.is_valid():
-            form.save()
-            scheduled_task.set_status(form.cleaned_data["status"])
-            crontab_schedule = get_crontab_schedule(form.cleaned_data)
-            scheduled_task.set_schedule(crontab_schedule)
-
-            return HttpResponseRedirect(self.get_success_url())
+                return HttpResponseRedirect(self.get_success_url())
 
         context = {
             "scheduledtask": scheduled_task,
@@ -74,4 +75,4 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
             "form": form,
             "task_parameter_form": task_parameter_form,
         }
-        return render(request, "forms/scheduled_task/scheduled_task_edit.html", context)
+        return self.render_to_response(context)

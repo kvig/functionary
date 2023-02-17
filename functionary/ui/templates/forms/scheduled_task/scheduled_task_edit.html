@@ -221,6 +221,7 @@
                         </div>
                         <hr/>
                         {% if update %}
+                            <input type="hidden" name="function" value="{{ scheduledtask.function_id }}"/>
                             <input class="button is-link" type="submit" value="Update"/>
                         {% else %}
                             <input class="button is-link" type="submit" value="Create"/>

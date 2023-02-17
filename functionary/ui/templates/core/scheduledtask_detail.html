@@ -16,6 +16,11 @@
             <p>
                 <i class="fa fa-clock"></i>
                 <span>{{ scheduledtask.name }}</span>
+                <a href="{% url 'ui:scheduledtask-update' scheduledtask.id %}">
+                    <button class="button is-small has-text-link is-white singletonActive">
+                        <span class="fa fa-pencil-alt"></span>
+                    </button>
+                </a>
             </p>
         </h1>
     </div>

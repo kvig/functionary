@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
 from core.models import Environment, Function, ScheduledTask
@@ -44,29 +44,29 @@ class ScheduledTaskCreateView(PermissionedCreateView):
 
         task_parameter_form = TaskParameterForm(data["function"], data)
 
-        # Run is valid to clean fields and generate errors if present
-        if task_parameter_form.is_valid():
-            pass
-
-        data["parameters"] = task_parameter_form.cleaned_data
-        scheduled_task_form = ScheduledTaskForm(
-            data=data, environment=data["environment"]
-        )
-        if scheduled_task_form.is_valid():
-            scheduled_task = _create_scheduled_task(
-                request,
-                scheduled_task_form.cleaned_data,
-                task_parameter_form.cleaned_data,
+        if not task_parameter_form.is_valid():
+            scheduled_task_form = self.get_form()
+        else:
+            data["parameters"] = task_parameter_form.cleaned_data
+            scheduled_task_form = ScheduledTaskForm(
+                data=data,
+                environment=data["environment"],
             )
-            return HttpResponseRedirect(
-                reverse("ui:scheduledtask-detail", kwargs={"pk": scheduled_task.id})
-            )
+            if scheduled_task_form.is_valid():
+                scheduled_task = _create_scheduled_task(
+                    request,
+                    scheduled_task_form.cleaned_data,
+                    task_parameter_form.cleaned_data,
+                )
+                return HttpResponseRedirect(
+                    reverse("ui:scheduledtask-detail", kwargs={"pk": scheduled_task.id})
+                )
 
         context = {
             "form": scheduled_task_form,
             "task_parameter_form": task_parameter_form,
         }
-        return render(request, "forms/scheduled_task/scheduled_task_edit.html", context)
+        return self.render_to_response(context)
 
 
 def _create_scheduled_task(

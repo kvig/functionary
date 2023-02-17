@@ -3,6 +3,7 @@ import json
 from copy import deepcopy
 from typing import TYPE_CHECKING, Type, TypeVar, Union
 
+import jsonschema
 from django.core.exceptions import ValidationError as DjangoValidationError
 from pydantic import BaseModel, Field, FileUrl, Json, ValidationError, create_model
 
@@ -63,7 +64,9 @@ def _serialize_json_parameters(
     """Serializes json type parameters for use in validation"""
     parameters_copy = deepcopy(parameters)
 
-    for parameter_obj in instance.parameters.filter(parameter_type=PARAMETER_TYPE.JSON):
+    for parameter_obj in instance.parameters.filter(
+        name__in=parameters.keys(), parameter_type=PARAMETER_TYPE.JSON
+    ):
         name = parameter_obj.name
         parameters_copy[name] = json.dumps(parameters_copy[name])
 
@@ -96,6 +99,13 @@ def validate_parameters(parameters: dict, instance: Union["Function", "Workflow"
     """
     try:
         pydantic_model = _get_pydantic_model(instance)
-        _ = pydantic_model(**_serialize_json_parameters(parameters, instance))
-    except (ValidationError, json.JSONDecodeError) as exc:
+        serialized_parameters = _serialize_json_parameters(parameters, instance)
+        jsonschema.validate(
+            serialized_parameters, pydantic_model(**serialized_parameters).schema()
+        )
+    except (
+        ValidationError,
+        jsonschema.exceptions.ValidationError,
+        json.JSONDecodeError,
+    ) as exc:
         raise DjangoValidationError(exc)
