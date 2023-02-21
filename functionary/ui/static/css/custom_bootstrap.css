@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @font-face {
   font-family: "Playball";
-  src: url("../webfonts/Playball-Regular.ttf");
+  src: url("../webfonts/Functionary_Playball.woff2");
 }
 :root {
   --bs-blue: #0d6efd;
