@@ -17,7 +17,4 @@ INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + [
     "10.0.2.2",
 ]
 
-try:
-    from .local import *
-except ImportError:
-    pass
+from .local_settings import *  # noqa
