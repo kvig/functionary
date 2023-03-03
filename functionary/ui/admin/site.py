@@ -6,6 +6,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.authtoken.models import Token
 
 from core.admin.environment import EnvironmentAdmin
+from core.admin.settings import FunctionarySettings, SettingsAdmin
 from core.admin.socialapplication import ConfiguredSocialApp, SocialAppAdmin
 from core.admin.team import TeamAdmin
 from core.admin.user import UserAdmin
@@ -39,3 +40,4 @@ ui_admin_site.register(Team, TeamAdmin)
 ui_admin_site.register(User, UserAdmin)
 ui_admin_site.register(SocialAccount)
 ui_admin_site.register(ConfiguredSocialApp, SocialAppAdmin)
+ui_admin_site.register([FunctionarySettings], SettingsAdmin)

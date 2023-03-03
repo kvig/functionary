@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 from io import BytesIO
 
+from constance import config
 from django.conf import settings
 from django.http import HttpRequest
 from minio import Minio
@@ -38,13 +39,12 @@ class MinioInterface:
     def __init__(self, bucket_name: str):
         try:
             self.client = Minio(
-                endpoint=f"{settings.S3_HOST}:{settings.S3_PORT}",
-                access_key=settings.S3_ACCESS_KEY,
-                secret_key=settings.S3_SECRET_KEY,
-                secure=settings.S3_SECURE,
-                region=settings.S3_REGION,
+                endpoint=f"{config.S3_HOST}:{config.S3_PORT}",
+                access_key=config.S3_ACCESS_KEY,
+                secret_key=config.S3_SECRET_KEY,
+                secure=config.S3_SECURE,
+                region=config.S3_REGION,
             )
-            logger.debug("Successfully connected to S3 provider.")
             self.bucket_name = bucket_name
             self._create_bucket()
         except MaxRetryError as err:
@@ -55,6 +55,7 @@ class MinioInterface:
             msg = f"Error communicating with S3 provider: {err}"
             logger.error(msg)
             raise S3ConnectionError(msg)
+        logger.debug("Successfully connected to S3 provider.")
 
     def bucket_exists(self) -> bool:
         return self.client.bucket_exists(self.bucket_name)
@@ -98,7 +99,7 @@ class MinioInterface:
                 bucket_name=self.bucket_name,
                 object_name=filename,
                 expires=timedelta(
-                    minutes=settings.S3_SIGNED_URL_TIMEOUT_MINUTES,
+                    minutes=config.S3_PRESIGNED_URL_TIMEOUT_MINUTES,
                 ),
             )
 
