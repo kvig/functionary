@@ -18,12 +18,7 @@ x-environment:
   DB_PORT: 5432
   FUNCTIONARY_NETWORK: functionary-network # Mutually exclusive with NETWORK_MODE
   FUNCTIONARY_NETWORK_MODE:
-  S3_HOST: minio
-  S3_PORT: 9000
-  S3_REGION:
-  S3_SECURE: false
-  S3_ACCESS_KEY: ROOTUSER
-  S3_SECRET_KEY: CHANGEME123
+
 
 services:
   django:

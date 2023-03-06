@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import timedelta
 from io import BytesIO
 
@@ -39,7 +40,7 @@ class MinioInterface:
     def __init__(self, bucket_name: str):
         try:
             self.client = Minio(
-                endpoint=f"{config.S3_HOST}:{config.S3_PORT}",
+                endpoint=f"{os.getenv('S3_HOST', config.S3_HOST)}:{config.S3_PORT}",
                 access_key=config.S3_ACCESS_KEY,
                 secret_key=config.S3_SECRET_KEY,
                 secure=config.S3_SECURE,

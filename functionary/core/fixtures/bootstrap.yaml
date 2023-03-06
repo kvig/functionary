@@ -124,3 +124,43 @@
     role: OPERATOR
     updated_at: 2022-10-13 03:25:56.915799+00:00
     environment: 2d113b21-bf1f-4c74-ba12-e37d8f34b72a
+- model: database.constance
+  pk: 1
+  fields:
+    key: constance:functionary:SOCIALACCOUNT_PROVIDERS
+    value: gAJ9cQAoWAYAAABnaXRodWJxAX1xAlgGAAAAZ2l0bGFicQN9cQRYCgAAAEdJVExBQl9VUkxxBVgAAAAAcQZzWAgAAABrZXljbG9ha3EHfXEIdS4=
+- model: database.constance
+  pk: 2
+  fields:
+    key: constance:functionary:S3_HOST
+    value: gAJYBQAAAG1pbmlvcQAu
+- model: database.constance
+  pk: 3
+  fields:
+    key: constance:functionary:S3_PORT
+    value: 9000
+- model: database.constance
+  pk: 4
+  fields:
+    key: constance:functionary:S3_REGION
+    value: gAJYAAAAAHEALg==
+- model: database.constance
+  pk: 5
+  fields:
+    key: constance:functionary:S3_SECURE
+    value: false
+- model: database.constance
+  pk: 6
+  fields:
+    key: constance:functionary:S3_ACCESS_KEY
+    value: gAJYCAAAAFJPT1RVU0VScQAu
+- model: database.constance
+  pk: 7
+  fields:
+    key: constance:functionary:S3_SECRET_KEY
+    value: gAJYCwAAAENIQU5HRU1FMTIzcQAu
+- model: database.constance
+  pk: 8
+  fields:
+    key: constance:functionary:S3_PRESIGNED_URL_TIMEOUT_MINUTES
+    value: 5

@@ -13,13 +13,13 @@ CONSTANCE_CONFIG = {
         "SocialAccount Providers Configuration",
         "config_field",
     ),
-    "S3_HOST": ("localhost", "Server Hostname", str),
+    "S3_HOST": ("", "Server Hostname", str),
     "S3_PORT": (9000, "Port", int),
     "S3_REGION": ("", "Region", str),
+    "S3_ACCESS_KEY": ("", "Access Key", str),
+    "S3_SECRET_KEY": ("", "Secret Key", str),
     "S3_SECURE": (False, "Require Secure Access", bool),
-    "S3_ACCESS_KEY": ("ACCESS_KEY", "ROOTUSER", str),
-    "S3_SECRET_KEY": ("SECRET_KEY", "CHANGEME123", str),
-    "S3_PRESIGNED_URL_TIMEOUT_MINUTES": (1, "Download URL Timeout (minutes)", int),
+    "S3_PRESIGNED_URL_TIMEOUT_MINUTES": (5, "Download URL Timeout (minutes)", int),
 }
 CONSTANCE_CONFIG_FIELDSETS = {
     "S3 Settings": {
