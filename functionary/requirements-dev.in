@@ -14,3 +14,6 @@ djlint
 
 # Django debugging
 django-debug-toolbar
+
+# Schema Generation
+drf-jsonschema-serializer

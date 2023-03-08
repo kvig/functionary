@@ -19,14 +19,12 @@ class Command(BaseCommand):
             action="store",
             dest="schema_file",
             type=pathlib.Path,
-            nargs=1,
             help="Output file to write the schema to",
         )
 
     def handle(self, *args, **options):
         json_schema = to_jsonschema(PackageDefinitionWithVersionSerializer())
         json_schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-        json_schema["$id"] = "https://functionary/package.yaml"
         schema_string = json.dumps(json_schema, indent=4)
 
         if not options["schema_file"]:

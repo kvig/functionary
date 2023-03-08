@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://functionary/package.yaml",
   "type": "object",
   "properties": {
     "version": { "type": "number", "minLength": 1, "title": "Version" },
@@ -122,7 +121,8 @@
                   },
                   "required": ["name", "type"]
                 },
-                "title": "Parameters"
+                "title": "Parameters",
+                "additionalProperties": false
               },
               "return_type": {
                 "type": "string",
@@ -142,7 +142,8 @@
             },
             "required": ["name", "parameters"]
           },
-          "title": "Functions"
+          "title": "Functions",
+          "additionalProperties": false
         }
       },
       "required": ["name", "functions"],
