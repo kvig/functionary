@@ -33,8 +33,6 @@ package:
 #        - name: string
 #          # (optional) defaults to name; determines how the parameter is displayed in the UI
 #          display_name: string
-#          # (optional) short summary of the functions purpose
-#          summary: string
 #          # (optional) detailed description
 #          description: string
 #          # (required) data type of the parameter

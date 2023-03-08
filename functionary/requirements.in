@@ -20,5 +20,6 @@ rapidfuzz
 
 # drf and optional dependencies
 djangorestframework
+drf-jsonschema-serializer
 drf-spectacular
 drf-spectacular[sidecar]

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://functionary/package.yaml",
+  "type": "object",
+  "properties": {
+    "version": { "type": "number", "minLength": 1, "title": "Version" },
+    "package": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "title": "Name" },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Display name"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Summary"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Description"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["python", "javascript"],
+          "enumNames": ["Python", "JavaScript"],
+          "title": "Language"
+        },
+        "functions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "title": "Name" },
+              "display_name": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Display name"
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Summary"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Description"
+              },
+              "variables": {
+                "type": "array",
+                "items": { "type": "string", "maxLength": 256, "minLength": 1 },
+                "title": "Variables"
+              },
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "title": "Name"
+                    },
+                    "display_name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "title": "Display name"
+                    },
+                    "description": {
+                      "type": "string",
+                      "minLength": 1,
+                      "title": "Description"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "boolean",
+                        "date",
+                        "datetime",
+                        "file",
+                        "float",
+                        "integer",
+                        "json",
+                        "string",
+                        "text"
+                      ],
+                      "title": "Type"
+                    },
+                    "required": { "type": "boolean", "title": "Required" },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "title": "Name"
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "title": "Value"
+                          }
+                        },
+                        "required": ["name", "value"]
+                      },
+                      "title": "Options"
+                    },
+                    "default": {
+                      "type": ["string", "boolean", "integer", "number"],
+                      "minLength": 1,
+                      "title": "Default",
+                      "description": "This value should be the same type as the 'type' property"
+                    }
+                  },
+                  "required": ["name", "type"]
+                },
+                "title": "Parameters"
+              },
+              "return_type": {
+                "type": "string",
+                "enum": [
+                  "boolean",
+                  "date",
+                  "datetime",
+                  "file",
+                  "float",
+                  "integer",
+                  "json",
+                  "string",
+                  "text"
+                ],
+                "title": "Return type"
+              }
+            },
+            "required": ["name", "parameters"]
+          },
+          "title": "Functions"
+        }
+      },
+      "required": ["name", "functions"],
+      "title": "Package"
+    }
+  },
+  "required": ["version", "package"]
+}

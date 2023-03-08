@@ -1,26 +1,12 @@
 {
   "folders": [
-    {
-      "path": "cli"
-    },
-    {
-      "path": "docs"
-    },
-    {
-      "path": "docker"
-    },
-    {
-      "path": "examples"
-    },
-    {
-      "path": "functionary"
-    },
-    {
-      "path": "runner"
-    },
-    {
-      "path": "package_templates"
-    }
+    { "path": "cli" },
+    { "path": "docs" },
+    { "path": "docker" },
+    { "path": "examples" },
+    { "path": "functionary" },
+    { "path": "runner" },
+    { "path": "package_templates" }
   ],
   "settings": {
     "files.exclude": {
@@ -39,9 +25,7 @@
       "**/*.swp": true
     },
     "editor.formatOnSave": true,
-    "markdownlint.config": {
-      "MD013": true
-    },
+    "markdownlint.config": { "MD013": true },
     "prettier.proseWrap": "always",
     "python.analysis.autoImportCompletions": false,
     "python.testing.pytestEnabled": true,
@@ -54,25 +38,16 @@
       "RABBITMQ_USER": "bugs",
       "RABBITMQ_PASSWORD": "wascallywabbit"
     },
-    "[django-html]": {
-      "editor.defaultFormatter": "monosans.djlint"
+    "yaml.schemas": {
+      "../functionary/.vscode/schema.json": "package.yaml"
     },
-    "[html]": {
-      "editor.defaultFormatter": "monosans.djlint"
-    },
-    "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[jsonc]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
+    "[django-html]": { "editor.defaultFormatter": "monosans.djlint" },
+    "[html]": { "editor.defaultFormatter": "monosans.djlint" },
+    "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
     "[python]": {
-      "editor.codeActionsOnSave": {
-        "source.organizeImports": true
-      },
+      "editor.codeActionsOnSave": { "source.organizeImports": true },
       "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "[dockercompose]": {
@@ -109,7 +84,8 @@
       "ms-python.python",
       "ms-vscode-remote.remote-containers",
       "ms-vscode-remote.remote-ssh",
-      "ms-vscode-remote.vscode-remote-extensionpack"
+      "ms-vscode-remote.vscode-remote-extensionpack",
+      "redhat.vscode-yaml"
     ]
   }
 }
