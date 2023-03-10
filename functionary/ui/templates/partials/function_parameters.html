@@ -1,6 +1,8 @@
 {% for parameter in parameters %}
-    <div class="control pb-2">
-        <label for="{{ parameter.label }}"><b>{{ parameter.label }}: </b><i>{{ parameter.label_suffix }}</i></label>
-        {{ parameter.widget }}    
+    <div class="control mb-2">
+        <label for="{{ parameter.label }}">
+            <b>{{ parameter.label }}: </b><i>{{ parameter.label_suffix }}</i>
+        </label>
+        {{ parameter.widget }}
     </div>
 {% endfor %}

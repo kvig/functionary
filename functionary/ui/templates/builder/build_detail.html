@@ -11,7 +11,7 @@
                 <li class="breadcrumb-item active" aria-current="page">{{ build.package.render_name }}</li>
             </ol>
         </nav>
-        <div class="hstack gap-3 pt-2 pb-4">
+        <div class="hstack gap-3 mt-2 mb-4">
             <h1>
                 <i class="fa fa-wrench"></i>
                 {{ build.package.render_name }}
@@ -21,25 +21,25 @@
                 <span class="fs-5">{{ build.status }}</span>
             </div>
         </div>
-        <div class="vstack gap-4 py-2">
+        <div class="vstack gap-4 my-2">
             <div>
-                <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw pe-1"></i>Creator</strong>
-                <p class="ps-4 py-2">
+                <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw me-1"></i>Creator</strong>
+                <p class="ms-4 my-2">
                     {{ build.creator.first_name }} {{ build.creator.last_name }} <span class="text-muted">({{ build.creator.username }})</span>
                     at {{ build.created_at }}
                 </p>
             </div>
             {% if build.updated_at %}
                 <div>
-                    <strong class="fs-4"><i class="fa fa-clock-rotate-left fa-sm fa-fw pe-1"></i>Last Updated</strong>
-                    <p class="ps-4 py-2">{{ build.updated_at }}</p>
+                    <strong class="fs-4"><i class="fa fa-clock-rotate-left fa-sm fa-fw me-1"></i>Last Updated</strong>
+                    <p class="ms-4 my-2">{{ build.updated_at }}</p>
                 </div>
             {% endif %}
             {% if build_log.log %}
                 <div>
-                    <strong class="fs-4"><i class="fa fa-book fa-sm fa-fw pe-1"></i>Build Log</strong>
-                    <div class="ps-4">
-                        <div class="form-switch py-3">
+                    <strong class="fs-4"><i class="fa fa-book fa-sm fa-fw me-1"></i>Build Log</strong>
+                    <div class="ms-4">
+                        <div class="form-switch my-3">
                             <input class="form-check-input"
                                    type="checkbox"
                                    name="wrap"
@@ -48,7 +48,7 @@
                                    checked/>
                             <label class="form-check-label" for="wrap-toggle">Wrap text</label>
                         </div>
-                        <pre class="py-1 font-monospace">{{ build_log.log }}</pre>
+                        <pre class="my-1 font-monospace">{{ build_log.log }}</pre>
                     </div>
                 </div>
             {% endif %}

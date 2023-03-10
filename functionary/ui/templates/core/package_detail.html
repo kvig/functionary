@@ -9,25 +9,25 @@
                 <li class="breadcrumb-item active" aria-current="page">{{ package.render_name }}</li>
             </ol>
         </nav>
-        <h1 class="pt-2 pb-4">
+        <h1 class="mt-2 mb-4">
             <i class="fa fa-cubes"></i>
             {{ package.render_name }}
         </h1>
-        <div class="vstack gap-4 py-2">
+        <div class="vstack gap-4 my-2">
             {% if package.description %}
                 <div>
-                    <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw pe-1"></i>Description</strong>
-                    <p class="ps-4 py-2">{{ package.description }}</p>
+                    <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw me-1"></i>Description</strong>
+                    <p class="ms-4 my-2">{{ package.description }}</p>
                 </div>
             {% elif package.summary %}
                 <div>
-                    <strong class="fs-4"><i class="fa fa-rectangle-list fa-sm fa-fw pe-1"></i>Summary</strong>
-                    <p class="ps-4 py-2">{{ package.summary }}</p>
+                    <strong class="fs-4"><i class="fa fa-rectangle-list fa-sm fa-fw me-1"></i>Summary</strong>
+                    <p class="ms-4 my-2">{{ package.summary }}</p>
                 </div>
             {% endif %}
             <div>
-                <strong class="fs-4"><i class="fa fa-cube fa-sm fa-fw pe-1"></i>Functions</strong>
-                <div class="ps-4">
+                <strong class="fs-4"><i class="fa fa-cube fa-sm fa-fw me-1"></i>Functions</strong>
+                <div class="ms-4">
                     <div id="funcs" class="list-group">
                         {% for function in functions %}
                             <a href="{% url 'ui:function-detail' function.id %}"

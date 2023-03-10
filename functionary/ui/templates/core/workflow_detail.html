@@ -8,7 +8,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{ workflow.name }}</li>
         </ol>
     </nav>
-    <div class="hstack gap-3 pt-2 pb-4">
+    <div class="hstack gap-3 mt-2 mb-4">
         <h1>
             <i class="fa fa-diagram-next"></i>
             {{ workflow.name }}
@@ -20,17 +20,17 @@
            hx-swap="beforeend"
            hx-get="{% url 'ui:workflow-update' workflow.id %}?id={{ workflow.id }}"></i>
     </div>
-    <div class="vstack gap-4 py-2">
+    <div class="vstack gap-4 my-2">
         <div>
-            <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw pe-1"></i>Description</strong>
-            <p id="desc" class="ps-4 py-2">{{ workflow.description }}</p>
+            <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw me-1"></i>Description</strong>
+            <p id="desc" class="ms-4 my-2">{{ workflow.description }}</p>
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw pe-1"></i>Parameters</strong>
+            <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters</strong>
             {% include "partials/workflows/parameter_list.html" %}
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-stairs fa-sm fa-fw pe-1"></i>Steps</strong>
+            <strong class="fs-4"><i class="fa fa-stairs fa-sm fa-fw me-1"></i>Steps</strong>
             {% include "partials/workflows/step_list.html" %}
         </div>
     </div>

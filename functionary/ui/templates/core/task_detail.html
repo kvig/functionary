@@ -10,7 +10,7 @@
                 <li class="breadcrumb-item active" aria-current="page">{{ task.function.render_name }}</li>
             </ol>
         </nav>
-        <div class="hstack gap-3 pt-2 pb-4">
+        <div class="hstack gap-3 mt-2 mb-4">
             <h1>
                 <i class="fa fa-digital-tachograph"></i>
                 {{ task.function.render_name }}
@@ -20,20 +20,20 @@
                 <span class="fs-5">{{ task.status }}</span>
             </div>
         </div>
-        <div class="vstack gap-4 py-2">
+        <div class="vstack gap-4 my-2">
             <div>
-                <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw pe-1"></i>Creator</strong>
-                <p class="ps-4 py-2">
+                <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw me-1"></i>Creator</strong>
+                <p class="ms-4 my-2">
                     {{ task.creator.first_name }} {{ task.creator.last_name }} <span class="text-muted">({{ task.creator.username }})</span>
                     at {{ task.created_at }}
                 </p>
             </div>
             <div>
-                <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw pe-1"></i>Parameters</strong>
-                <p class="font-monospace ps-4 py-2 m-0">{{ task.parameters | pprint }}</p>
+                <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters</strong>
+                <p class="font-monospace ms-4 my-2 m-0">{{ task.parameters | pprint }}</p>
             </div>
             <div>
-                <strong class="fs-4"><i class="fa fa-clipboard-check fa-sm fa-fw pe-1"></i>Result</strong>
+                <strong class="fs-4"><i class="fa fa-clipboard-check fa-sm fa-fw me-1"></i>Result</strong>
                 {% include "partials/task_result_block.html" %}
             </div>
         </div>

@@ -15,11 +15,11 @@
             <li class="breadcrumb-item active" aria-current="page">{{ function.render_name }}</li>
         </ol>
     </nav>
-    <h1 class="pt-2 pb-4">
+    <h1 class="mt-2 mb-4">
         <i class="fa fa-cube fa-xl"></i>
         <span>{{ function.render_name }}</span>
     </h1>
-    <div class="vstack gap-4 py-2">
+    <div class="vstack gap-4 my-2">
         {% if not function.active %}
             <div class="alert alert-warning text-center" role="alert">
                 <i class="fa fa-triangle-exclamation"></i>
@@ -28,26 +28,26 @@
         {% endif %}
         {% if function.description %}
             <div>
-                <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw pe-1"></i>Description</strong>
-                <p class="ps-4 py-2">{{ function.description }}</p>
+                <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw me-1"></i>Description</strong>
+                <p class="ms-4 my-2">{{ function.description }}</p>
             </div>
         {% elif function.summary %}
             <div>
-                <strong class="fs-4"><i class="fa fa-rectangle-list fa-sm fa-fw pe-1"></i>Summary</strong>
-                <p class="ps-4 py-2">{{ function.summary }}</p>
+                <strong class="fs-4"><i class="fa fa-rectangle-list fa-sm fa-fw me-1"></i>Summary</strong>
+                <p class="ms-4 my-2">{{ function.summary }}</p>
             </div>
         {% endif %}
         {% if function.return_type %}
             <div>
-                <strong class="fs-4"><i class="fa fa-right-from-bracket fa-sm fa-fw pe-1"></i>Return Type</strong>
-                <p class="ps-4 py-2">{{ function.return_type }}</p>
+                <strong class="fs-4"><i class="fa fa-right-from-bracket fa-sm fa-fw me-1"></i>Return Type</strong>
+                <p class="ms-4 my-2">{{ function.return_type }}</p>
             </div>
         {% endif %}
         {% if form is not None %}
             <div>
                 {% if function.active %}
-                    <strong class="fs-4"><i class="fa fa-pencil-alt fa-sm fa-fw pe-1"></i>Create Task</strong>
-                    <div class="ps-4 py-2">
+                    <strong class="fs-4"><i class="fa fa-pencil-alt fa-sm fa-fw me-1"></i>Create Task</strong>
+                    <div class="ms-4 my-2">
                         <div class="row">
                             <div class="col-5">
                                 <form id="taskCreateForm"
@@ -83,7 +83,7 @@
                 Schema:
             </summary>
             <div class="p-4">
-                <ol class="px-1 json-container wrap-json" id="json-result" />
+                <ol class="mx-1 json-container wrap-json" id="json-result" />
                 <pre class="has-background-link-light">{{ function.schema | pretty_json }}</pre>
             </div>
         </details>
