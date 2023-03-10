@@ -24,15 +24,30 @@
     color: black;
 }
 .errorlist > li {
-    color: red;
+    color: var(--bs-text-danger);
 }
 .errors {
-    color: red;
+    color: var(--bs-text-danger);
 }
 /* the :has() must be user enabled to work on firefox */
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/:has#browser_compatibility */
 div:has(input[type="checkbox"][name="wrap"]:not(:checked)) ~ pre {
     white-space: pre;
+}
+#status-color[title="PENDING"]{
+    color: var(--bs-info);
+}
+#status-color[title="ACTIVE"]{
+    color: var(--bs-success);
+}
+#status-color[title="PAUSED"]{
+    color:  var(--bs-warning-text);
+}
+#status-color[title="ERROR"]{
+    color: var(--bs-danger);
+}
+#status-color[title="ARCHIVED"]{
+    color: var(--bs-dark);
 }
 .wrap-json,
 pre {

@@ -96,13 +96,9 @@ class ScheduledTaskForm(ModelForm):
     def _setup_field_classes(self) -> None:
         for field in self.fields:
             if field not in ["status", "function"]:
-                self.fields[field].widget.attrs.update(
-                    {"class": "input is-medium is-fullwidth"}
-                )
+                self.fields[field].widget.attrs.update({"class": "form-control"})
             else:
-                self.fields[field].widget.attrs.update(
-                    {"class": "select is-medium is-fullwidth"}
-                )
+                self.fields[field].widget.attrs.update({"class": "form-select-control"})
 
         self.fields["function"].widget.attrs.update(
             {

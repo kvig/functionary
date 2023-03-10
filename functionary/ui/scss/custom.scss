@@ -19,7 +19,9 @@ $display-font-sizes: (1: 7rem, 2: 4rem);
 $primary: #3E5F8E;
 $secondary: #FFFFFF;
 $danger: #8A1B19;
+// $danger-text: #8A1B19;
 $warning: #FFA270;
+$warning-text: #CC4700;
 $info: #407f87;
 $success: #5A7A57;
 $light: #F7F8F8;
@@ -40,14 +42,15 @@ $link-decoration: none;
 
 // 3. Include required Bootstrap stylesheets
 @import "./variables";
-@import "./mixins";
-@import "./maps";
+@import "./variables-dark";
 
 // 4. Include any default map overrides here
 
 // 5. Include remainder of Bootstrap stylesheets
-@import "./utilities";
+@import "./maps";
+@import "./mixins";
 @import "./root";
+@import "./utilities";
 
 // 6. Include additional Bootstrap components
 @import "./reboot";

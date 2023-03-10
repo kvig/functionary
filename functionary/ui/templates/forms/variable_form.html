@@ -23,13 +23,13 @@
                 <div class="field column is-half">
                     <label class="label{% if form.description.errors %} errors{% endif %}" for={{ form.description.id_for_label }}>Description:
                     </label>
-                    {% render_field form.description class="textarea" placeholder=form.description.name rows=4 %}
+                    {% render_field form.description class="textarea" placeholder=form.description.name rows=3 cols=40 %}
                     {{ form.description.errors }}
                 </div>
                 <div class="field column is-half">
                     <label class="{% if form.value.errors %}errors{% endif %} label" for={{ form.value.id_for_label }}>Value:
                     </label>
-                    {% render_field form.value class="textarea" placeholder=form.value.name rows=4 %}
+                    {% render_field form.value class="textarea" placeholder=form.value.name rows=3 cols=40 %}
                     {{ form.value.errors }}
                 </div>
             </div>

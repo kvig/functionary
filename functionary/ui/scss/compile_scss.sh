@@ -8,7 +8,7 @@ if ! which npm &>/dev/null; then
     printf "\tapt-get install nodejs\n"
 fi
 
-export BOOTSTRAP_VERSION="5.2.3"
+export BOOTSTRAP_VERSION="5.3.0-alpha1"
 
 # Make a working directory and find the directory of this script
 TMP_DIR=$(mktemp -d)

@@ -60,6 +60,6 @@ class ScheduledTaskTable(tables.Table):
         return format_html(
             f'<a class="btn btn-small singletonActive" role="button"'
             f' href="{reverse("ui:scheduledtask-update", kwargs={"pk": record.id})}">'
-            f'<span class="fa fa-pencil-alt"></span>'
+            f'<span class="fa fa-pencil-alt text-info"></span>'
             f"</a>"
         )
