@@ -9,7 +9,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{ scheduledtask.name }}</li>
         </ol>
     </nav>
-    <div class="hstack gap-3 pt-2 pb-4">
+    <div class="hstack gap-3 mt-2 mb-4">
         <h1>
             <i class="fa fa-clock"></i>
             {{ scheduledtask.name }}
@@ -23,40 +23,40 @@
     </div>
     {% if scheduledtask.description %}
         <div>
-            <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw pe-1"></i>Description</strong>
-            <p class="ps-4 py-2">{{ scheduledtask.description }}</p>
+            <strong class="fs-4"><i class="fa fa-newspaper fa-sm fa-fw me-1"></i>Description</strong>
+            <p class="ms-4 my-2">{{ scheduledtask.description }}</p>
         </div>
     {% endif %}
-    <div class="vstack gap-2 py-2">
+    <div class="vstack gap-2 my-2">
         <div>
-            <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw pe-1"></i>Creator</strong>
-            <p class="ps-4 py-2">
+            <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw me-1"></i>Creator</strong>
+            <p class="ms-4 my-2">
                 {{ scheduledtask.creator.first_name }} {{ scheduledtask.creator.last_name }} <span class="text-muted">({{ scheduledtask.creator.username }})</span>
                 at {{ scheduledtask.created_at }}
             </p>
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-calendar fa-sm fa-fw pe-1"></i>Crontab</strong>
-            <span class="font-monospace px-2"
+            <strong class="fs-4"><i class="fa fa-calendar fa-sm fa-fw me-1"></i>Crontab</strong>
+            <span class="font-monospace mx-2"
                   id="status-color"
                   title="{{ scheduledtask.status }}">
-                <i class="fa fa-heart-pulse fa-xs pe-1"></i>{{ scheduledtask.status }}
+                <i class="fa fa-heart-pulse fa-xs me-1"></i>{{ scheduledtask.status }}
             </span>
-            <p class="ps-4 py-2">{{ scheduledtask.periodic_task.crontab }}</p>
+            <p class="ms-4 my-2">{{ scheduledtask.periodic_task.crontab }}</p>
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-cube fa-sm fa-fw pe-1"></i>Function</strong>
-            <p class="ps-4 py-2">
+            <strong class="fs-4"><i class="fa fa-cube fa-sm fa-fw me-1"></i>Function</strong>
+            <p class="ms-4 my-2">
                 <a href="{% url 'ui:function-detail' scheduledtask.function.id %}">{{ scheduledtask.function.render_name }}</a>
             </p>
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw pe-1"></i>Parameters</strong>
-            <p class="font-monospace ps-4 py-2" id="params">{{ scheduledtask.parameters | pprint }}</p>
+            <strong class="fs-4"><i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters</strong>
+            <p class="font-monospace ms-4 my-2" id="params">{{ scheduledtask.parameters | pprint }}</p>
         </div>
         <div>
-            <strong class="fs-4"><i class="fa fa-clock-rotate-left fa-sm fa-fw pe-1"></i>Recent History</strong>
-            <div class="ps-4 py-2 table-container">
+            <strong class="fs-4"><i class="fa fa-clock-rotate-left fa-sm fa-fw me-1"></i>Recent History</strong>
+            <div class="ms-4 my-2 table-container">
                 <table class="table table-sm table-striped">
                     <thead>
                         <tr>
