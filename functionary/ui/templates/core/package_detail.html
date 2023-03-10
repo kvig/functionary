@@ -27,12 +27,14 @@
             {% endif %}
             <div>
                 <strong class="fs-4"><i class="fa fa-cube fa-sm fa-fw me-1"></i>Functions</strong>
-                <div class="ms-4">
-                    <div id="funcs" class="list-group">
+                <div class="ms-4 my-2">
+                    <div id="funcs" class="list-group list-group-flush">
                         {% for function in functions %}
                             <a href="{% url 'ui:function-detail' function.id %}"
-                               class="list-group-item list-group-item-action">{{ function.render_name }}</a>
-                            <p class="ms-4">{{ function.summary }}</p>
+                               class="list-group-item list-group-item-action">
+                                <p class="fw-bold mb-0">{{ function.render_name }}</p>
+                                <p class="ms-4 mb-0">{{ function.summary }}</p>
+                            </a>
                         {% endfor %}
                     </div>
                 </div>

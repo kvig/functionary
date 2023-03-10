@@ -1,47 +1,36 @@
-{% extends "base_bulma.html" %}
+{% extends "base.html" %}
 {% block content %}
-    <div class="column is-full">
-        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-            <ul>
-                <li>
-                    <a href="{% url 'ui:environment-list' %}">Environment List</a>
-                </li>
-                <li class="is-active">
-                    <a href="#">{{ environment.name }}</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <div class="column">
-        <div class="block">
-            <h1 class="title is-1">
-                <p>
-                    <i class="fa fa-building"></i>
-                    <span>{{ environment.name }}</span>
-                </p>
-            </h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'ui:package-list' %}">Environment List</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ environment.name }}</li>
+        </ol>
+    </nav>
+    <h1 class="mt-2 mb-4">
+        <i class="fa fa-building"></i>
+        {{ environment.name }}
+    </h1>
+    <div class="vstack gap-4 my-2">
+        <div>
+            <strong class="fs-4"><i class="fa fa-users fa-sm fa-fw me-1"></i>Team</strong>
+            <p class="ms-4 my-2">{{ environment.team.name }}</p>
         </div>
-        <div class="column has-addons">
-            <div class="columns">
-                <div class="column is-3">
-                    <i class="fa fa-users"></i>&nbsp;{{ environment.team.name }}
-                </div>
-            </div>
-            <div class="field">{% include "partials/environments/environment_management.html" %}</div>
-            {% include 'partials/variables_section.html' with parent_object=environment parent_id=environment.id %}
-            <div class="field">
-                <label class="label" for="packages">
-                    <i class="fa fa-cubes"></i>&nbsp;Packages:
-                </label>
-                <ul id="packages">
+        <div class="field">{% include "partials/environments/environment_management.html" %}</div>
+        {% include "partials/variables_section.html" with parent_object=environment parent_id=environment.id %}
+        <div>
+            <strong class="fs-4"><i class="fa fa-cubes fa-sm fa-fw me-1"></i>Packages</strong>
+            <div class="ms-4 my-2">
+                <div id="packages" class="list-group list-group-flush">
                     {% for package in packages %}
-                        <li class="block ml-4">
-                            <a href="{% url 'ui:package-detail' package.id %}">{{ package.render_name }}</a>
-                            <br/>
-                            {{ package.summary }}
-                        </li>
+                        <a href="{% url 'ui:package-detail' package.id %}"
+                           class="list-group-item list-group-item-action">
+                            <p class="fw-bold mb-0">{{ package.render_name }}</p>
+                            <p class="ms-4 mb-0">{{ package.summary }}</p>
+                        </a>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
         </div>
     </div>
