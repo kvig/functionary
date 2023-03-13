@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_style %}
+    <link rel="stylesheet" href="{% static 'css/brands.css' %}" />
+{% endblock extra_style %}
+{% block content %}
+    {% include "partials/socialaccount/connections.html" %}
+    <br/>
+    {% include "partials/token.html" %}
+{% endblock content %}

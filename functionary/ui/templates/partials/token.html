@@ -1,0 +1,18 @@
+<div id="token">
+    <strong class="fs-4"><i class="fa fa-id-badge fa-sm fa-fw pe-1"></i>Token</strong>
+    <div class="col-9">
+        <form >
+            {% csrf_token %}
+            <span class="col-7">{{ token.key }}</span>
+            {% comment %} <span class="col-2"/> {% endcomment %}
+            <button class="btn btn-sm border-0 btn-outline"
+                    type="submit"
+                    title="Regenerate Token"
+                    hx-target="#token"
+                    hx-swap="outerHTML"
+                    hx-post="{% url 'ui:token-refresh' %}">
+                <icon class="fa fa-recycle text-success" />
+            </button>
+        </form>
+    </div>
+</div>

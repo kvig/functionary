@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from .views import (
+    account,
     build,
     environment,
     environment_select,
@@ -114,6 +115,16 @@ urlpatterns = [
         name="set-environment",
     ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+account_urlpatterns = [
+    path("account/details", account.details, name="account-detail"),
+    path(
+        "account/disconnect_social",
+        account.disconnect_social,
+        name="account-disconnect-social",
+    ),
+    path("account/token/refresh", account.refresh_token, name="token-refresh"),
+]
 
 environment_urlpatterns = [
     path(
@@ -289,6 +300,7 @@ For example, there should be a list for all the URLs related to
 teams, environments, schedules, tasks, etc.
 
 """
+urlpatterns += account_urlpatterns
 urlpatterns += environment_urlpatterns
 urlpatterns += scheduling_urlpatterns
 urlpatterns += team_urlpatterns
