@@ -11,17 +11,13 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody id="variable_list"
-                       hx-get="{% url 'ui:all-variables' parent_id=parent_id %}"
-                       hx-trigger="newVariable from:body">
-                    {% include "partials/variable_rows.html" with variables=variables parent_id=parent_id %}
-                </tbody>
+                {% include "partials/variable_rows.html" with variables=variables parent_id=parent_id %}
             </table>
         </div>
-        <div id="var-add-modal"></div>
         <button class="btn btn-primary fa-plus"
                 type="button"
-                hx-target="#var-add-modal"
+                hx-target="#variable-list"
+                hx-swap="beforeend"
                 hx-post="{% url 'ui:variable-create' parent_id=parent_object.id %}?all=true">
             Add
         </button>

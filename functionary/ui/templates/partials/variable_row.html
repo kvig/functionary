@@ -1,29 +1,31 @@
-<td>
-    <p title="{{ variable.description }}">{{ variable.name }}</p>
-</td>
-<td>
-    {% if not variable.protect %}
-        {{ variable.value }}
-    {% else %}
-        <span class="fa fa-user-secret" title="Protected Value"/>
-    {% endif %}
-</td>
-<td>
-    {% if var_update %}
-        <button class="btn btn-small text-info fa fa-pencil-alt"
-                type="button"
-                title="Edit"
-                hx-target="#variable-modal"
-                hx-get="{% url 'ui:variable-update' pk=variable.id parent_id=parent_id %}"/>
-    {% endif %}
-    {% if var_delete %}
-        <button class="btn btn-small text-danger fa fa-trash"
-                type="button"
-                title="Delete"
-                hx-confirm="Are you sure you want to delete {{ variable.name }}?"
-                hx-target="closest tr"
-                hx-swap="outerHTML swap:1s"
-                hx-delete="{% url 'ui:variable-delete' variable.id %}"/>
-    {% endif %}
-</td>
-<div id="variable-modal"></div>
+<tr id="variable-{{ variable.id }}">
+    <td>
+        <p title="{{ variable.description }}">{{ variable.name }}</p>
+    </td>
+    <td>
+        {% if not variable.protect %}
+            {{ variable.value }}
+        {% else %}
+            <span class="fa fa-user-secret" title="Protected Value"/>
+        {% endif %}
+    </td>
+    <td>
+        {% if var_update %}
+            <button class="btn btn-small text-info fa fa-pencil-alt"
+                    type="button"
+                    title="Edit"
+                    hx-target="#variable-list"
+                    hx-swap="beforeend"
+                    hx-get="{% url 'ui:variable-update' pk=variable.id parent_id=parent_id %}"/>
+        {% endif %}
+        {% if var_delete %}
+            <button class="btn btn-small text-danger fa fa-trash"
+                    type="button"
+                    title="Delete"
+                    hx-confirm="Are you sure you want to delete {{ variable.name }}?"
+                    hx-target="closest tr"
+                    hx-swap="outerHTML swap:1s"
+                    hx-delete="{% url 'ui:variable-delete' variable.id %}"/>
+        {% endif %}
+    </td>
+</tr>

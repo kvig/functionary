@@ -10,11 +10,10 @@
 {% endblock modal_title %}
 {% block modal_content %}
     <form method="post"
-          id="var-modal-form"
-          hx-target="#form-modal"
+          id="variable-modal-form"
+          hx-target="#variable-list"
           hx-swap="outerHTML"
-          hx-post="{% if variable %}{% url 'ui:variable-update' variable.id parent_id %}{% else %}{% url 'ui:variable-create' parent_id %}{% endif %}"
-          {% if not variable %}hx-params="not environment, team"{% endif %}>
+          hx-post="{% if variable %}{% url 'ui:variable-update' variable.id parent_id %}{% else %}{% url 'ui:variable-create' parent_id %}{% endif %}">
         {% csrf_token %}
         {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
         <div class="mb-3">
@@ -44,7 +43,7 @@
     </form>
 {% endblock modal_content %}
 {% block modal_footer %}
-    <button class="btn btn-primary" form="var-modal-form" type="submit">
+    <button class="btn btn-primary" form="variable-modal-form" type="submit">
         {% if variable %}
             Update
         {% else %}
