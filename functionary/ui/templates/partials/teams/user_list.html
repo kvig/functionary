@@ -1,13 +1,10 @@
 <div id="user-list-block">
     {% if not usernames|length and username|length %}
-    <ul class="errorlist">
-        <li>User not found.</li>
-    </ul>
+        <ul class="text-danger">
+            <li>User not found.</li>
+        </ul>
     {% endif %}
-
     <datalist id="user-list">
-        {% for username in usernames %}
-            <option value="{{ username }}">{{ username }}</option>
-        {% endfor %}
+        {% for username in usernames %}<option value="{{ username }}" />{% endfor %}
     </datalist>
 </div>

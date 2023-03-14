@@ -1,48 +1,44 @@
-{% extends "partials/modal_old.html" %}
-
+{% extends "partials/modal.html" %}
 {% block modal_title %}
     Update User's Role
-{% endblock %}
-
+{% endblock modal_title %}
 {% block modal_description %}
-    Update user's role for this environment
-{% endblock %}
-
-{% block form_declaration %}
-    <form hx-post="{% url 'ui:environmentuserrole-update' environmentuserrole.environment.id environmentuserrole.id %}" method="post"
-        hx-swap="outerHTML" 
-        hx-target="#form-modal">
-{% endblock %}
-
+    Update user's role for this environment.
+{% endblock modal_description %}
 {% block modal_content %}
-{% csrf_token %}
-<div class="columns is-multiline">
-    {% if form.non_field_errors %}
-    <div class="ml-3">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %} 
-    <div class="field column is-half">
-        <label class="label" for="username-field">User:</label>
-        <input id="username-field" class="input is-medium" disabled placeholder="{{ environmentuserrole.user.username }}"/>
-        {% comment %} Username value needs to be in this hidden field, not in the above disabled field {% endcomment %}
-        <input type="hidden" name="user" value="{{ environmentuserrole.user.username }}"/>
-        <input type="hidden" name="environment" value="{{ environmentuserrole.environment.id }}"/>
-        {{ form.user.errors }}
-    </div>
-    <div class="field column">
-        <label class="{% if form.role.errors %}errors{% endif %} label" for="{{ form.role.id_for_label }}">Role:</label>
-        <div class="select is-medium is-fullwidth">
+    <form hx-post="{% url 'ui:environmentuserrole-update' environmentuserrole.environment.id environmentuserrole.id %}"
+          method="post"
+          id="user-update-modal-form"
+          hx-swap="outerHTML"
+          hx-target="#form-modal">
+        {% csrf_token %}
+        {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+        <div class="mb-3">
+            <label class="form-label" for="username-field">User</label>
+            <input id="username-field"
+                   class="form-control"
+                   disabled
+                   placeholder="{{ environmentuserrole.user.username }}"/>
+            {% comment %} Username value needs to be in this hidden field, not in the above disabled field {% endcomment %}
+            <input type="hidden"
+                   name="user"
+                   value="{{ environmentuserrole.user.username }}"/>
+            <input type="hidden"
+                   name="environment"
+                   value="{{ environmentuserrole.environment.id }}"/>
+            <div class="text-danger">{{ form.user.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label class="{% if form.role.errors %}errors{% endif %} form-label"
+                   for="{{ form.role.id_for_label }}">Role</label>
             {{ form.role }}
         </div>
-    </div>
-</div>
-{% endblock %}
- 
+    </form>
+{% endblock modal_content %}
 {% block modal_footer %}
-    <button class="button is-link is-medium" type="submit" value="Update Role">Update Role</button>
-{% endblock %}
-
-{% block form_end %}
-</form>
-{% endblock %}
+    <button class="btn btn-primary"
+            type="submit"
+            form="user-update-modal-form">
+        Update Role
+    </button>
+{% endblock modal_footer %}

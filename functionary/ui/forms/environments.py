@@ -15,6 +15,7 @@ class EnvironmentUserRoleForm(ModelForm):
             "invalid_choice": "User does not exist.",
         },
     )
+    role.widget.attrs.update({"class": "form-select"})
 
     class Meta:
         model = EnvironmentUserRole

@@ -32,10 +32,12 @@ def _render_variable_row(request, parent_id, variable):
 
 def _render_variable_form(request, form, parent_id, variable=None, add=False):
     context = {"form": form, "variable": variable, "parent_id": parent_id, "add": add}
+    form_name = "forms/variable_form.html"
     if variable:
         context["pk"] = variable.id
+        form_name = "forms/variable_form_row.html"
 
-    return render(request, "forms/variable_form.html", context)
+    return render(request, form_name, context)
 
 
 @require_http_methods(["GET"])

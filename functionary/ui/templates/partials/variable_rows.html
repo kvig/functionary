@@ -1,8 +1,5 @@
 {% for variable in variables.all %}
-    <tr id="variable-{{ variable.id }}"
-        class="ml-4"
-        hx-target="this"
-        hx-swap="innerHTML">
+    <tr id="variable-{{ variable.id }}" hx-target="this" hx-swap="innerHTML">
         {% include "partials/variable_row.html" with variable=variable parent_id=parent_id %}
     </tr>
 {% endfor %}

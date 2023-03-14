@@ -1,32 +1,29 @@
 <td>
-    <span title="{{ variable.description }}">{{ variable.name }}</span>
+    <p title="{{ variable.description }}">{{ variable.name }}</p>
 </td>
-<td class="pl-4">
+<td>
     {% if not variable.protect %}
-        <span>{{ variable.value }}</span>
+        {{ variable.value }}
     {% else %}
         <span class="fa fa-user-secret" title="Protected Value"/>
     {% endif %}
 </td>
-<td class="pl-4">
+<td>
     {% if var_update %}
-        <button class="button is-small has-text-info is-white singletonActive"
+        <button class="btn btn-small text-info fa fa-pencil-alt"
                 type="button"
                 title="Edit"
-                onclick="disableVariableButtons(true)"
-                hx-get="{% url 'ui:variable-update' pk=variable.id parent_id=parent_id %}">
-            <span class="fa fa-pencil-alt"/>
-        </button>
+                hx-target="#variable-modal"
+                hx-get="{% url 'ui:variable-update' pk=variable.id parent_id=parent_id %}"/>
     {% endif %}
     {% if var_delete %}
-        <button class="button is-small has-text-danger is-white"
+        <button class="btn btn-small text-danger fa fa-trash"
                 type="button"
                 title="Delete"
                 hx-confirm="Are you sure you want to delete {{ variable.name }}?"
                 hx-target="closest tr"
                 hx-swap="outerHTML swap:1s"
-                hx-delete="{% url 'ui:variable-delete' variable.id %}">
-            <span class="fa fa-trash"/>
-        </button>
+                hx-delete="{% url 'ui:variable-delete' variable.id %}"/>
     {% endif %}
 </td>
+<div id="variable-modal"></div>

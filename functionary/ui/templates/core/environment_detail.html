@@ -17,7 +17,7 @@
             <strong class="fs-4"><i class="fa fa-users fa-sm fa-fw me-1"></i>Team</strong>
             <p class="ms-4 my-2">{{ environment.team.name }}</p>
         </div>
-        <div class="field">{% include "partials/environments/environment_management.html" %}</div>
+        {% include "partials/environments/environment_management.html" %}
         {% include "partials/variables_section.html" with parent_object=environment parent_id=environment.id %}
         <div>
             <strong class="fs-4"><i class="fa fa-cubes fa-sm fa-fw me-1"></i>Packages</strong>

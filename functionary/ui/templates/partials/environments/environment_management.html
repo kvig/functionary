@@ -1,59 +1,63 @@
-<label class="label" for="users">
-    <i class="fa fa-user"></i>&nbsp;Users:
-    <button class="button is-small has-text-link is-white singletonActive"
-            hx-trigger="click"
-            hx-get="{% url 'ui:environmentuserrole-create' environment_id %}"
-            hx-target="#add-user"
-            type="button">
-        <span class="fa fa-plus"></span>
-    </button>
-</label>
-<div id="add-user"></div>
-<table class="table is-hoverable">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Effective Role</th>
-            <th>Role Origin</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for u in user_details %}
-            <tr>
-                <td>{{ u.user.first_name }} {{ u.user.last_name }}</td>
-                <td>{{ u.user.username }}</td>
-                <td>{{ u.role }}</td>
-                <td>{{ u.origin }}</td>
-                <td>
-                    {% if u.environment_user_role_id %}
-                        <button class="button is-small has-text-link is-white singletonActive"
-                                hx-get="{% url 'ui:environmentuserrole-update' environment_id u.environment_user_role_id %}"
-                                hx-target="#update-modal">
-                            <span class="fa fa-pencil-alt"></span>
-                        </button>
-                    {% else %}
-                        <button class="button is-small has-text-link is-white singletonActive"
-                                hx-get="{% url 'ui:environmentuserrole-create' environment_id %}"
-                                hx-vals='{"user_id": "{{ u.user.id }}"}'
-                                hx-target="#update-modal">
-                            <span class="fa fa-pencil-alt"></span>
-                        </button>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if u.environment_user_role_id %}
-                        <button class="button is-small has-text-link is-white singletonActive"
-                                hx-post="{% url 'ui:environmentuserrole-delete' environment_id u.environment_user_role_id %}"
-                                hx-confirm="Are you sure you want to remove {{ u.user.username }}'s explicit role from this environment?">
-                            <span class="fa fa-trash"></span>
-                        </button>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<div id="update-modal"></div>
+<div>
+    <strong class="fs-4"><i class="fa fa-user fa-sm fa-fw me-1"></i>Users</strong>
+    <div class="ms-4 my-2">
+        <div class="table-container">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Effective Role</th>
+                        <th scope="col">Role Origin</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in user_details %}
+                        <tr>
+                            <td>{{ u.user.first_name }} {{ u.user.last_name }}</td>
+                            <td>{{ u.user.username }}</td>
+                            <td>{{ u.role }}</td>
+                            <td>{{ u.origin }}</td>
+                            <td>
+                                {% if u.environment_user_role_id %}
+                                    <button class="btn btn-small text-info fa fa-pencil-alt"
+                                            title="Edit"
+                                            type="button"
+                                            hx-get="{% url 'ui:environmentuserrole-update' environment_id u.environment_user_role_id %}"
+                                            hx-target="#update-user-modal">
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-small text-info fa fa-pencil-alt"
+                                            title="Create"
+                                            type="button"
+                                            hx-get="{% url 'ui:environmentuserrole-create' environment_id %}"
+                                            hx-vals='{"user_id": "{{ u.user.id }}"}'
+                                            hx-target="#update-user-modal">
+                                    </button>
+                                {% endif %}
+                                {% if u.environment_user_role_id %}
+                                    <button class="btn btn-small text-danger fa fa-trash"
+                                            title="Delete"
+                                            type="button"
+                                            hx-post="{% url 'ui:environmentuserrole-delete' environment_id u.environment_user_role_id %}"
+                                            hx-confirm="Are you sure you want to remove {{ u.user.username }}'s explicit role from this environment?">
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="add-user-modal"></div>
+        <div id="update-user-modal"></div>
+        <button class="btn btn-primary fa-plus"
+                type="button"
+                hx-target="#add-user-modal"
+                hx-trigger="click"
+                hx-get="{% url 'ui:environmentuserrole-create' environment_id %}">
+            Add
+        </button>
+    </div>
+</div>

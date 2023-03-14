@@ -49,6 +49,9 @@ div:has(input[type="checkbox"][name="wrap"]:not(:checked)) ~ pre {
 #status-color[title="ARCHIVED"]{
     color: var(--bs-dark);
 }
+datalist{
+    z-index: 1500;
+}
 .wrap-json,
 pre {
     overflow-x: auto;

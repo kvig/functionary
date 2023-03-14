@@ -1,57 +1,51 @@
-{% extends "partials/modal_old.html" %}
-
-
+{% extends "partials/modal.html" %}
+{% load widget_tweaks %}
 {% block modal_title %}
     Add User
-{% endblock %}
-
+{% endblock modal_title %}
 {% block modal_description %}
     Assign role to user for this environment.
-{% endblock %}
-
-{% block form_declaration %}
-    <form hx-post="{% url 'ui:environmentuserrole-create' environment_id %}" method="post" hx-swap="outerHTML" hx-target="#form-modal">
-{% endblock %}
-
+{% endblock modal_description %}
 {% block modal_content %}
-{% csrf_token %}
-<div class="columns is-multiline">
-    {% if form.non_field_errors %}
-    <div class="ml-3">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %} 
-    <div class="field column is-half">
-        {% if not username %}
-            <label class="{% if form.user.errors %}errors{% endif %} label" for="user">User:</label>
-            <input class="input is-medium" name="user" id="user" list="user-list"
-            hx-get="{% url 'ui:get-users' %}"
-            hx-trigger="keyup changed delay:500ms"
-            hx-swap="outerHTML"
-            hx-target="#user-list-block"/>
-            {% include "partials/teams/user_list.html" with usernames=usernames %}
-        {% else %}
-            <label class="label" for="username-field">User:</label>
-            <input class="input is-medium" name="username-field" disabled placeholder="{{ username }}" />
-            {% comment %} Username value needs to be in this hidden field, not in the above disabled field {% endcomment %}
-            <input type="hidden" name="user" value="{{ username }}"/>
-        {% endif %}
+    <form hx-post="{% url 'ui:environmentuserrole-create' environment_id %}"
+          method="post"
+          id="user-add-modal-form"
+          hx-swap="outerHTML"
+          hx-target="#form-modal">
+        {% csrf_token %}
         <input type="hidden" name="environment" value="{{ environment_id }}"/>
-        {{ form.user.errors }}
-    </div>
-    <div class="field column">
-        <label class="{% if form.role.errors %}errors{% endif %} label" for="{{ form.role.id_for_label }}">Role:</label>
-        <div class="select is-medium is-fullwidth">
-            {{ form.role }}
+        {% if form.non_field_errors %}<div class="text-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="mb-3">
+            <label class="form-label {% if form.user.errors %}text-danger{% endif %}"
+                   for="user">User</label>
+            <input class="form-control"
+                   name="user"
+                   id="user"
+                   list="user-list"
+                   {% if username %}disabled{% endif %}
+                   {% if username %}placeholder="{{ username }}"{% else %}placeholder="Type to search..."{% endif %}
+                   hx-get="{% url 'ui:get-users' %}"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-swap="outerHTML"
+                   hx-target="#user-list-block"/>
+            {% if not username %}
+                {% include "partials/teams/user_list.html" with usernames=usernames %}
+                <div class="text-danger">{{ form.user.errors }}</div>
+            {% else %}
+                {% comment %} Username value needs to be in this hidden field, not in the above disabled field {% endcomment %}
+                <input type="hidden" name="user" value="{{ username }}"/>
+            {% endif %}
         </div>
-    </div>
-</div>
-{% endblock %}
- 
+        <div class="mb-3">
+            <label class="form-label {% if form.role.errors %}text-danger{% endif %}"
+                   for="{{ form.role.id_for_label }}">
+                Role
+            </label>
+            {% render_field form.role class="form-select" aria-label=form.role.label %}
+            <div class="text-danger">{{ form.role.errors }}</div>
+        </div>
+    </form>
+{% endblock modal_content %}
 {% block modal_footer %}
-    <button class="button is-link is-medium" type="submit" value="Add User">Add User</button>
-{% endblock %}
-
-{% block form_end %}
-</form>
-{% endblock %}
+    <button class="btn btn-primary" type="submit" form="user-add-modal-form">Add User</button>
+{% endblock modal_footer %}
