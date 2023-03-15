@@ -3,7 +3,7 @@
     <div class="col-9">
         <form >
             {% csrf_token %}
-            <span class="col-7">{{ token.key }}</span>
+            <span class="col-7" data-token="{{ token.key }}">{{ token.key }}</span>
             {% comment %} <span class="col-2"/> {% endcomment %}
             <button class="btn btn-sm border-0 btn-outline"
                     type="submit"
