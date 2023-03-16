@@ -20,8 +20,8 @@ class EnvironmentUserRoleUpdateView(PermissionedUpdateView):
     def get_initial(self) -> dict:
         environment_user_role: EnvironmentUserRole = self.get_object()
         initial = super().get_initial()
-        role, _ = get_user_role(
+        if role := get_user_role(
             environment_user_role.user, environment_user_role.environment
-        )
-        initial["role"] = role.role if role else initial["role"]
+        ):
+            initial["role"] = role
         return initial

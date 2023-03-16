@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 
 from core.auth import Permission
 from core.models import Team, Variable
-from ui.views.team.utils import get_users
+from ui.views.team.utils import get_user_roles
 
 
 class TeamDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -12,7 +12,7 @@ class TeamDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team: Team = self.get_object()
-        user_details = get_users(team)
+        user_details = get_user_roles(team)
 
         # Sort users by their username
         user_details.sort(key=lambda x: x["user"].username)

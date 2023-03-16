@@ -1,20 +1,22 @@
 from core.models import Team, TeamUserRole
 
 
-def get_users(team: Team) -> list[dict]:
-    """Get user data about all the users in the team
+def get_user_roles(team: Team) -> list[dict]:
+    """Get role data about all the users in the team
 
-    Get a list of metadata about the users that are currently
+    Get a list of metadata about the user roles that are currently
     assigned to the given team.
 
     Args:
         team: The team to get the users from
 
     Returns:
-        user_details: A list of dictionaries that contains information
-            about the user and their relationship with the team
+        A list of dictionaries that contains information about
+        the user and their role in the team
     """
-    team_user_roles: list[TeamUserRole] = team.user_roles.all()
+    team_user_roles: list[TeamUserRole] = list(
+        TeamUserRole.objects.filter(team=team).select_related("user", "team").all()
+    )
 
     user_details = []
     for team_user_role in team_user_roles:

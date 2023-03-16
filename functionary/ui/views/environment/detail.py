@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView
 from core.auth import Permission
 from core.models import Environment, Package, Variable
 
-from .utils import get_users
+from .utils import get_user_roles
 
 
 class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -16,7 +16,7 @@ class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
         env = self.get_object()
 
         context["packages"] = Package.objects.filter(environment=env)
-        context["user_details"] = get_users(env)
+        context["user_details"] = get_user_roles(env)
         context["environment_id"] = str(env.id)
         context["variables"] = (
             env.vars

@@ -32,13 +32,12 @@ class EnvironmentUserRoleCreateView(PermissionedCreateView):
     def get_initial(self) -> dict:
         """Replace role in form with the user's effective role for the environment"""
         initial = super().get_initial()
-        user_id = self.request.GET.get("user_id")
-        if not user_id:
+        if not (user_id := self.request.GET.get("user_id")):
             return initial
 
         environment_id = self.kwargs.get("environment_pk")
         user = get_object_or_404(User, id=user_id)
         environment = get_object_or_404(Environment, id=environment_id)
-        user_role, _ = get_user_role(user, environment)
-        initial["role"] = user_role.role if user_role else None
+
+        initial["role"] = get_user_role(user, environment)
         return initial
