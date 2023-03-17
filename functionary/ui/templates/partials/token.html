@@ -1,18 +1,43 @@
 <div id="token">
     <strong class="fs-4"><i class="fa fa-id-badge fa-sm fa-fw pe-1"></i>Token</strong>
-    <div class="col-9">
-        <form >
-            {% csrf_token %}
-            <span class="col-7" data-token="{{ token.key }}">{{ token.key }}</span>
-            {% comment %} <span class="col-2"/> {% endcomment %}
-            <button class="btn btn-sm border-0 btn-outline"
-                    type="submit"
-                    title="Regenerate Token"
-                    hx-target="#token"
-                    hx-swap="outerHTML"
-                    hx-post="{% url 'ui:token-refresh' %}">
-                <icon class="fa fa-recycle text-success" />
-            </button>
-        </form>
+    <div class="ps-4">
+        <div class="form-switch py-3">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="show"
+                   role="switch"
+                   id="show-toggle"
+                   onclick="toggleToken()"/>
+            <label class="form-check-label" for="wrap-toggle">Show token</label>
+        </div>
+        <div class="col-9 py-1">
+            <form >
+                {% csrf_token %}
+                <span class="col-7 font-monospace d-none" data-token="{{ token.key }}">{{ token.key }}</span>
+                <span id="masked_token" class="col-7 font-monospace">****************************************</span>
+                <button class="btn btn-sm border-0 btn-outline"
+                        type="submit"
+                        title="Regenerate Token"
+                        hx-target="#token"
+                        hx-swap="outerHTML"
+                        hx-post="{% url 'ui:token-refresh' %}">
+                    <icon class="fa fa-recycle text-success" />
+                </button>
+            </form>
+        </div>
     </div>
 </div>
+<script>
+    function toggleToken() {
+        const class_name = "d-none"
+        const masked_token = document.getElementById("masked_token")
+        const is_hidden = masked_token.classList.contains(class_name)
+        if (is_hidden) {
+            masked_token.classList.remove(class_name)
+            masked_token.previousElementSibling.classList.add(class_name)
+        } else {
+            masked_token.classList.add(class_name)
+            masked_token.previousElementSibling.classList.remove(class_name)
+        }
+    }
+</script>

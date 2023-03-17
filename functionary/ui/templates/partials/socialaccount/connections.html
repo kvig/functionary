@@ -2,66 +2,68 @@
 {% load social_helper %}
 <div id="social_account_connections">
     <strong class="fs-4"><i class="fa fa-id-card fa-sm fa-fw pe-1"></i>Account Connections</strong>
-    {% configured_providers as socialaccount_providers %}
-    {% if not socialaccount_providers %}
-        <p>No third party accounts available to connect</p>
-    {% else %}
-        <p>Manage third party account login connections here.</p>
-        <div class="row flex-nowrap">
-            <div class="col-9">
-                <form hx-post="{% url 'ui:account-disconnect-social' %}">
-                    {% csrf_token %}
-                    {% if form.non_field_errors %}<div id="errorMsg">{{ form.non_field_errors }}</div>{% endif %}
-                    <table class="table table-sm table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Provider</th>
-                                <th scope="col">Account</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                            {% for provider_pair in socialaccount_providers %}
-                                {% find_account provider_pair.provider.id as existing_account %}
+    <div class="ps-4">
+        <div class="col-9 py-1">
+            {% configured_providers as socialaccount_providers %}
+            {% if not socialaccount_providers %}
+                <p>No third party accounts available to connect</p>
+            {% else %}
+                <p>Manage third party account login connections here.</p>
+                <div class="row flex-nowrap">
+                    <form hx-post="{% url 'ui:account-disconnect-social' %}">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}<div id="errorMsg">{{ form.non_field_errors }}</div>{% endif %}
+                        <table class="table table-sm table-striped">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <span class="icon-{{ provider_pair.provider.id }}">&nbsp;{{ provider_pair.name }}</span>
-                                    </td>
-                                    <td>
-                                        {% if existing_account %}{{ existing_account.username }}{% endif %}
-                                    </td>
-                                    <td>
-                                        {% if existing_account %}
-                                            <input id="id_account_{{ existing_account.id }}"
-                                                   type="hidden"
-                                                   name="account"
-                                                   value="{{ existing_account.id }}"/>
-                                            <button class="btn btn-sm border-0 btn-outline"
-                                                    title="Disconnect {{ provider_pair.name }} account"
-                                                    type="submit"
-                                                    hx-params="id_account_{{ existing_account.id }}">
-                                                <i class="fa fa-unlink text-danger"></i>
-                                            </button>
-                                        {% else %}
-                                            <button class="btn btn-sm border-0 btn-outline"
-                                                    type="submit"
-                                                    title="Connect {{ provider_pair.name }} account"
-                                                    hx-target="#connect_modal"
-                                                    hx-swap="innerHTML"
-                                                    hx-vals='{"next": "/ui/account/details"}'
-                                                    hx-get="{% provider_login_url provider_pair.provider.id process="connect" scope=scope auth_params=auth_params %}">
-                                                <i class="fa fa-plus text-success"></i>
-                                            </button>
-                                        {% endif %}
-                                    </td>
+                                    <th scope="col">Provider</th>
+                                    <th scope="col">Account</th>
+                                    <th scope="col"></th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </form>
-            </div>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                {% for provider_pair in socialaccount_providers %}
+                                    {% find_account provider_pair.provider.id as existing_account %}
+                                    <tr>
+                                        <td>
+                                            <span class="icon-{{ provider_pair.provider.id }}">&nbsp;{{ provider_pair.name }}</span>
+                                        </td>
+                                        <td>
+                                            {% if existing_account %}{{ existing_account.username }}{% endif %}
+                                        </td>
+                                        <td>
+                                            {% if existing_account %}
+                                                <input id="id_account_{{ existing_account.id }}"
+                                                       type="hidden"
+                                                       name="account"
+                                                       value="{{ existing_account.id }}"/>
+                                                <button class="btn btn-sm border-0 btn-outline"
+                                                        title="Disconnect {{ provider_pair.name }} account"
+                                                        type="submit"
+                                                        hx-params="id_account_{{ existing_account.id }}">
+                                                    <i class="fa fa-unlink text-danger"></i>
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-sm border-0 btn-outline"
+                                                        type="submit"
+                                                        title="Connect {{ provider_pair.name }} account"
+                                                        hx-target="#connect_modal"
+                                                        hx-swap="innerHTML"
+                                                        hx-vals='{"next": "/ui/account/details"}'
+                                                        hx-get="{% provider_login_url provider_pair.provider.id process="connect" scope=scope auth_params=auth_params %}">
+                                                    <i class="fa fa-plus text-success"></i>
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </div>
     {% include "socialaccount/snippets/login_extra.html" %}
     <div id="connect_modal"></div>
 </div>
