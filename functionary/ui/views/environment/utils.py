@@ -44,7 +44,7 @@ def get_user_roles(env: Environment) -> list[dict]:
 
     Get a list of users who have access to the environment. This includes
     the members of the team that the environment belongs to. The list will
-    be sorted in decending order based on role.
+    be sorted by user name.
 
     Args:
         env: The environment to get users from
@@ -75,7 +75,8 @@ def get_members(env: Environment) -> dict[User, TeamUserRole | EnvironmentUserRo
     """Get a dict of all users with roles that have access to the environment
 
     Return a dict of all users with their role that have permission to access
-    the environment either through a role on the team or environment.
+    the environment either through a role on the team or environment. A role
+    in the Environment overrides a Team role.
 
     Args:
         env: The environment to get the users from
