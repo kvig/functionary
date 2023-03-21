@@ -2,22 +2,39 @@ from core.auth import Role
 from core.models import Environment, EnvironmentUserRole, TeamUserRole, User
 
 
+def _get_effective_role(
+    role_1: EnvironmentUserRole | TeamUserRole | None,
+    role_2: EnvironmentUserRole | TeamUserRole | None,
+) -> EnvironmentUserRole | TeamUserRole | None:
+    """Compares two roles and returns the more permissive of the two.
+
+    This checks the role permissions on the passed in UserRoles, returning the
+    higher of the two. If they are equal, role_1 will be returned."""
+
+    if not role_1:
+        return role_2
+    elif not role_2:
+        return role_1
+
+    return role_2 if Role[role_2.role] > Role[role_1.role] else role_1
+
+
 def get_user_role(user: User, environment: Environment) -> str | None:
     """Get the effective role of the user with respect to the Environment and Team
 
-    This function returns the effective UserRole the user has within an environment,
-    which is the highest role that user is currently assigned between the environment
-    and the team.
+    This function returns the string of the effective role the user has within
+    an environment, which is the highest permission role that user is currently
+    assigned between the environment and the team.
 
-    If the user is not part of the environment, and they are not on the team,
+    If the user is not part of the environment and they are not on the team,
     a None is returned.
 
     Args:
-        user: User object for the user whose highest role you want to know
+        user: The user whose highest role you want to know
         environment: The target environment
 
     Returns:
-        Return the string value of the Role or None
+        The string value of the Role or None
     """
 
     env_user_role = EnvironmentUserRole.objects.filter(
@@ -27,16 +44,8 @@ def get_user_role(user: User, environment: Environment) -> str | None:
         user=user, team=environment.team
     ).first()
 
-    # Return None if neither exists
-    if not env_user_role and not team_user_role:
-        return None
-
-    # Otherwise make sure that a role value exists for both. It doesn't matter which
-    # role it comes from, just the greater value.
-    env_role = env_user_role.role if env_user_role else team_user_role.role
-    team_role = team_user_role.role if team_user_role else env_user_role.role
-
-    return team_role if Role[team_role] > Role[env_role] else env_role
+    effective = _get_effective_role(env_user_role, team_user_role)
+    return effective.role if effective else None
 
 
 def get_user_roles(env: Environment) -> list[dict]:
@@ -53,17 +62,20 @@ def get_user_roles(env: Environment) -> list[dict]:
         A list of dictionaries containing all the users who have access
         to the environment.
     """
-    role_members: dict[User, EnvironmentUserRole | TeamUserRole] = get_members(env)
+    role_members: dict[
+        User,
+        tuple[EnvironmentUserRole | None, EnvironmentUserRole | TeamUserRole],
+    ] = get_members(env)
 
     users = []
-    for user, role in role_members.items():
-        is_env_role = isinstance(role, EnvironmentUserRole)
+    for user, (env_role, effective_role) in role_members.items():
+        effective_is_env = isinstance(effective_role, EnvironmentUserRole)
         user_elements = {}
-        origin = role.environment if is_env_role else role.team
+        origin = effective_role.environment if effective_is_env else effective_role.team
         user_elements["user"] = user
-        user_elements["role"] = role.role
+        user_elements["role"] = effective_role.role
         user_elements["origin"] = origin.name
-        user_elements["environment_user_role_id"] = role.id if is_env_role else None
+        user_elements["environment_user_role_id"] = env_role.id if env_role else None
         users.append(user_elements)
 
     # Sort users by their username in ascending order
@@ -71,25 +83,36 @@ def get_user_roles(env: Environment) -> list[dict]:
     return users
 
 
-def get_members(env: Environment) -> dict[User, TeamUserRole | EnvironmentUserRole]:
-    """Get a dict of all users with roles that have access to the environment
+def get_members(
+    env: Environment,
+) -> dict[User, tuple[EnvironmentUserRole | None, EnvironmentUserRole | TeamUserRole]]:
+    """Get a dict of all users with roles that have access to the environment.
 
-    Return a dict of all users with their role that have permission to access
-    the environment either through a role on the team or environment. A role
-    in the Environment overrides a Team role.
+    Return a dict of all users with their roles that have permission to access
+    the environment either through a role on the team or environment.
 
     Args:
         env: The environment to get the users from
 
     Returns:
-        A dict of all users with permission for the environment
+        A dict mapping each user with permission for the environment to a tuple
+        of their corresponding EnvironmentUserRole(if any) and their effective
+        user role.
     """
-    roles = TeamUserRole.objects.filter(team=env.team).select_related("user", "team")
-    members: dict[User, TeamUserRole | EnvironmentUserRole] = {
-        role.user: role for role in roles
-    }
+    team_roles = TeamUserRole.objects.filter(team=env.team).select_related(
+        "user", "team"
+    )
+    members: dict[
+        User,
+        tuple[EnvironmentUserRole | None, EnvironmentUserRole | TeamUserRole],
+    ] = {role.user: (None, role) for role in team_roles}
+
     env_roles = EnvironmentUserRole.objects.filter(environment=env).select_related(
         "user", "environment"
     )
-    members.update({role.user: role for role in env_roles.all()})
+    for role in env_roles:
+        existing_role = members.get(role.user, (None, None))
+        effective_role = _get_effective_role(role, existing_role[1])
+        members[role.user] = (role, effective_role)
+
     return members

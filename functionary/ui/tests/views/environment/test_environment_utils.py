@@ -91,7 +91,8 @@ def test_get_members_no_team(environment, user_with_env_role):
     user_roles = get_members(environment)
 
     assert len(user_roles) == 1
-    assert isinstance(user_roles[user_with_env_role], EnvironmentUserRole)
+    assert isinstance(user_roles[user_with_env_role][0], EnvironmentUserRole)
+    assert isinstance(user_roles[user_with_env_role][1], EnvironmentUserRole)
 
 
 @pytest.mark.django_db
@@ -100,7 +101,8 @@ def test_get_members_only_team(environment, user_with_team_role):
     user_roles = get_members(environment)
 
     assert len(user_roles) == 1
-    assert isinstance(user_roles[user_with_team_role], TeamUserRole)
+    assert user_roles[user_with_team_role][0] is None
+    assert isinstance(user_roles[user_with_team_role][1], TeamUserRole)
 
 
 @pytest.mark.django_db
@@ -109,7 +111,8 @@ def test_get_members_both_roles(environment, user_with_both_roles):
     user_roles = get_members(environment)
 
     assert len(user_roles) == 1
-    assert isinstance(user_roles[user_with_both_roles], EnvironmentUserRole)
+    assert isinstance(user_roles[user_with_both_roles][0], EnvironmentUserRole)
+    assert isinstance(user_roles[user_with_both_roles][1], EnvironmentUserRole)
 
 
 @pytest.mark.django_db
@@ -121,20 +124,26 @@ def test_get_members_multiple_users(
     user_with_env_admin_and_team_role,
     user_with_team_admin_and_env_role,
 ):
-    """returns a user role, but only the environment role when a
-    team role is also set"""
+    """returns the most permissive role value"""
     user_roles = get_members(environment)
 
     assert len(user_roles) == 5
-    assert isinstance(user_roles[user_with_both_roles], EnvironmentUserRole)
+    assert user_roles[user_with_both_roles][1].role == Role.DEVELOPER.name
     assert isinstance(
-        user_roles[user_with_env_admin_and_team_role], EnvironmentUserRole
+        user_roles[user_with_env_admin_and_team_role][0], EnvironmentUserRole
     )
     assert isinstance(
-        user_roles[user_with_team_admin_and_env_role], EnvironmentUserRole
+        user_roles[user_with_env_admin_and_team_role][1], EnvironmentUserRole
     )
-    assert isinstance(user_roles[user_with_env_role], EnvironmentUserRole)
-    assert isinstance(user_roles[user_with_team_role], TeamUserRole)
+    assert user_roles[user_with_env_admin_and_team_role][1].role == Role.ADMIN.name
+
+    assert isinstance(
+        user_roles[user_with_team_admin_and_env_role][0], EnvironmentUserRole
+    )
+    assert isinstance(user_roles[user_with_team_admin_and_env_role][1], TeamUserRole)
+    assert user_roles[user_with_team_admin_and_env_role][1].role == Role.ADMIN.name
+    assert user_roles[user_with_env_role][1].role == Role.DEVELOPER.name
+    assert user_roles[user_with_team_role][1].role == Role.OPERATOR.name
 
 
 @pytest.mark.django_db
@@ -193,20 +202,24 @@ def test_get_user_roles(
     user_with_team_admin_and_env_role,
 ):
     """environment with users is ordered by username and returns the
-    environment role when a team role is also present for a given user"""
+    environment role when a team role is also present for a given user.
+    Must also return the highest permissive role for a multi-role user."""
     user_roles = get_user_roles(environment)
 
     assert len(user_roles) == 5
     assert user_roles[0]["user"] == user_with_both_roles
-    assert user_roles[0]["environment_user_role_id"] > -1
+    assert user_roles[0]["origin"] == environment.name
+    assert user_roles[0]["environment_user_role_id"] is not None
     assert user_roles[1]["user"] == user_with_env_role
-    assert user_roles[1]["environment_user_role_id"] > -1
+    assert user_roles[1]["environment_user_role_id"] is not None
     assert user_roles[2]["user"] == user_with_env_admin_and_team_role
-    assert user_roles[2]["environment_user_role_id"] > -1
+    assert user_roles[2]["origin"] == environment.name
+    assert user_roles[2]["environment_user_role_id"] is not None
     assert user_roles[2]["role"] == Role.ADMIN.name
     assert user_roles[3]["user"] == user_with_team_admin_and_env_role
-    assert user_roles[3]["environment_user_role_id"] > -1
-    assert user_roles[3]["role"] == Role.DEVELOPER.name
+    assert user_roles[3]["origin"] == environment.team.name
+    assert user_roles[3]["environment_user_role_id"] is not None
+    assert user_roles[3]["role"] == Role.ADMIN.name
     assert user_roles[4]["user"] == user_with_team_role
     assert user_roles[4]["environment_user_role_id"] is None
 
