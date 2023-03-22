@@ -14,3 +14,4 @@ class EnvironmentListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     paginate_by = PAGINATION_AMOUNT
     template_name = "default_list.html"
     filterset_class = EnviromentFilter
+    queryset = Environment.objects.select_related("team")

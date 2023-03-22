@@ -11,3 +11,4 @@ class WorkflowListView(PermissionedListView):
     table_class = WorkflowTable
     template_name = "core/workflow_list.html"
     filterset_class = WorkflowFilter
+    queryset = Workflow.objects.select_related("environment", "creator")

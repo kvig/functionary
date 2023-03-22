@@ -26,6 +26,7 @@ class FunctionListView(PermissionedListView):
     ordering = ["package__name", "name"]
     table_class = FunctionTable
     filterset_class = FunctionFilter
+    queryset = Function.objects.select_related("package")
 
 
 class FunctionDetailView(PermissionedDetailView):
