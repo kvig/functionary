@@ -4,6 +4,7 @@ from django import forms
 from django.urls import reverse
 
 from core.models import WorkflowStep
+from core.models.workflow_step import VALID_STEP_NAME
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -46,12 +47,19 @@ class WorkflowStepCreateForm(forms.ModelForm):
                 "hx-swap": "innerHTML",
             }
         )
+        self.fields["name"].widget.attrs.update(
+            {
+                "pattern": VALID_STEP_NAME.regex.pattern,
+                "title": VALID_STEP_NAME.message,
+            }
+        )
 
-        # Narrow the available function list down to just those for the environment
-        if environment is not None:
+        # Narrow the available function list down to just those
+        # active in the environment
+        if environment:
             function_field = self.fields["function"]
             function_field.queryset = function_field.queryset.filter(
-                environment=environment
+                environment=environment, active=True
             )
 
 

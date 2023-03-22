@@ -65,7 +65,8 @@ class ScheduledTaskForm(ModelForm):
 
     def _update_function_queryset(self, environment: Environment):
         if environment:
-            self.fields["function"].queryset = Function.objects.filter(
+            function_field = self.fields["function"]
+            function_field.queryset = function_field.queryset.filter(
                 environment=environment, active=True
             )
 
