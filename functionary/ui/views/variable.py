@@ -92,12 +92,10 @@ class VariableView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         return _render_variable_form(request, form, parent_id, add=True)
 
-    def get(self, request, pk):
-        variable = get_object_or_404(Variable, id=pk)
-        parent_id = (
-            variable.environment.id if variable.environment else variable.team.id
-        )
-        return _render_variable_row(request, parent_id, variable)
+    def get(self, request, parent_id):
+        form = VariableForm(parent_id)
+
+        return _render_variable_form(request, form, parent_id, add=True)
 
     def test_func(self):
         obj = (
