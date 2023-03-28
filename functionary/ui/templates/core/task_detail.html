@@ -36,7 +36,7 @@
                     <i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters
                 </h3>
                 <div class="my-2">
-                    <ol class="json-container wrap-json" id="json-result" />
+                    <ol class="json-container wrap-json" id="json-parameters" />
                 </div>
             </div>
             <div>
@@ -47,9 +47,11 @@
             </div>
         </div>
     </div>
-    <script data-task-result="{{ task.parameters | pretty_json }}">
-        var parsed_result = JSON.parse(document.currentScript.dataset.taskResult)
-        var result_element = document.getElementById('json-result')
-        result_element.innerHTML = prettyPrintJson.toHtml(parsed_result, {"quoteKeys": true})
+    <script data-task-parameters="{{ task.parameters | pretty_json }}">
+        var parsed_parameters = JSON.parse(document.currentScript.dataset.taskParameters)
+        var parameters_element = document.getElementById('json-parameters')
+        parameters_element.innerHTML = prettyPrintJson.toHtml(parsed_parameters, {
+            "quoteKeys": true
+        })
     </script>
 {% endblock content %}
