@@ -2,6 +2,7 @@ import pytest
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 from core.models import Function, Package, ScheduledTask, Task, Team, User
+from core.models.package import DISABLED, ENABLED
 
 
 @pytest.fixture
@@ -21,7 +22,16 @@ def environment(team):
 
 @pytest.fixture
 def package(environment):
-    return Package.objects.create(name="testpackage", environment=environment)
+    return Package.objects.create(
+        name="testpackage", environment=environment, status=ENABLED
+    )
+
+
+@pytest.fixture
+def disabled_package(environment):
+    return Package.objects.create(
+        name="disabledpackage", environment=environment, status=DISABLED
+    )
 
 
 @pytest.fixture
@@ -30,6 +40,16 @@ def function(package):
         name="testfunction",
         environment=package.environment,
         package=package,
+        active=True,
+    )
+
+
+@pytest.fixture
+def active_function_disabled_package(disabled_package):
+    return Function.objects.create(
+        name="activefunction_disabledpackage",
+        environment=disabled_package.environment,
+        package=disabled_package,
         active=True,
     )
 
@@ -79,3 +99,21 @@ def test_deactivate(function):
 
     for scheduled_t in function.scheduled_tasks.all():
         assert scheduled_t.status == ScheduledTask.PAUSED
+
+
+@pytest.mark.django_db
+@pytest.mark.usefixtures("package", "disabled_package")
+def test_active_functions(function, active_function_disabled_package):
+    """This checks filtering of functions that are inactive or who
+    belong to packages which are disabled"""
+    assert function.active is True
+    assert active_function_disabled_package.active is True
+
+    active_functions = Function.active_objects.all()
+    assert len(active_functions) == 1
+    assert active_function_disabled_package not in active_functions
+    assert function in active_functions
+
+    function.deactivate()
+    active_functions = Function.active_objects.all()
+    assert len(active_functions) == 0

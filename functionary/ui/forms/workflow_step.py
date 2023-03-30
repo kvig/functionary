@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Union
 from django import forms
 from django.urls import reverse
 
-from core.models import WorkflowStep
+from core.models import Function, WorkflowStep
 from core.models.workflow_step import VALID_STEP_NAME
 
 if TYPE_CHECKING:
@@ -58,8 +58,8 @@ class WorkflowStepCreateForm(forms.ModelForm):
         # active in the environment
         if environment:
             function_field = self.fields["function"]
-            function_field.queryset = function_field.queryset.filter(
-                environment=environment, active=True
+            function_field.queryset = Function.active_objects.filter(
+                environment=environment
             )
 
 

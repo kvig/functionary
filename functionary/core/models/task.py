@@ -110,7 +110,7 @@ class Task(models.Model):
 
     def _clean_tasked_object(self):
         """Validate tasked_object is active for newly created tasks"""
-        if self._state.adding and self.tasked_object.active is False:
+        if self._state.adding and not self.tasked_object.is_active():
             raise ValidationError("This function or workflow is not active")
 
     def clean(self):

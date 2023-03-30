@@ -36,7 +36,7 @@ class ScheduledTaskForm(ModelForm):
         initial="*",
         validators=[month_of_year_validator],
     )
-    function = ModelChoiceField(queryset=Function.objects.all(), required=True)
+    function = ModelChoiceField(queryset=Function.active_objects.all(), required=True)
 
     class Meta:
         model = ScheduledTask

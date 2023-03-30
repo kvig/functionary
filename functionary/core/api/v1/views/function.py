@@ -8,7 +8,7 @@ from ..serializers import FunctionSerializer
 class FunctionViewSet(EnvironmentReadOnlyModelViewSet):
     """View functions across all known packages"""
 
-    queryset = Function.objects.filter(active=True)
+    queryset = Function.active_objects.all()
     serializer_class = FunctionSerializer
     permission_classes = [HasEnvironmentPermissionForAction]
     environment_through_field = "package"

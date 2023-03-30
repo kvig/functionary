@@ -104,11 +104,13 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
 
     def activate(self) -> None:
         self._enable_periodic_task()
-        self._update_status(self.ACTIVE)
+        if self.status in [self.PAUSED, self.PENDING]:
+            self._update_status(self.ACTIVE)
 
     def pause(self) -> None:
         self._disable_periodic_task()
-        self._update_status(self.PAUSED)
+        if self.status == self.ACTIVE:
+            self._update_status(self.PAUSED)
 
     def error(self) -> None:
         self._disable_periodic_task()

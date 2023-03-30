@@ -7,6 +7,22 @@ from django.db.models import QuerySet
 
 from core.models import Environment
 
+# Pending status represents the package is being built
+# Complete status represents the package has been successfully built at least once
+# Enabled status represents that the package is can be used by users
+# Disabled status represents that the package cannot be used by users
+PENDING = "PENDING"
+COMPLETE = "COMPLETE"
+ENABLED = "ENABLED"
+DISABLED = "DISABLED"
+
+
+class ActivePackageManager(models.Manager):
+    """Manager for filtering out disabled packages."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=ENABLED)
+
 
 class Package(models.Model):
     """A Package is a grouping of functions made available for tasking
@@ -22,15 +38,6 @@ class Package(models.Model):
         status: represents the status of the package
         image_name: the docker image name for the package
     """
-
-    # Pending status represents the package is being built
-    # Complete status represents the package has been successfully built at least once
-    # Enabled status represents that the package is can be used by users
-    # Disabled status represents that the package cannot be used by users
-    PENDING = "PENDING"
-    COMPLETE = "COMPLETE"
-    ENABLED = "ENABLED"
-    DISABLED = "DISABLED"
 
     STATUS_CHOICES = [
         (PENDING, "Pending"),
@@ -55,6 +62,9 @@ class Package(models.Model):
 
     image_name = models.CharField(max_length=256)
 
+    objects = models.Manager()
+    active_objects = ActivePackageManager()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -73,18 +83,25 @@ class Package(models.Model):
     def complete(self) -> None:
         """Mark package as completed if it was previously in `PENDING` status"""
         # NOTE: This is to prevent overwriting the enabled/disabled status set by users
-        if self.status == self.PENDING:
-            self._update_status(self.COMPLETE)
+        if self.status == PENDING:
+            self._update_status(COMPLETE)
 
     def enable(self) -> None:
         """Enable package as it's associated functions"""
-        # TODO: Add method for enabling package's functions
-        self._update_status(self.ENABLED)
+        # Prevent the user from manually enabling a package that hasn't
+        # yet successfully finished being built.
+        if self.status in [COMPLETE, DISABLED]:
+            self._update_status(ENABLED)
 
     def disable(self) -> None:
         """Disable package and it's associated functions"""
-        # TODO: Add method for disabling package's functions
-        self._update_status(self.DISABLED)
+        # Prevent the user from manually disabling a package that hasn't
+        # yet successfully finished being built.
+        if self.status == ENABLED:
+            self._update_status(DISABLED)
+
+            for function in self.active_functions.all():
+                function.update_scheduled_tasks(enable=False)
 
     def _update_status(self, status: str) -> None:
         """Update status of the package"""
@@ -106,3 +123,8 @@ class Package(models.Model):
     def active_functions(self) -> QuerySet:
         """Returns a QuerySet of all active functions in the package"""
         return self.functions.filter(active=True)
+
+    @property
+    def enabled(self) -> bool:
+        """Returns true if the package is enabled"""
+        return self.status == ENABLED

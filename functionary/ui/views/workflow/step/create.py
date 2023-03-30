@@ -38,7 +38,7 @@ class WorkflowStepCreateView(PermissionedCreateView):
         # Various parent class calls require the object be set
         self.object = None
 
-        function = Function.objects.get(id=self.request.POST.get("function"))
+        function = Function.active_objects.get(id=self.request.POST.get("function"))
         parameter_form = TaskParameterTemplateForm(
             tasked_object=function, data=self.request.POST
         )

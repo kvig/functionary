@@ -26,7 +26,7 @@ class ScheduledTaskCreateView(PermissionedCreateView):
 
     def get(self, *args, **kwargs):
         environment_id = self.request.session.get("environment_id")
-        if not Function.objects.filter(environment=environment_id).exists():
+        if not Function.active_objects.filter(environment=environment_id).exists():
             messages.warning(
                 self.request,
                 "No available functions to schedule in current environment.",

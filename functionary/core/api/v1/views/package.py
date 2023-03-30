@@ -8,6 +8,6 @@ from ..serializers import PackageSerializer
 class PackageViewSet(EnvironmentModelViewSet):
     """View for retrieving and updating packages"""
 
-    queryset = Package.objects.all()
+    queryset = Package.active_objects.all()
     serializer_class = PackageSerializer
     permission_classes = [HasEnvironmentPermissionForAction]

@@ -26,13 +26,8 @@ class FunctionListView(PermissionedListView):
     ordering = ["package__name", "name"]
     table_class = FunctionTable
     filterset_class = FunctionFilter
-    queryset = Function.objects.select_related("package")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumb"] = "Function List"
-
-        return context
+    queryset = Function.active_objects.select_related("package")
+    extra_context = {"breadcrumb": "Function List"}
 
 
 class FunctionDetailView(PermissionedDetailView):

@@ -15,7 +15,7 @@ class EnvironmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
         context = super().get_context_data(**kwargs)
         env = self.get_object()
 
-        context["packages"] = Package.objects.filter(environment=env)
+        context["packages"] = Package.active_objects.filter(environment=env)
         context["user_details"] = get_user_roles(env)
         context["environment_id"] = str(env.id)
         context["variables"] = (

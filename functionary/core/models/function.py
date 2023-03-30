@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from core.models.package import ENABLED
 from core.utils.parameter import get_schema
 
 
@@ -15,6 +16,13 @@ def list_of_strings(value):
     raise ValidationError(
         '"%(value)s" is not a list of strings', params={"value": value}
     )
+
+
+class ActiveFunctionManager(models.Manager):
+    """Manager for filtering out disabled packages."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(active=True, package__status=ENABLED)
 
 
 class Function(models.Model):
@@ -50,6 +58,9 @@ class Function(models.Model):
     )
     active = models.BooleanField(default=True)
 
+    objects = models.Manager()
+    active_objects = ActiveFunctionManager()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -80,9 +91,23 @@ class Function(models.Model):
         """Deactivate the function and pause any associated scheduled tasks"""
         self.active = False
         self.save()
+        self.update_scheduled_tasks(enable=False)
 
+    def update_scheduled_tasks(self, enable: bool) -> None:
+        """Activates all related scheduled tasks if enable is True,
+        otherwise pause the scheduled tasks.
+
+        Args:
+            enable: If true, activates the scheduled task, otherise pauses.
+
+        Returns:
+            None
+        """
         for scheduled_task in self.scheduled_tasks.all():
-            scheduled_task.pause()
+            if enable:
+                scheduled_task.activate()
+            else:
+                scheduled_task.pause()
 
     @property
     def parameters(self):
@@ -99,3 +124,7 @@ class Function(models.Model):
     def schema(self) -> dict:
         """Function definition schema"""
         return get_schema(self)
+
+    def is_active(self) -> bool:
+        """Returns true if active and the package isn't disabled"""
+        return self.active and self.package.enabled

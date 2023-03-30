@@ -96,3 +96,7 @@ class Workflow(models.Model):
         # TODO: Once scheduled_tasks support workflows come back and do something like:
         # for scheduled_task in self.scheduled_tasks.all():
         #     scheduled_task.pause()
+
+    def is_active(self) -> bool:
+        """Returns true if the workflow is active"""
+        return self.active
