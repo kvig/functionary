@@ -7,7 +7,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 from core.models import Function, FunctionParameter, Package, Task, Team
-from core.models.package import ENABLED
+from core.models.package import PACKAGE_STATUS
 from core.utils.minio import S3FileUploadError
 from core.utils.parameter import PARAMETER_TYPE
 
@@ -21,7 +21,7 @@ def environment():
 @pytest.fixture
 def package(environment):
     return Package.objects.create(
-        name="testpackage", environment=environment, status=ENABLED
+        name="testpackage", environment=environment, status=PACKAGE_STATUS.ACTIVE
     )
 
 

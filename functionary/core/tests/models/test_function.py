@@ -2,7 +2,7 @@ import pytest
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 from core.models import Function, Package, ScheduledTask, Task, Team, User
-from core.models.package import DISABLED, ENABLED
+from core.models.package import PACKAGE_STATUS
 
 
 @pytest.fixture
@@ -23,14 +23,14 @@ def environment(team):
 @pytest.fixture
 def package(environment):
     return Package.objects.create(
-        name="testpackage", environment=environment, status=ENABLED
+        name="testpackage", environment=environment, status=PACKAGE_STATUS.ACTIVE
     )
 
 
 @pytest.fixture
 def disabled_package(environment):
     return Package.objects.create(
-        name="disabledpackage", environment=environment, status=DISABLED
+        name="disabledpackage", environment=environment, status=PACKAGE_STATUS.DISABLED
     )
 
 

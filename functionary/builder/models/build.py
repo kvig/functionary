@@ -68,7 +68,7 @@ class Build(ModelSaveHookMixin, models.Model):
         self._update_status(self.COMPLETE)
         self.package.complete()
         # Two steps to ensure proper state transitions for packages.
-        self.package.enable()
+        self.package.activate()
 
     def in_progress(self):
         """Saves status as `IN_PROGRESS`"""

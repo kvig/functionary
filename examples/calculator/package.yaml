@@ -34,3 +34,48 @@ package:
           type: integer
           default: 1
           required: true
+    - name: subtract
+      summary: Subtracts two integers
+      description: This function consumes two integers and outputs the difference.
+      return_type: integer
+
+      # (required) Parameters that the function takes
+      parameters:
+        - name: a
+          type: integer
+          default: 1
+          required: true
+        - name: b
+          type: integer
+          default: 1
+          required: true
+    - name: multiply
+      summary: Multiplies two integers
+      description: This function consumes two integers and outputs the product.
+      return_type: integer
+
+      # (required) Parameters that the function takes
+      parameters:
+        - name: a
+          type: integer
+          default: 1
+          required: true
+        - name: b
+          type: integer
+          default: 1
+          required: true
+    - name: divide
+      summary: Divides two integers
+      description: This function divides two integers and returns the result.
+      return_type: float
+
+      # (required) Parameters that the function takes
+      parameters:
+        - name: a
+          type: integer
+          default: 1
+          required: true
+        - name: b
+          type: integer
+          default: 1
+          required: true

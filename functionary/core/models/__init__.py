@@ -1,7 +1,7 @@
 from .environment import Environment  # noqa
 from .function import Function  # noqa
 from .mixins import ModelSaveHookMixin  # noqa
-from .package import Package  # noqa
+from .package import PACKAGE_STATUS, Package  # noqa
 from .parameter import FunctionParameter, WorkflowParameter  # noqa
 from .scheduled_task import ScheduledTask  # noqa
 from .task import Task  # noqa

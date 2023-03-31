@@ -2,26 +2,28 @@
 import uuid
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.db.models import QuerySet
 
 from core.models import Environment
 
-# Pending status represents the package is being built
-# Complete status represents the package has been successfully built at least once
-# Enabled status represents that the package is can be used by users
-# Disabled status represents that the package cannot be used by users
-PENDING = "PENDING"
-COMPLETE = "COMPLETE"
-ENABLED = "ENABLED"
-DISABLED = "DISABLED"
+
+class PACKAGE_STATUS:
+    # Pending status represents the package is being built
+    # Complete status represents the package has been successfully built at least once
+    # Enabled status represents that the package is can be used by users
+    # Disabled status represents that the package cannot be used by users
+    PENDING = "PENDING"
+    COMPLETE = "COMPLETE"
+    ACTIVE = "ACTIVE"
+    DISABLED = "DISABLED"
 
 
 class ActivePackageManager(models.Manager):
-    """Manager for filtering out disabled packages."""
+    """Manager that filters out inactive Packages."""
 
     def get_queryset(self):
-        return super().get_queryset().filter(status=ENABLED)
+        return super().get_queryset().filter(status=PACKAGE_STATUS.ACTIVE)
 
 
 class Package(models.Model):
@@ -40,10 +42,10 @@ class Package(models.Model):
     """
 
     STATUS_CHOICES = [
-        (PENDING, "Pending"),
-        (COMPLETE, "Complete"),
-        (ENABLED, "Enabled"),
-        (DISABLED, "Disabled"),
+        (PACKAGE_STATUS.PENDING, "Pending"),
+        (PACKAGE_STATUS.COMPLETE, "Complete"),
+        (PACKAGE_STATUS.ACTIVE, "Active"),
+        (PACKAGE_STATUS.DISABLED, "Disabled"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -55,7 +57,9 @@ class Package(models.Model):
     display_name = models.CharField(max_length=64, null=True)
     summary = models.CharField(max_length=128, null=True)
     description = models.TextField(null=True)
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=PENDING)
+    status = models.CharField(
+        max_length=16, choices=STATUS_CHOICES, default=PACKAGE_STATUS.PENDING
+    )
 
     # TODO: Restrict to list of choices?
     language = models.CharField(max_length=64)
@@ -83,25 +87,25 @@ class Package(models.Model):
     def complete(self) -> None:
         """Mark package as completed if it was previously in `PENDING` status"""
         # NOTE: This is to prevent overwriting the enabled/disabled status set by users
-        if self.status == PENDING:
-            self._update_status(COMPLETE)
+        if self.status == PACKAGE_STATUS.PENDING:
+            self._update_status(PACKAGE_STATUS.COMPLETE)
 
-    def enable(self) -> None:
+    def activate(self) -> None:
         """Enable package as it's associated functions"""
         # Prevent the user from manually enabling a package that hasn't
         # yet successfully finished being built.
-        if self.status in [COMPLETE, DISABLED]:
-            self._update_status(ENABLED)
+        if self.status in [PACKAGE_STATUS.COMPLETE, PACKAGE_STATUS.DISABLED]:
+            self._update_status(PACKAGE_STATUS.ACTIVE)
 
-    def disable(self) -> None:
+    def deactivate(self) -> None:
         """Disable package and it's associated functions"""
         # Prevent the user from manually disabling a package that hasn't
         # yet successfully finished being built.
-        if self.status == ENABLED:
-            self._update_status(DISABLED)
-
-            for function in self.active_functions.all():
-                function.update_scheduled_tasks(enable=False)
+        if self.status == PACKAGE_STATUS.ACTIVE:
+            with transaction.atomic():
+                for function in self.active_functions.all():
+                    function.pause_scheduled_tasks()
+                self._update_status(PACKAGE_STATUS.DISABLED)
 
     def _update_status(self, status: str) -> None:
         """Update status of the package"""
@@ -125,6 +129,6 @@ class Package(models.Model):
         return self.functions.filter(active=True)
 
     @property
-    def enabled(self) -> bool:
-        """Returns true if the package is enabled"""
-        return self.status == ENABLED
+    def is_active(self) -> bool:
+        """Returns true if the Package is active"""
+        return self.status == PACKAGE_STATUS.ACTIVE

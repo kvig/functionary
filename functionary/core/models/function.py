@@ -5,7 +5,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from core.models.package import ENABLED
+from core.models.package import PACKAGE_STATUS
 from core.utils.parameter import get_schema
 
 
@@ -19,10 +19,17 @@ def list_of_strings(value):
 
 
 class ActiveFunctionManager(models.Manager):
-    """Manager for filtering out disabled packages."""
+    """Manager that filters out inactive Functions.
+
+    An inactive Function is a Function explicitly marked inactive
+    or an active Function of an inactive Package"""
 
     def get_queryset(self):
-        return super().get_queryset().filter(active=True, package__status=ENABLED)
+        return (
+            super()
+            .get_queryset()
+            .filter(active=True, package__status=PACKAGE_STATUS.ACTIVE)
+        )
 
 
 class Function(models.Model):
@@ -91,23 +98,12 @@ class Function(models.Model):
         """Deactivate the function and pause any associated scheduled tasks"""
         self.active = False
         self.save()
-        self.update_scheduled_tasks(enable=False)
+        self.pause_scheduled_tasks()
 
-    def update_scheduled_tasks(self, enable: bool) -> None:
-        """Activates all related scheduled tasks if enable is True,
-        otherwise pause the scheduled tasks.
-
-        Args:
-            enable: If true, activates the scheduled task, otherise pauses.
-
-        Returns:
-            None
-        """
+    def pause_scheduled_tasks(self) -> None:
+        """Pauses all scheduled tasks."""
         for scheduled_task in self.scheduled_tasks.all():
-            if enable:
-                scheduled_task.activate()
-            else:
-                scheduled_task.pause()
+            scheduled_task.pause()
 
     @property
     def parameters(self):
@@ -125,6 +121,7 @@ class Function(models.Model):
         """Function definition schema"""
         return get_schema(self)
 
+    @property
     def is_active(self) -> bool:
-        """Returns true if active and the package isn't disabled"""
-        return self.active and self.package.enabled
+        """Returns true if this Function and its Package are both active."""
+        return self.active and self.package.is_active

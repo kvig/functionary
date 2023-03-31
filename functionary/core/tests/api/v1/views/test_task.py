@@ -17,7 +17,7 @@ from core.models import (
     WorkflowParameter,
     WorkflowStep,
 )
-from core.models.package import ENABLED
+from core.models.package import PACKAGE_STATUS
 from core.utils.minio import S3FileUploadError
 from core.utils.parameter import PARAMETER_TYPE
 
@@ -31,7 +31,7 @@ def environment() -> Environment:
 @pytest.fixture
 def package(environment: Environment) -> Package:
     return Package.objects.create(
-        name="testpackage", environment=environment, status=ENABLED
+        name="testpackage", environment=environment, status=PACKAGE_STATUS.ACTIVE
     )
 
 
