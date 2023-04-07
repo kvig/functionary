@@ -58,12 +58,12 @@ def _400_error_handling(response):
         case "missing_env_header":
             message = (
                 "No environment selected. Please set environment id "
-                + "using 'functionary package environment set'."
+                "using 'functionary environment set'.",
             )
         case "invalid_env_header":
             message = (
                 "Invalid environment provided. Please set environment "
-                + "using 'functionary package environment set'."
+                "using 'functionary environment set'.",
             )
         case "invalid_package":
             message = f"{response.json()['detail']}"

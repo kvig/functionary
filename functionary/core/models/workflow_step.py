@@ -7,7 +7,7 @@ from django.db import models, transaction
 from django.template import Context, Template
 
 from core.models import Task, WorkflowRunStep
-from core.utils.tasking import start_task
+from core.utils.tasking import start_task, task_errored
 
 VALID_STEP_NAME = RegexValidator(
     regex=r"^\w+$",
@@ -118,6 +118,12 @@ class WorkflowStep(models.Model):
                 workflow_step=self, step_task=task, workflow_task=workflow_task
             )
 
-        start_task(task)
+        try:
+            start_task(task)
+        except Exception as exc:
+            task_errored(task, "Failed to start", error=exc)
+            task_errored(
+                workflow_task, f"Unable to start workflow step {self.name}", error=exc
+            )
 
         return task

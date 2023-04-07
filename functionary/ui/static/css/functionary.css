@@ -24,10 +24,10 @@
     color: black;
 }
 .errorlist > li {
-    color: var(--bs-text-danger);
+    color: var(--bs-danger-text);
 }
 .errors {
-    color: var(--bs-text-danger);
+    color: var(--bs-danger-text);
 }
 .json-string {
     color: #7a7a00;

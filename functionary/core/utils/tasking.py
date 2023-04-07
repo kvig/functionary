@@ -81,10 +81,20 @@ def publish_task(task_id: UUID) -> None:
         .get(id=task_id)
     )
 
-    _handle_file_parameters(task)
+    try:
+        _handle_file_parameters(task)
 
-    exchange, routing_key = get_route(task)
-    send_message(exchange, routing_key, "TASK_PACKAGE", _generate_task_message(task))
+        # This may be a retry, make sure the task is marked as IN_PROGRESS
+        task.status = Task.IN_PROGRESS
+        task.save()
+
+        exchange, routing_key = get_route(task)
+        send_message(
+            exchange, routing_key, "TASK_PACKAGE", _generate_task_message(task)
+        )
+    except Exception as exc:
+        task_errored(task, "Unable to send task to runner", exc)
+        raise exc
 
 
 @app.task()
@@ -145,8 +155,12 @@ def run_scheduled_task(scheduled_task_id: str) -> None:
         scheduled_task=scheduled_task,
     )
 
-    start_task(task)
-    scheduled_task.update_most_recent_task(task)
+    try:
+        start_task(task)
+        scheduled_task.update_most_recent_task(task)
+    except Exception as exc:
+        task_errored(task, "Unable to start scheduled task", exc)
+        raise exc
 
 
 def _update_task_status(task: Task, status: int) -> None:
@@ -155,11 +169,10 @@ def _update_task_status(task: Task, status: int) -> None:
             task.status = Task.COMPLETE
         case _:
             task.status = Task.ERROR
+            if task.scheduled_task is not None:
+                task.scheduled_task.error()
 
     task.save()
-
-    if task.scheduled_task is not None and status == "ERROR":
-        task.scheduled_task.error()
 
 
 def _handle_workflow_run(workflow_run_step: WorkflowRunStep, task: Task) -> None:
@@ -233,8 +246,8 @@ def start_task(task: Task) -> None:
         None
 
     Raises:
-        InvalidContentType: The tasked_object associated with the task is of an
-                            unrecognized type
+        InvalidContentObject: The tasked_object associated with the task is of an
+                              unrecognized type
         InvalidStatus: The task cannot be started based on its current status
     """
     if task.status != Task.PENDING:
@@ -250,6 +263,21 @@ def start_task(task: Task) -> None:
     elif tasked_type_class is Workflow:
         _start_workflow_task(task)
     else:
-        raise InvalidContentObject(
-            f"Handling for content type {tasked_type_class} is undefined"
-        )
+        message = f"Handling for content type {tasked_type_class} is undefined"
+        task_errored(task, message, None)
+        raise InvalidContentObject(message)
+
+
+def task_errored(task, message, error=None):
+    """Changes the task status to errored and logs the message"""
+    task.status = Task.ERROR
+    task.save()
+
+    if message:
+        extra = f" Error: {str(error)}" if error else ""
+        log_message = f"{message}{extra}"
+        task_log, created = TaskLog.objects.get_or_create(task=task)
+        if not created:
+            log_message = f"{task_log.log}\n{log_message}"
+        task_log.log = log_message
+        task_log.save()

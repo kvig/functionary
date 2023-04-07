@@ -1,7 +1,7 @@
 import pytest
 
-from core.models import Function, Package, Task, Team, Variable
-from core.utils.tasking import record_task_result
+from core.models import Function, Package, Task, TaskLog, Team, Variable
+from core.utils.tasking import publish_task, record_task_result, task_errored
 
 
 @pytest.fixture
@@ -77,3 +77,64 @@ def test_output_masking(task):
     assert task_log.count("hi") == 2
     assert task_log.count("hide me") == 0
     assert task_log.count("Hide me") == 1
+
+
+@pytest.mark.django_db
+def test_publish_task_errors(mocker, task):
+    """Verify that exceptions during publish_task result in a Task ERROR."""
+    message = "An error occurred sending the message"
+
+    def mock_send_message(param1, param2, param3, param4):
+        """Mock the start_task function to return a failure"""
+        raise ValueError(message)
+
+    # Patch the imported send_message function
+    mocker.patch("core.utils.tasking.send_message", mock_send_message)
+
+    # Execute the first step, it should error
+    with pytest.raises(ValueError):
+        publish_task(task.id)
+
+    # Make sure the task is marked as ERROR when it fails to be
+    # sent to the runner
+    workflow_task = Task.objects.filter(id=task.id).first()
+    workflow_log = TaskLog.objects.filter(task=workflow_task).first()
+    assert workflow_task is not None
+    assert workflow_task.status == Task.ERROR
+    assert workflow_log is not None
+    assert message in workflow_log.log
+
+
+@pytest.mark.django_db
+def test_task_errored(mocker, task):
+    """Test that calling task_errored changes the Tasks status and that
+    calling it multiple times preserves existing messages."""
+    message1 = "An error occurred sending the message"
+    message2 = "There was a problem"
+    error_message = "This is an error message"
+
+    task_errored(task, message1)
+
+    the_task = Task.objects.filter(id=task.id).first()
+    the_log = TaskLog.objects.filter(task=the_task).first()
+
+    assert the_task is not None
+    assert the_task.status == Task.ERROR
+
+    assert the_log is not None
+    assert message1 in the_log.log
+    assert error_message not in the_log.log
+
+    # Call it again, with an error this time. Make sure
+    task_errored(task, message2, ValueError(error_message))
+
+    the_task = Task.objects.filter(id=task.id).first()
+    the_log = TaskLog.objects.filter(task=the_task).first()
+
+    assert the_task is not None
+    assert the_task.status == Task.ERROR
+
+    assert the_log is not None
+    assert message1 in the_log.log
+    assert message2 in the_log.log
+    assert error_message in the_log.log
