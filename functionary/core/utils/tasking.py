@@ -276,8 +276,9 @@ def task_errored(task, message, error=None):
     if message:
         extra = f" Error: {str(error)}" if error else ""
         log_message = f"{message}{extra}"
-        task_log, created = TaskLog.objects.get_or_create(task=task)
+        task_log, created = TaskLog.objects.get_or_create(
+            task=task, defaults={"log": log_message}
+        )
         if not created:
-            log_message = f"{task_log.log}\n{log_message}"
-        task_log.log = log_message
-        task_log.save()
+            task_log.log = f"{task_log.log}\n{log_message}"
+            task_log.save()
