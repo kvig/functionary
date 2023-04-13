@@ -14,7 +14,7 @@ from django.views.decorators.http import require_GET, require_POST
 from core.auth import Permission
 from core.models import Environment, Function, Task, Workflow
 from core.utils.minio import S3Error, handle_file_parameters
-from core.utils.tasking import start_task, task_errored
+from core.utils.tasking import mark_error, start_task
 from ui.forms.tasks import TaskParameterForm, TaskParameterTemplateForm
 from ui.tables.function import FunctionFilter, FunctionTable
 
@@ -117,17 +117,7 @@ def execute(request: HttpRequest) -> HttpResponse:
             form.add_error(
                 None,
                 (
-                    "Unable to upload file, please try again. "
-                    "If the problem persists, contact your system administrator."
-                ),
-            )
-        except Exception:
-            task = None
-            status_code = 500
-            form.add_error(
-                None,
-                (
-                    "Unknown error creating task, please try again. "
+                    "Unable to upload file; please try again. "
                     "If the problem persists, contact your system administrator."
                 ),
             )
@@ -136,13 +126,11 @@ def execute(request: HttpRequest) -> HttpResponse:
             try:
                 start_task(task)
 
-                # Redirect to the newly created task:
-                return HttpResponseRedirect(reverse("ui:task-detail", args=(task.id,)))
             except ValueError as err:
-                status_code = 500
-                message = "Unable to start task."
-                form.add_error(None, ValidationError(message, code="invalid"))
-                task_errored(task, message, error=err)
+                mark_error(task, "Unable to start task.", error=err)
+
+            # Redirect to the newly created task:
+            return HttpResponseRedirect(reverse("ui:task-detail", args=(task.id,)))
 
     context = {}
     context["form"] = form

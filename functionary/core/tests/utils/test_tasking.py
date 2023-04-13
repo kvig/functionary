@@ -1,7 +1,7 @@
 import pytest
 
 from core.models import Function, Package, Task, TaskLog, Team, Variable
-from core.utils.tasking import publish_task, record_task_result, task_errored
+from core.utils.tasking import mark_error, publish_task, record_task_result
 
 
 @pytest.fixture
@@ -106,14 +106,14 @@ def test_publish_task_errors(mocker, task):
 
 
 @pytest.mark.django_db
-def test_task_errored(mocker, task):
-    """Test that calling task_errored changes the Tasks status and that
+def test_mark_error(mocker, task):
+    """Test that calling mark_error changes the Tasks status and that
     calling it multiple times preserves existing messages."""
     message1 = "An error occurred sending the message"
     message2 = "There was a problem"
     error_message = "This is an error message"
 
-    task_errored(task, message1)
+    mark_error(task, message1)
 
     the_task = Task.objects.filter(id=task.id).first()
     the_log = TaskLog.objects.filter(task=the_task).first()
@@ -126,7 +126,7 @@ def test_task_errored(mocker, task):
     assert error_message not in the_log.log
 
     # Call it again, with an error this time. Make sure
-    task_errored(task, message2, ValueError(error_message))
+    mark_error(task, message2, ValueError(error_message))
 
     the_task = Task.objects.filter(id=task.id).first()
     the_log = TaskLog.objects.filter(task=the_task).first()

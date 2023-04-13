@@ -93,7 +93,7 @@ def publish_task(task_id: UUID) -> None:
             exchange, routing_key, "TASK_PACKAGE", _generate_task_message(task)
         )
     except Exception as exc:
-        task_errored(task, "Unable to send task to runner", exc)
+        mark_error(task, "Unable to send task to runner", exc)
         raise exc
 
 
@@ -159,7 +159,7 @@ def run_scheduled_task(scheduled_task_id: str) -> None:
         start_task(task)
         scheduled_task.update_most_recent_task(task)
     except Exception as exc:
-        task_errored(task, "Unable to start scheduled task", exc)
+        mark_error(task, "Unable to start scheduled task", exc)
         raise exc
 
 
@@ -182,7 +182,16 @@ def _handle_workflow_run(workflow_run_step: WorkflowRunStep, task: Task) -> None
     match task.status:
         case Task.COMPLETE:
             if next_step := workflow_run_step.workflow_step.next:
-                next_step.execute(workflow_task=workflow_task)
+                try:
+                    next_step.execute(workflow_task=workflow_task)
+                except Exception as exc:
+                    # execute handles the case where the step task is
+                    # created but fails to start
+                    mark_error(
+                        workflow_task,
+                        f"Unable to create a task for {next_step.name}",
+                        error=exc,
+                    )
             else:
                 workflow_task.status = Task.COMPLETE
                 workflow_task.save()
@@ -264,11 +273,11 @@ def start_task(task: Task) -> None:
         _start_workflow_task(task)
     else:
         message = f"Handling for content type {tasked_type_class} is undefined"
-        task_errored(task, message, None)
+        mark_error(task, message, None)
         raise InvalidContentObject(message)
 
 
-def task_errored(task, message, error=None):
+def mark_error(task, message, error=None):
     """Changes the task status to errored and logs the message"""
     task.status = Task.ERROR
     task.save()
