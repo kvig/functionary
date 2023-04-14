@@ -6,7 +6,7 @@ import pytest
 from django.test.client import Client
 from django.urls import reverse
 
-from core.models import Function, FunctionParameter, Package, Task, TaskLog, Team
+from core.models import Function, FunctionParameter, Package, Task, Team
 from core.models.package import PACKAGE_STATUS
 from core.utils.minio import S3FileUploadError
 from core.utils.parameter import PARAMETER_TYPE
@@ -127,36 +127,3 @@ def test_fail_file_upload(
     response = admin_client.post(url, data)
     assert response.status_code == 503
     assert not Task.objects.filter(tasked_id=file_function.id).exists()
-
-
-@pytest.mark.django_db
-def test_fail_execute_logs_error(
-    mocker, admin_client: Client, function, text_parameter
-):
-    """Test that an error executing a function results in a log being generated"""
-    message = "An error occurred starting the task"
-
-    def mock_start_task(_task):
-        """Mock the start_task function to return a failure"""
-        raise ValueError(message)
-
-    # Patch the imported start_task in the function view file, not
-    # in the file that its defined in
-    mocker.patch("ui.views.function.start_task", mock_start_task)
-
-    session = admin_client.session
-    session["environment_id"] = str(function.environment.id)
-    session.save()
-
-    url = reverse("ui:function-execute")
-    data = {
-        "function_id": str(function.id),
-        f"task-parameter-{text_parameter.name}": "should be included",
-    }
-
-    admin_client.post(url, data)
-    task = Task.objects.get(tasked_id=function.id)
-    task_log = TaskLog.objects.filter(task__id=task.id).first()
-    assert task.status == Task.ERROR
-    assert task_log is not None
-    assert message in task_log.log

@@ -14,7 +14,7 @@ from django.views.decorators.http import require_GET, require_POST
 from core.auth import Permission
 from core.models import Environment, Function, Task, Workflow
 from core.utils.minio import S3Error, handle_file_parameters
-from core.utils.tasking import mark_error, start_task
+from core.utils.tasking import start_task
 from ui.forms.tasks import TaskParameterForm, TaskParameterTemplateForm
 from ui.tables.function import FunctionFilter, FunctionTable
 
@@ -123,11 +123,7 @@ def execute(request: HttpRequest) -> HttpResponse:
             )
 
         if task:
-            try:
-                start_task(task)
-
-            except ValueError as err:
-                mark_error(task, "Unable to start task.", error=err)
+            start_task(task)
 
             # Redirect to the newly created task:
             return HttpResponseRedirect(reverse("ui:task-detail", args=(task.id,)))

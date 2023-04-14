@@ -118,12 +118,8 @@ class WorkflowStep(models.Model):
                 workflow_step=self, step_task=task, workflow_task=workflow_task
             )
 
-        try:
-            start_task(task)
-        except Exception as exc:
-            mark_error(task, "Failed to start", error=exc)
-            mark_error(
-                workflow_task, f"Unable to start workflow step {self.name}", error=exc
-            )
+        start_task(task)
+        if task.status == Task.ERROR:
+            mark_error(workflow_task, f"Unable to start workflow step {self.name}")
 
         return task

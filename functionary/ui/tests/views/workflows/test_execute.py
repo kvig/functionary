@@ -1,5 +1,4 @@
 import pytest
-from django.urls import reverse
 
 from core.auth import Role
 from core.models import (
@@ -14,6 +13,7 @@ from core.models import (
     WorkflowStep,
 )
 from core.utils.parameter import PARAMETER_TYPE
+from core.utils.tasking import mark_error
 
 
 @pytest.fixture
@@ -80,38 +80,6 @@ def step1(step2, workflow, function):
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("environment")
-def test_execute_workflow_failure(mocker, client, user_with_access, workflow):
-    """Verify that the task is marked as ERROR and a log is generated when a
-    workflow fails to execute."""
-    client.force_login(user_with_access)
-    message = "An error occurred starting the workflow"
-
-    def mock_start_task(_task):
-        """Mock the start_task function to return a failure"""
-        raise ValueError(message)
-
-    # Patch the imported start_task in the function view file, not
-    # in the file that its defined in
-    mocker.patch("ui.views.function.start_task", mock_start_task)
-
-    url = reverse("ui:function-execute")
-    data = {
-        "workflow_id": str(workflow.pk),
-    }
-    session = client.session
-    session["environment_id"] = str(workflow.environment.id)
-    session.save()
-
-    client.post(url, data)
-    task = Task.objects.get(tasked_id=workflow.pk)
-    assert task.status == Task.ERROR
-    task_log = TaskLog.objects.filter(task__id=task.id).first()
-    assert task_log is not None
-    assert message in task_log.log
-
-
-@pytest.mark.django_db
 def test_step_failure_errors_workflow(
     mocker, environment, user_with_access, workflow, step1
 ):
@@ -120,8 +88,7 @@ def test_step_failure_errors_workflow(
     message = "An error occurred starting the workflow"
 
     def mock_start_task(_task):
-        """Mock the start_task function to return a failure"""
-        raise ValueError(message)
+        mark_error(_task, message)
 
     # Patch the imported start_task in the workflow_step file, not
     # in the file that its defined in

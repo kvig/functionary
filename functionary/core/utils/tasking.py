@@ -155,12 +155,8 @@ def run_scheduled_task(scheduled_task_id: str) -> None:
         scheduled_task=scheduled_task,
     )
 
-    try:
-        start_task(task)
-        scheduled_task.update_most_recent_task(task)
-    except Exception as exc:
-        mark_error(task, "Unable to start scheduled task", exc)
-        raise exc
+    start_task(task)
+    scheduled_task.update_most_recent_task(task)
 
 
 def _update_task_status(task: Task, status: int) -> None:
@@ -267,14 +263,18 @@ def start_task(task: Task) -> None:
 
     tasked_type_class = task.tasked_type.model_class()
 
-    if tasked_type_class is Function:
-        _start_function_task(task)
-    elif tasked_type_class is Workflow:
-        _start_workflow_task(task)
-    else:
+    if tasked_type_class not in [Function, Workflow]:
         message = f"Handling for content type {tasked_type_class} is undefined"
         mark_error(task, message, None)
         raise InvalidContentObject(message)
+
+    try:
+        if tasked_type_class is Function:
+            _start_function_task(task)
+        elif tasked_type_class is Workflow:
+            _start_workflow_task(task)
+    except Exception as exc:
+        mark_error(task, "Failed to start", error=exc)
 
 
 def mark_error(task, message, error=None):

@@ -1,7 +1,7 @@
 import pytest
 
-from core.models import Function, Package, Task, TaskLog, Team, Variable
-from core.utils.tasking import mark_error, publish_task, record_task_result
+from core.models import Function, Package, Task, TaskLog, Team, Variable, Workflow
+from core.utils.tasking import mark_error, publish_task, record_task_result, start_task
 
 
 @pytest.fixture
@@ -52,6 +52,23 @@ def function(package):
 def task(function, environment, admin_user):
     return Task.objects.create(
         tasked_object=function,
+        environment=environment,
+        parameters={},
+        creator=admin_user,
+    )
+
+
+@pytest.fixture
+def workflow(environment, admin_user):
+    return Workflow.objects.create(
+        environment=environment, name="testworkflow", creator=admin_user
+    )
+
+
+@pytest.fixture
+def workflow_task(workflow, environment, admin_user):
+    return Task.objects.create(
+        tasked_object=workflow,
         environment=environment,
         parameters={},
         creator=admin_user,
@@ -138,3 +155,23 @@ def test_mark_error(mocker, task):
     assert message1 in the_log.log
     assert message2 in the_log.log
     assert error_message in the_log.log
+
+
+@pytest.mark.django_db
+def test_start_task_errors(mocker, workflow_task, workflow):
+    """Test that an error executing a function results in a log being generated"""
+    message = "An error occurred starting the task"
+
+    def mock_start_workflow_task(_task):
+        """Mock the _start_workflow_task function to return a failure"""
+        raise ValueError(message)
+
+    mocker.patch("core.utils.tasking._start_workflow_task", mock_start_workflow_task)
+
+    start_task(workflow_task)
+
+    task = Task.objects.get(tasked_id=workflow.id)
+    task_log = TaskLog.objects.filter(task__id=task.id).first()
+    assert task.status == Task.ERROR
+    assert task_log is not None
+    assert message in task_log.log
