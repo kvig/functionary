@@ -1,6 +1,15 @@
 import pytest
 
-from core.models import Function, Package, Task, TaskLog, Team, Variable, Workflow
+from core.models import (
+    Function,
+    Package,
+    Task,
+    TaskLog,
+    Team,
+    Variable,
+    Workflow,
+    WorkflowStep,
+)
 from core.utils.tasking import mark_error, publish_task, record_task_result, start_task
 
 
@@ -62,6 +71,27 @@ def task(function, environment, admin_user):
 def workflow(environment, admin_user):
     return Workflow.objects.create(
         environment=environment, name="testworkflow", creator=admin_user
+    )
+
+
+@pytest.fixture
+def step2(workflow, function):
+    return WorkflowStep.objects.create(
+        workflow=workflow,
+        name="step2",
+        function=function,
+        parameter_template='{"prop1": 42}',
+    )
+
+
+@pytest.fixture
+def step1(step2, workflow, function):
+    return WorkflowStep.objects.create(
+        workflow=workflow,
+        name="step1",
+        function=function,
+        parameter_template='{"prop1": 42}',
+        next=step2,
     )
 
 
@@ -142,7 +172,7 @@ def test_mark_error(mocker, task):
     assert message1 in the_log.log
     assert error_message not in the_log.log
 
-    # Call it again, with an error this time. Make sure
+    # Call it again, with an error this time
     mark_error(task, message2, ValueError(error_message))
 
     the_task = Task.objects.filter(id=task.id).first()
@@ -175,3 +205,45 @@ def test_start_task_errors(mocker, workflow_task, workflow):
     assert task.status == Task.ERROR
     assert task_log is not None
     assert message in task_log.log
+
+
+@pytest.mark.django_db
+def test_step_failure_errors_workflow(mocker, environment, admin_user, workflow, step1):
+    """Verify that the step and parent tasks are marked as ERROR and
+    a log is generated when a workflow step fails to execute."""
+    message = "An error occurred starting the workflow"
+
+    def mock_start_task(_task):
+        mark_error(_task, message)
+
+    # Patch the imported start_task in the workflow_step file, not
+    # in the file that its defined in
+    mocker.patch("core.models.workflow_step.start_task", mock_start_task)
+
+    workflow_task = Task(
+        environment=environment,
+        creator=admin_user,
+        tasked_object=workflow,
+        parameters={},
+        return_type=None,
+    )
+    workflow_task.status = Task.IN_PROGRESS
+    workflow_task.save()
+    assert workflow_task.status == Task.IN_PROGRESS
+
+    # Execute the first step, it should error
+    step1.execute(workflow_task)
+
+    # Make sure the parent workflow is errored and has an associated log
+    assert workflow_task.status == Task.ERROR
+    workflow_task_log = TaskLog.objects.filter(task__id=workflow_task.id).first()
+    assert workflow_task_log is not None
+    assert step1.name in workflow_task_log.log
+
+    step_task = Task.objects.get(tasked_id=step1.function_id)
+    assert step_task is not None
+    assert step_task.status == Task.ERROR
+
+    step_task_log = TaskLog.objects.filter(task=step_task).first()
+    assert step_task_log is not None
+    assert message in step_task_log.log
