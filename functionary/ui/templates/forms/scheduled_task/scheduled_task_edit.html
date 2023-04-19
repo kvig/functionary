@@ -96,17 +96,17 @@
                                 <i class="fa fa-cube fa-sm fa-fw me-1"></i>Function
                             </label>
                             {% if update %}
-                                {% render_field form.function disabled=True class="form-select" role="menu" %}
+                                {% render_field form.tasked_object disabled=True class="form-select" role="menu" %}
                             {% else %}
-                                {% render_field form.function class="form-select" role="menu" %}
+                                {% render_field form.tasked_object class="form-select" role="menu" %}
                             {% endif %}
-                            <div class="text-danger">{{ form.function.errors }}</div>
+                            <div class="text-danger">{{ form.tasked_object.errors }}</div>
                         </div>
                         <div>
                             <label class="fw-semibold form-label">
                                 <i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters
                             </label>
-                            <div class="font-monospace" id="function-parameters">
+                            <div class="font-monospace" id="tasked_object-parameters">
                                 {% comment %} Render function param form if available. Else, lazy load. {% endcomment %}
                                 {% if task_parameter_form %}
                                     {% if task_parameter_form.fields %}
@@ -117,7 +117,7 @@
                                 {% else %}
                                     <div hx-trigger="load"
                                          class="mb-3"
-                                         hx-get="{% url 'ui:function-parameters' %}"
+                                         hx-get="{% url 'ui:scheduledtask-object-parameters' %}"
                                          hx-vals='{"function": "{{ form.function.id }}"}'>
                                     </div>
                                 {% endif %}
@@ -130,6 +130,7 @@
                     {% else %}
                         <button class="btn btn-primary" type="submit" title="Create">Create</button>
                     {% endif %}
+                    <input type="hidden" name="tasked_type" value="{{ tasked_type }}"/>
                 </form>
             </div>
         </div>

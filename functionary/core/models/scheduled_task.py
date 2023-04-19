@@ -2,12 +2,14 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
-from core.models import ModelSaveHookMixin
+from core.models import Function, ModelSaveHookMixin
 from core.utils.parameter import validate_parameters
 
 
@@ -18,10 +20,14 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
     data happen in the context of a specific environment.
     Attributes:
         id: unique identifier (UUID)
-        function: the function that this task is an execution of
+        tasked_type: the ContentType (model) of the object being tasked
+        tasked_id: the UUID of the object being tasked
+        tasked_object: foreign key to the object being tasked, built from tasked_type
+                        and tasked_id.
         environment: the environment that this task belongs to. All queryset filtering
                      should include an environment.
         parameters: JSON representing the parameters that will be passed to the function
+                    or workflow
         creator: the user that initiated the task
         created_at: task creation timestamp
         updated_at: task updated timestamp
@@ -45,9 +51,9 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200, blank=False)
     description = models.TextField(blank=True)
-    function = models.ForeignKey(
-        to="Function", on_delete=models.CASCADE, related_name="scheduled_tasks"
-    )
+    tasked_type = models.ForeignKey(to=ContentType, on_delete=models.PROTECT)
+    tasked_id = models.UUIDField()
+    tasked_object = GenericForeignKey("tasked_type", "tasked_id")
     environment = models.ForeignKey(to="Environment", on_delete=models.CASCADE)
     parameters = models.JSONField(encoder=DjangoJSONEncoder, blank=True, default=dict)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=PENDING)
@@ -64,7 +70,8 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
     class Meta:
         indexes = [
             models.Index(
-                fields=["environment", "function"], name="s_task_environment_function"
+                fields=["environment", "tasked_type", "tasked_id"],
+                name="s_task_contenttype",
             ),
             models.Index(
                 fields=["environment", "creator"], name="s_task_environment_creator"
@@ -83,22 +90,34 @@ class ScheduledTask(ModelSaveHookMixin, models.Model):
         return str(self.id)
 
     def _clean_environment(self):
-        """Ensures that the environment is correctly set to that of the function"""
+        """Ensures that the environment is correctly set to that of the function
+        or workflow"""
         if self.environment is None:
-            self.environment = self.function.package.environment
-        elif self.environment != self.function.package.environment:
+            self.environment = self.tasked_object.environment
+        elif self.environment != self.tasked_object.environment:
             raise ValidationError(
-                "Function does not belong to the provided environment"
+                "Function or Workflow does not belong to the provided environment"
             )
 
     def _clean_parameters(self):
-        """Validate that the parameters conform to the function's schema"""
+        """Validate that the parameters conform to the schema of the function
+        or workflow"""
         if self.parameters is None:
             self.parameters = {}
-        validate_parameters(self.parameters, self.function)
+        validate_parameters(self.parameters, self.tasked_object)
 
-    def clean(self):
+    def _clean_tasked_object(self):
+        """Validate the tasked_object is active for new scheduled tasks"""
+        if not self.tasked_object and self.tasked_id:
+            self.tasked_object = self.tasked_type.get_object_for_this_type(
+                id=self.tasked_id
+            )
+        if self.tasked_object.active is False:
+            raise ValidationError("This function or workflow is not active")
+
+    def clean(self) -> None:
         """Model instance validation and attribute cleanup"""
+        self._clean_tasked_object()
         self._clean_environment()
         self._clean_parameters()
 

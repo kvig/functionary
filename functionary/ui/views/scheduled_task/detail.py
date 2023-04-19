@@ -10,7 +10,8 @@ class ScheduledTaskDetailView(PermissionedDetailView):
         return (
             super()
             .get_queryset()
-            .select_related("creator", "function", "periodic_task__crontab")
+            .select_related("creator", "tasked_type", "periodic_task__crontab")
+            .prefetch_related("tasked_object")
         )
 
     def get_context_data(self, **kwargs):

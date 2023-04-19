@@ -54,14 +54,25 @@
                         </span>
                     </p>
                 </div>
-                <div>
-                    <h3 class="fw-semibold">
-                        <i class="fa fa-cube fa-sm fa-fw me-1"></i>Function
-                    </h3>
-                    <p class="ms-4 my-2">
-                        <a href="{% url 'ui:function-detail' scheduledtask.function.id %}">{{ scheduledtask.function.render_name }}</a>
-                    </p>
-                </div>
+                {% if scheduled_task.tasked_type.name == "function" %}
+                    <div>
+                        <h3 class="fw-semibold">
+                            <i class="fa fa-cube fa-sm fa-fw me-1"></i>Function
+                        </h3>
+                        <p class="ms-4 my-2">
+                            <a href="{% url 'ui:function-detail' scheduledtask.tasked_object.id %}">{{ scheduledtask.tasked_object.render_name }}</a>
+                        </p>
+                    </div>
+                {% else %}
+                    <div>
+                        <h3 class="fw-semibold">
+                            <i class="fa fa-diagram-next fa-sm fa-fw me-1"></i>Workflow
+                        </h3>
+                        <p class="ms-4 my-2">
+                            <a href="{% url 'ui:workflow-detail' scheduledtask.tasked_object.id %}">{{ scheduledtask.tasked_object.name }}</a>
+                        </p>
+                    </div>
+                {% endif %}
                 <div>
                     <h3 class="fw-semibold">
                         <i class="fa fa-list fa-sm fa-fw me-1"></i>Parameters
@@ -107,6 +118,8 @@
     <script data-task-result="{{ scheduledtask.parameters | pretty_json }}">
         var parsed_result = JSON.parse(document.currentScript.dataset.taskResult)
         var result_element = document.getElementById('json-result')
-        result_element.innerHTML = prettyPrintJson.toHtml(parsed_result, {"quoteKeys": true})
+        result_element.innerHTML = prettyPrintJson.toHtml(parsed_result, {
+            "quoteKeys": true
+        })
     </script>
 {% endblock content %}

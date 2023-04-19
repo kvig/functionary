@@ -8,12 +8,16 @@
             </ol>
         </nav>
         <div>
-            <a class="btn btn-primary btn-sm fa-plus py-1 h-75"
-               title="Create New Scheduled Task"
-               type="button"
-               href="{% url 'ui:scheduledtask-create' %}">
-                Create Scheduled Task
-            </a>
+            {% if request.session.user_can_create_workflow %}
+                <a class="btn btn-primary btn-sm fa-plus py-1 h-75"
+                   title="Schedule a new Task"
+                   type="button"
+                   hx-target="body"
+                   hx-swap="beforeend"
+                   hx-get="{% url 'ui:schedule-create' %}">
+                    Schedule Task
+                </a>
+            {% endif %}
             {% include "partials/list_filter_button.html" %}
         </div>
     </div>

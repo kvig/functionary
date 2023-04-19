@@ -63,6 +63,11 @@ class Function(models.Model):
     tasks = GenericRelation(
         to="Task", content_type_field="tasked_type", object_id_field="tasked_id"
     )
+    scheduled_tasks = GenericRelation(
+        to="ScheduledTask",
+        content_type_field="tasked_type",
+        object_id_field="tasked_id",
+    )
     active = models.BooleanField(default=True)
 
     objects = models.Manager()

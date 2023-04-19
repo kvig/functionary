@@ -1,0 +1,13 @@
+<select class="form-select" id="tasked_id" name="tasked_object">
+    <option>
+        <span class="dropdown-item" {% if not tasked_object %}selected{% endif %}>-----</span>
+    </option>
+    {% for tasked_obj in tasked_objects %}
+        <option title="{{ tasked_obj.name }}"
+                value="{{ tasked_obj.id }}"
+                {% if tasked_object == tasked_obj.id|stringformat:'s' %}selected{% endif %}>
+            <span class="ms-3">{{ tasked_obj.name }}</span>
+        </option>
+    {% endfor %}
+</select>
+<input type="hidden" name="tasked_type" value="{{ tasked_type }}"/>

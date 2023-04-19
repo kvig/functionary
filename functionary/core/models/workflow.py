@@ -7,6 +7,13 @@ from django.db import models
 from core.utils.parameter import get_schema
 
 
+class ActiveWorkflowManager(models.Manager):
+    """Manager that filters out Workflows marked inactive."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(active=True)
+
+
 class Workflow(models.Model):
     """A Workflow defines a series of tasks to be executed in sequence.
 
@@ -31,7 +38,15 @@ class Workflow(models.Model):
     tasks = GenericRelation(
         to="Task", content_type_field="tasked_type", object_id_field="tasked_id"
     )
+    scheduled_tasks = GenericRelation(
+        to="ScheduledTask",
+        content_type_field="tasked_type",
+        object_id_field="tasked_id",
+    )
     active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = ActiveWorkflowManager()
 
     class Meta:
         constraints = [

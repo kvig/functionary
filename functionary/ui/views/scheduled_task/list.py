@@ -16,5 +16,5 @@ class ScheduledTaskListView(PermissionedListView):
         "creator",
         "most_recent_task",
         "periodic_task",
-        "function",
-    )
+        "tasked_type",
+    ).prefetch_related("tasked_object")
