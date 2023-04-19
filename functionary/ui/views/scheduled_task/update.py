@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -23,9 +24,9 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
         crontab = scheduled_task.periodic_task.crontab
         initial["scheduled_minute"] = crontab.minute
         initial["scheduled_hour"] = crontab.hour
-        initial["scheduled_day_of_week"] = crontab.day_of_week
         initial["scheduled_day_of_month"] = crontab.day_of_month
         initial["scheduled_month_of_year"] = crontab.month_of_year
+        initial["scheduled_day_of_week"] = crontab.day_of_week
         return initial
 
     def get_context_data(self, **kwargs) -> dict:
@@ -33,7 +34,8 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
         scheduled_task: ScheduledTask = context["scheduledtask"]
         context["update"] = True
         context["task_parameter_form"] = TaskParameterForm(
-            tasked_object=scheduled_task.function, initial=scheduled_task.parameters
+            tasked_object=scheduled_task.tasked_object,
+            initial=scheduled_task.parameters,
         )
         return context
 
@@ -43,14 +45,19 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
             Environment, id=self.request.session.get("environment_id")
         )
         kwargs["environment"] = environment
+        kwargs["tasked_type"] = kwargs["instance"].tasked_type.name
         return kwargs
 
     def post(self, request: HttpRequest, **kwargs) -> HttpResponse:
         scheduled_task: ScheduledTask = self.get_object()
         data: QueryDict = request.POST.copy()
         data["environment"] = scheduled_task.environment
-        data["function"] = scheduled_task.function
-        task_parameter_form = TaskParameterForm(data["function"], data)
+        data["tasked_object"] = scheduled_task.tasked_object
+        data["tasked_id"] = scheduled_task.tasked_object.id
+        data["tasked_type"] = ContentType.objects.get_for_model(
+            scheduled_task.tasked_object
+        )
+        task_parameter_form = TaskParameterForm(data["tasked_object"], data)
 
         if not task_parameter_form.is_valid():
             form = self.get_form()
@@ -59,6 +66,7 @@ class ScheduledTaskUpdateView(PermissionedUpdateView):
             form = ScheduledTaskForm(
                 data=data,
                 environment=scheduled_task.environment,
+                tasked_type=data["tasked_type"].name,
                 instance=scheduled_task,
             )
             if form.is_valid():

@@ -156,6 +156,11 @@ scheduling_urlpatterns = [
         name="scheduledtask-create",
     ),
     path(
+        "schedule/create",
+        (scheduled_task.ScheduleCreateView.as_view()),
+        name="schedule-create",
+    ),
+    path(
         "schedule/<uuid:pk>",
         (scheduled_task.ScheduledTaskDetailView.as_view()),
         name="scheduledtask-detail",
@@ -164,6 +169,16 @@ scheduling_urlpatterns = [
         "schedule/<uuid:pk>/update",
         (scheduled_task.ScheduledTaskUpdateView.as_view()),
         name="scheduledtask-update",
+    ),
+    path(
+        "schedule/objects/<str:tasked_type>",
+        (scheduled_task.TaskedObjectsView.as_view()),
+        name="scheduledtask-objects",
+    ),
+    path(
+        "schedule/object_parameters",
+        (scheduled_task.object_parameters),
+        name="scheduledtask-object-parameters",
     ),
     path(
         "schedule_list/",
@@ -181,11 +196,6 @@ scheduling_urlpatterns = [
         name="scheduled-hour-param",
     ),
     path(
-        "crontab_day_of_week_param/",
-        (scheduled_task.crontab_day_of_week_param),
-        name="scheduled-day-of-week-param",
-    ),
-    path(
         "crontab_day_of_month_param/",
         (scheduled_task.crontab_day_of_month_param),
         name="scheduled-day-of-month-param",
@@ -194,6 +204,11 @@ scheduling_urlpatterns = [
         "crontab_month_of_year_param/",
         (scheduled_task.crontab_month_of_year_param),
         name="scheduled-month-of-year-param",
+    ),
+    path(
+        "crontab_day_of_week_param/",
+        (scheduled_task.crontab_day_of_week_param),
+        name="scheduled-day-of-week-param",
     ),
 ]
 

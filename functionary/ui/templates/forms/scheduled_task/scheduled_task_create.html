@@ -1,0 +1,60 @@
+{% extends "partials/modal.html" %}
+{% load widget_tweaks %}
+{% block modal_title %}
+    Schedule Task
+{% endblock modal_title %}
+{% block modal_content %}
+    <form id="schedule-form"
+          method="post"
+          hx-post="{% if schedule %}{% url 'ui:schedule-update' schedule.id %}{% else %}{% url 'ui:scheduledtask-create' %}{% endif %}">
+        {% comment %} hx-target="#form-modal"
+        hx-swap="outerHTML"> {% endcomment %}
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+            {% render_field form.name class="form-control" placeholder=form.name.label %}
+        </div>
+        {{ form.name.errors }}
+        <div class="mb-3">
+            <label class="form-label">Task Type</label>
+            <div class="ms-4 my-2" hx-target="#tasked_object" hx-swap="innerHTML">
+                <input type="radio"
+                       class="btn-check"
+                       name="tasked_type"
+                       value="function"
+                       id="function"
+                       autocomplete="off"
+                       checked
+                       hx-get="{% url 'ui:scheduledtask-objects' 'function' %}"/>
+                <label class="btn btn-outline-primary" for="function">
+                    <i class="fa fa-cube"></i> Function
+                </label>
+                <input type="radio"
+                       class="btn-check"
+                       name="tasked_type"
+                       id="workflow"
+                       value="workflow"
+                       autocomplete="off"
+                       hx-get="{% url 'ui:scheduledtask-objects' 'workflow' %}"/>
+                <label class="btn btn-outline-primary" for="workflow">
+                    <i class="fa fa-diagram-next"></i> Workflow
+                </label>
+                <div class="mt-3" id="tasked_object">{% include "partials/scheduled_task/tasked_object_chooser.html" %}</div>
+            </div>
+        </div>
+        <input type="hidden" name="initial" value="True"/>
+        {{ form.non_field_errors }}
+    </form>
+{% endblock modal_content %}
+{% block modal_footer %}
+    <button class="btn btn-primary"
+            type="submit"
+            form="schedule-form"
+            title="{% if schedule %}Save{% else %}Next{% endif %}">
+        {% if schedule %}
+            Save
+        {% else %}
+            Next
+        {% endif %}
+    </button>
+{% endblock modal_footer %}

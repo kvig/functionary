@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Value
 from django.forms import CharField, ModelChoiceField, ModelForm
 from django.urls import reverse
 from django_celery_beat.validators import (
@@ -8,7 +10,7 @@ from django_celery_beat.validators import (
     month_of_year_validator,
 )
 
-from core.models import Environment, Function, ScheduledTask
+from core.models import Environment, Function, ScheduledTask, Workflow
 
 
 class ScheduledTaskForm(ModelForm):
@@ -36,7 +38,10 @@ class ScheduledTaskForm(ModelForm):
         initial="*",
         validators=[day_of_week_validator],
     )
-    function = ModelChoiceField(queryset=Function.active_objects.all(), required=True)
+    tasked_object = ModelChoiceField(
+        queryset=Function.active_objects.all(),
+        required=True,
+    )
 
     class Meta:
         model = ScheduledTask
@@ -48,26 +53,60 @@ class ScheduledTaskForm(ModelForm):
             "environment",
             "description",
             "status",
-            "function",
+            "tasked_object",
+            "tasked_type",
+            "tasked_id",
             "parameters",
         ]
 
     def __init__(
         self,
         environment: Environment = None,
+        tasked_type: str = None,
         *args,
         **kwargs,
     ):
+        self._update_tasked_object_queryset(environment, tasked_type)
         super().__init__(*args, **kwargs)
         self._setup_field_choices(kwargs.get("instance") is not None)
-        self._update_function_queryset(environment)
         self._setup_field_classes()
 
-    def _update_function_queryset(self, environment: Environment):
+    def _update_tasked_object_queryset(
+        self, environment: Environment, tasked_type: str
+    ):
+        if tasked_type:
+            if tasked_type not in ["function", "workflow"]:
+                raise ValueError("Incorrect tasked type")
+            object_manager = (
+                Function.active_objects
+                if tasked_type == "function"
+                else Workflow.active_objects
+            )
+            self.declared_fields["tasked_object"].queryset = object_manager.filter(
+                environment=environment
+            )
+            return
+
+        if self.instance:
+            object_manager = (
+                Function.active_objects
+                if isinstance(self.instance.tasked_object, Function)
+                else Workflow.active_objects
+            )
+            self.fields["tasked_object"].queryset = object_manager.filter(
+                environment=environment
+            )
+            return
+
         if environment:
-            function_field = self.fields["function"]
-            function_field.queryset = function_field.queryset.filter(
-                environment=environment, active=True
+            tasked_object = self.instance.tasked_object
+            tasked_object_field = self.fields["tasked_object"]
+            if tasked_object:
+                tasked_type = tasked_type.__class__
+            tasked_object_field.queryset = (
+                Workflow.active_objects.filter(environment=environment)
+                if tasked_type == "workflow"
+                else Function.active_objects.filter(environment=environment)
             )
 
     def _get_create_status_choices(self) -> list:
@@ -88,27 +127,36 @@ class ScheduledTaskForm(ModelForm):
         ]
         return choices
 
+    def _get_tasked_object_choices(self) -> list:
+        choices = list(Function.active_objects.all()) + list(
+            Workflow.active_objects.all()
+        )
+        return [(choice.pk, choice) for choice in choices]
+
     def _setup_field_choices(self, is_update: bool) -> None:
         if is_update:
             self.fields["status"].choices = self._get_update_status_choices()
+            self.fields["tasked_object"].choices = [
+                (self.instance.tasked_object.id, self.instance.tasked_object)
+            ]
         else:
             self.fields["status"].choices = self._get_create_status_choices()
 
     def _setup_field_classes(self) -> None:
         for field in self.fields:
-            if field not in ["status", "function"]:
+            if field not in ["status", "tasked_obj"]:
                 self.fields[field].widget.attrs.update({"class": "form-control"})
             else:
                 self.fields[field].widget.attrs.update(
                     {"class": "form-select-control", "role": "menu"}
                 )
 
-        self.fields["function"].widget.attrs.update(
-            {
-                "hx-get": reverse("ui:function-parameters"),
-                "hx-target": "#function-parameters",
-            }
-        )
+        # self.fields["tasked_object"].widget.attrs.update(
+        #     {
+        #         "hx-get": reverse("ui:scheduledtask-object-parameters"),
+        #         "hx-target": "#tasked_object-parameters",
+        #     }
+        # )
 
         self._setup_crontab_fields()
 
@@ -118,9 +166,9 @@ class ScheduledTaskForm(ModelForm):
         crontab_fields = [
             "scheduled_minute",
             "scheduled_hour",
-            "scheduled_day_of_week",
             "scheduled_day_of_month",
             "scheduled_month_of_year",
+            "scheduled_day_of_week",
         ]
 
         for field in crontab_fields:
@@ -133,3 +181,29 @@ class ScheduledTaskForm(ModelForm):
                     "hx-target": f"#{field_id}_errors",
                 }
             )
+
+    def clean_tasked_object(self):
+        tasked_object = (
+            self.cleaned_data["tasked_object"] or self.instance.tasked_object
+        )
+
+        tasked_type = ContentType.objects.get_for_model(type(tasked_object))
+        self.cleaned_data["tasked_id"] = tasked_object.id
+        self.cleaned_data["tasked_object"] = tasked_object
+        self.cleaned_data["tasked_type"] = tasked_type
+        return self.cleaned_data["tasked_object"]
+
+    def clean_tasked_type(self):
+        tasked_object = (
+            self.cleaned_data["tasked_object"] or self.instance.tasked_object
+        )
+
+        tasked_type = ContentType.objects.get_for_model(tasked_object)
+        return tasked_type
+
+    def clean_tasked_id(self):
+        tasked_object = (
+            self.cleaned_data["tasked_object"] or self.instance.tasked_object
+        )
+
+        return tasked_object.id
